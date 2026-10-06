@@ -6,7 +6,7 @@ ROOT = Path(__file__).resolve().parent.parent
 
 
 def main():
-    runs = [json.loads(p.read_text()) for p in sorted((ROOT/"results").glob("*.json")) if p.name != "retrieval.json"]
+    runs = [json.loads(p.read_text()) for p in sorted((ROOT/"results").glob("*.json")) if p.name not in ("retrieval.json", "recovery.json")]
     runs = [r for r in runs if "metadata" in r]
     md = ["Measured offline baselines on synthetic telemetry. Transport is recorded per experiment.", "",
           "| Run | Transport | Cases | Outcome correct (95% CI) | Errors | Total observed API cost | p50 / p95 seconds |",
@@ -20,6 +20,13 @@ def main():
         md += ["", "Retrieval smoke checks (small author-written query set):"]
         for item in json.loads(retrieval.read_text()):
             md.append(f"- {item['embedder']}: {item['n_queries']} queries, recall@1 {item['recall@1']}%, recall@3 {item['recall@3']}%.")
+    recovery = ROOT/"results"/"recovery.json"
+    if recovery.exists():
+        md += ["", "Version-specific recovery policy lookup (offline structured reader, not an LLM ablation):", "",
+               "| Retrieval | Exact policies | Correct unknown-version abstentions |", "|---|---:|---:|"]
+        for run in json.loads(recovery.read_text())["runs"]:
+            s = run["summary"]
+            md.append(f"| {run['mode']} | {s['exact_policy_correct']}/{s['supported_cases']} | {s['correct_abstentions']}/{s['unknown_version_cases']} |")
     text = "\n".join(md)
     (ROOT/"results"/"RESULTS.md").write_text(text+"\n")
     readme = ROOT/"README.md"

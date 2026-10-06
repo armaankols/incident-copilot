@@ -1,16 +1,17 @@
 # Deployment preparation and remaining checks
 
-The application is not deployed. Python 3.12.15 is configured; 26 offline tests
+The application is not deployed. Python 3.12.15 is configured; 29 offline tests
 and the required TF-IDF retrieval checks passed. Runtime/development version
-locks are generated. Browser verification is pending because the sandbox rejects
-local socket binding. Docker and Fly CLIs are unavailable, so no container build
-or deployment was attempted. Paid API work remains paused at the user's request.
+locks are generated. The Linux/ARM64 Docker image built successfully and passed HTTP, non-root
+server, and budget/replay persistence checks. Browser active-run/error/dropdown
+checks await the user's report. Paid API work remains paused at the user's request.
+No deployment has been performed; account/destination access is still needed.
 
 ## Local setup
 
 Run `./scripts/setup.sh` from a terminal with network access to install the
 locked environment and run offline checks. The locks contain exact version pins,
-without wheel hashes; Linux installation remains unverified. Start with:
+without wheel hashes; Linux/ARM64 installation was verified by a local container build; Linux/AMD64 is covered by CI after push. Start with:
 
 ```bash
 .venv/bin/python -m uvicorn app.main:app --workers 1
@@ -19,6 +20,22 @@ without wheel hashes; Linux installation remains unverified. Start with:
 API credentials must be exported into that process; `.env` is not automatically
 loaded. Without credentials, the UI can show the bundled offline replay. Keep
 secrets out of chat, scripts and commits.
+
+## Container verification
+
+```bash
+docker build -t incident-copilot:local .
+python scripts/container_smoke.py --image incident-copilot:local
+```
+
+The check creates uniquely named test resources, verifies HTTP and missing-key
+rejection, confirms PID 1 runs as UID 10001, writes a synthetic ledger charge and
+replay, then verifies both survive restart. It also makes the mount root owned by
+root to test volume initialization. The entrypoint fixes ownership of the data
+directory and drops root before starting Uvicorn. It does not change existing
+file owners; restore database files with UID 10001 ownership. The smoke check
+removes only its own container and volume. Results are recorded in
+`container-verification.json`; the test charge is not provider spending.
 
 ## Model smoke test
 

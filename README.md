@@ -45,6 +45,13 @@ Outcome accuracy counts a correct abstention on redacted cases. Latency quantile
 
 Retrieval smoke checks (small author-written query set):
 - tfidf: 14 queries, recall@1 100.0%, recall@3 100.0%.
+
+Version-specific recovery policy lookup (offline structured reader, not an LLM ablation):
+
+| Retrieval | Exact policies | Correct unknown-version abstentions |
+|---|---:|---:|
+| no-retrieval | 0/12 | 3/3 |
+| tfidf | 12/12 | 3/3 |
 <!-- RESULTS:END -->
 
 The original fixtures are easy for seven simulator-tailored log rules: 60/60
@@ -68,13 +75,14 @@ Run from a terminal with network access:
 ./scripts/setup.sh
 .venv/bin/python -m pytest -q tests
 .venv/bin/python -m evals.retrieval_eval
+.venv/bin/python -m evals.recovery_eval
 .venv/bin/python -m uvicorn app.main:app --workers 1
 ```
 
 Python 3.12.15 and `.venv` are configured. Runtime and development version locks
 are generated from the tested installed environment, including transitive
 dependencies. These are exact version pins, without wheel hashes. Docker and CI
-use those locks; their Linux installation and container build remain unverified.
+use those locks; Linux/ARM64 installation and container smoke checks passed.
 The setup script can install the locked development environment from a terminal
 with network access. Without a model key, the page and bundled replay still work; live
 investigations return 503. Export `ANTHROPIC_API_KEY` securely into the server
@@ -92,10 +100,11 @@ python3 scripts/check_benchmarks.py
 python3 -m evals.report
 ```
 
-The full offline suite passed 26 tests, including FastAPI/MCP/LangGraph
+The full offline suite passed 29 tests, including FastAPI/MCP/LangGraph
 integration, evidence validation, partial failure accounting, cancellation
-settlement and replay persistence. TF-IDF retrieval checks passed. The sandbox
-rejects binding a local server socket, so browser verification remains pending. See [verification notes](docs/verification.md).
+settlement and replay persistence. TF-IDF retrieval checks passed. The local demo now runs with elevated execution
+permission. Initial replay and completed-run reload were inspected in Chrome;
+manual active-run/error/dropdown checks are pending the user's report. See [verification notes](docs/verification.md).
 
 ## Live evaluation and deployment
 
@@ -110,7 +119,11 @@ needed. No demo URL or GitHub destination has been established.
 
 ## Next experiments
 
-Add service/version-specific recovery constraints and paired retrieval ablations;
-compare dense retrieval only after required TF-IDF checks pass. A meaningful
+The `recovery-v1` benchmark adds 12 service/version policy cases and three unknown
+versions, using an isolated corpus under `runbooks/recovery/`. It checks rollback
+compatibility, restart ordering and configuration limits. Its offline reader
+extracts structured policies from retrieved chunks and abstains on missing or
+conflicting versions. These results measure lookup availability, not LLM recovery
+reasoning. Dense retrieval and live-model ablations remain future experiments. A meaningful
 remediation approval gate needs simulated action execution followed by recovery
 verification. pgvector and real incident corpora remain future work.

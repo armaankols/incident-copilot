@@ -1,0 +1,795 @@
+{
+  "dataset_version": "recovery-v1",
+  "corpus": "runbooks/recovery",
+  "measured_at": "2026-10-06T17:34:48.415335+00:00",
+  "reader": "structured policy extraction with exact service/version matching",
+  "limitations": "Author-written synthetic fixtures; no model calls, no recovery execution, no dense-retrieval comparison.",
+  "dataset_sha256": "a7ab522512273a0a86edb8a398dd9d0ac2e8cfad602f1f5237e73afff471950c",
+  "corpus_sha256": "2b1f1328443c57dccd7a8d2d67ecc491d91e2d14ccd1f09bca8e72d428c0ce43",
+  "runs": [
+    {
+      "mode": "no-retrieval",
+      "summary": {
+        "n": 15,
+        "supported_cases": 12,
+        "exact_policy_correct": 0,
+        "unknown_version_cases": 3,
+        "correct_abstentions": 3,
+        "top1_exact_version": 0
+      },
+      "records": [
+        {
+          "case_id": "recovery-v1/orders/v3",
+          "supported": true,
+          "correct": false,
+          "top1_exact_version": false,
+          "answer": {
+            "status": "insufficient_evidence",
+            "policy": null,
+            "source": null
+          },
+          "retrieved": []
+        },
+        {
+          "case_id": "recovery-v1/orders/v4",
+          "supported": true,
+          "correct": false,
+          "top1_exact_version": false,
+          "answer": {
+            "status": "insufficient_evidence",
+            "policy": null,
+            "source": null
+          },
+          "retrieved": []
+        },
+        {
+          "case_id": "recovery-v1/payments/v2",
+          "supported": true,
+          "correct": false,
+          "top1_exact_version": false,
+          "answer": {
+            "status": "insufficient_evidence",
+            "policy": null,
+            "source": null
+          },
+          "retrieved": []
+        },
+        {
+          "case_id": "recovery-v1/payments/v3",
+          "supported": true,
+          "correct": false,
+          "top1_exact_version": false,
+          "answer": {
+            "status": "insufficient_evidence",
+            "policy": null,
+            "source": null
+          },
+          "retrieved": []
+        },
+        {
+          "case_id": "recovery-v1/inventory/v1",
+          "supported": true,
+          "correct": false,
+          "top1_exact_version": false,
+          "answer": {
+            "status": "insufficient_evidence",
+            "policy": null,
+            "source": null
+          },
+          "retrieved": []
+        },
+        {
+          "case_id": "recovery-v1/inventory/v2",
+          "supported": true,
+          "correct": false,
+          "top1_exact_version": false,
+          "answer": {
+            "status": "insufficient_evidence",
+            "policy": null,
+            "source": null
+          },
+          "retrieved": []
+        },
+        {
+          "case_id": "recovery-v1/auth/v1",
+          "supported": true,
+          "correct": false,
+          "top1_exact_version": false,
+          "answer": {
+            "status": "insufficient_evidence",
+            "policy": null,
+            "source": null
+          },
+          "retrieved": []
+        },
+        {
+          "case_id": "recovery-v1/auth/v2",
+          "supported": true,
+          "correct": false,
+          "top1_exact_version": false,
+          "answer": {
+            "status": "insufficient_evidence",
+            "policy": null,
+            "source": null
+          },
+          "retrieved": []
+        },
+        {
+          "case_id": "recovery-v1/search/v1",
+          "supported": true,
+          "correct": false,
+          "top1_exact_version": false,
+          "answer": {
+            "status": "insufficient_evidence",
+            "policy": null,
+            "source": null
+          },
+          "retrieved": []
+        },
+        {
+          "case_id": "recovery-v1/search/v2",
+          "supported": true,
+          "correct": false,
+          "top1_exact_version": false,
+          "answer": {
+            "status": "insufficient_evidence",
+            "policy": null,
+            "source": null
+          },
+          "retrieved": []
+        },
+        {
+          "case_id": "recovery-v1/postgres/v14",
+          "supported": true,
+          "correct": false,
+          "top1_exact_version": false,
+          "answer": {
+            "status": "insufficient_evidence",
+            "policy": null,
+            "source": null
+          },
+          "retrieved": []
+        },
+        {
+          "case_id": "recovery-v1/postgres/v15",
+          "supported": true,
+          "correct": false,
+          "top1_exact_version": false,
+          "answer": {
+            "status": "insufficient_evidence",
+            "policy": null,
+            "source": null
+          },
+          "retrieved": []
+        },
+        {
+          "case_id": "recovery-v1/orders/v8",
+          "supported": false,
+          "correct": true,
+          "top1_exact_version": null,
+          "answer": {
+            "status": "insufficient_evidence",
+            "policy": null,
+            "source": null
+          },
+          "retrieved": []
+        },
+        {
+          "case_id": "recovery-v1/payments/v9",
+          "supported": false,
+          "correct": true,
+          "top1_exact_version": null,
+          "answer": {
+            "status": "insufficient_evidence",
+            "policy": null,
+            "source": null
+          },
+          "retrieved": []
+        },
+        {
+          "case_id": "recovery-v1/auth/v7",
+          "supported": false,
+          "correct": true,
+          "top1_exact_version": null,
+          "answer": {
+            "status": "insufficient_evidence",
+            "policy": null,
+            "source": null
+          },
+          "retrieved": []
+        }
+      ]
+    },
+    {
+      "mode": "tfidf",
+      "summary": {
+        "n": 15,
+        "supported_cases": 12,
+        "exact_policy_correct": 12,
+        "unknown_version_cases": 3,
+        "correct_abstentions": 3,
+        "top1_exact_version": 12
+      },
+      "records": [
+        {
+          "case_id": "recovery-v1/orders/v3",
+          "supported": true,
+          "correct": true,
+          "top1_exact_version": true,
+          "answer": {
+            "status": "policy_found",
+            "policy": {
+              "policy_id": "orders-v3-rollback",
+              "service": "orders",
+              "version": "v3",
+              "action": "rollback",
+              "steps": [
+                "verify_schema_compatibility",
+                "rollback_previous_release",
+                "verify_checkout"
+              ],
+              "limits": {
+                "rollback_allowed": true
+              }
+            },
+            "source": "orders-release-recovery"
+          },
+          "retrieved": [
+            {
+              "runbook": "orders-release-recovery",
+              "section": "orders v3 recovery policy",
+              "score": 0.5035635232925415
+            },
+            {
+              "runbook": "orders-release-recovery",
+              "section": "orders v4 recovery policy",
+              "score": 0.20616798102855682
+            },
+            {
+              "runbook": "payments-release-recovery",
+              "section": "payments v3 recovery policy",
+              "score": 0.13757751882076263
+            }
+          ]
+        },
+        {
+          "case_id": "recovery-v1/orders/v4",
+          "supported": true,
+          "correct": true,
+          "top1_exact_version": true,
+          "answer": {
+            "status": "policy_found",
+            "policy": {
+              "policy_id": "orders-v4-rollforward",
+              "service": "orders",
+              "version": "v4",
+              "action": "rollforward",
+              "steps": [
+                "disable_checkout_flag",
+                "deploy_forward_fix",
+                "verify_checkout"
+              ],
+              "limits": {
+                "rollback_allowed": false
+              }
+            },
+            "source": "orders-release-recovery"
+          },
+          "retrieved": [
+            {
+              "runbook": "orders-release-recovery",
+              "section": "orders v4 recovery policy",
+              "score": 0.5089748501777649
+            },
+            {
+              "runbook": "orders-release-recovery",
+              "section": "orders v3 recovery policy",
+              "score": 0.20669719576835632
+            },
+            {
+              "runbook": "inventory-release-recovery",
+              "section": "inventory v2 recovery policy",
+              "score": 0.013593187555670738
+            }
+          ]
+        },
+        {
+          "case_id": "recovery-v1/payments/v2",
+          "supported": true,
+          "correct": true,
+          "top1_exact_version": true,
+          "answer": {
+            "status": "policy_found",
+            "policy": {
+              "policy_id": "payments-v2-restart",
+              "service": "payments",
+              "version": "v2",
+              "action": "restart",
+              "steps": [
+                "drain_inflight_payments",
+                "restart_one_replica",
+                "verify_ledger_consistency"
+              ],
+              "limits": {
+                "parallel_restarts": 1
+              }
+            },
+            "source": "payments-release-recovery"
+          },
+          "retrieved": [
+            {
+              "runbook": "payments-release-recovery",
+              "section": "payments v2 recovery policy",
+              "score": 0.5298917293548584
+            },
+            {
+              "runbook": "payments-release-recovery",
+              "section": "payments v3 recovery policy",
+              "score": 0.25148844718933105
+            },
+            {
+              "runbook": "search-release-recovery",
+              "section": "search v2 recovery policy",
+              "score": 0.09608935564756393
+            }
+          ]
+        },
+        {
+          "case_id": "recovery-v1/payments/v3",
+          "supported": true,
+          "correct": true,
+          "top1_exact_version": true,
+          "answer": {
+            "status": "policy_found",
+            "policy": {
+              "policy_id": "payments-v3-restart",
+              "service": "payments",
+              "version": "v3",
+              "action": "restart",
+              "steps": [
+                "release_leader_lease",
+                "drain_inflight_payments",
+                "restart_one_replica",
+                "verify_ledger_consistency"
+              ],
+              "limits": {
+                "parallel_restarts": 1
+              }
+            },
+            "source": "payments-release-recovery"
+          },
+          "retrieved": [
+            {
+              "runbook": "payments-release-recovery",
+              "section": "payments v3 recovery policy",
+              "score": 0.5231183171272278
+            },
+            {
+              "runbook": "payments-release-recovery",
+              "section": "payments v2 recovery policy",
+              "score": 0.2573283612728119
+            },
+            {
+              "runbook": "orders-release-recovery",
+              "section": "orders v3 recovery policy",
+              "score": 0.1408459097146988
+            }
+          ]
+        },
+        {
+          "case_id": "recovery-v1/inventory/v1",
+          "supported": true,
+          "correct": true,
+          "top1_exact_version": true,
+          "answer": {
+            "status": "policy_found",
+            "policy": {
+              "policy_id": "inventory-v1-pool",
+              "service": "inventory",
+              "version": "v1",
+              "action": "restore_config",
+              "steps": [
+                "set_pool_max",
+                "canary_one_replica",
+                "verify_connection_wait"
+              ],
+              "limits": {
+                "pool_max_per_replica": 20,
+                "global_connection_limit": 100
+              }
+            },
+            "source": "inventory-release-recovery"
+          },
+          "retrieved": [
+            {
+              "runbook": "inventory-release-recovery",
+              "section": "inventory v1 recovery policy",
+              "score": 0.4095052480697632
+            },
+            {
+              "runbook": "inventory-release-recovery",
+              "section": "inventory v2 recovery policy",
+              "score": 0.22332513332366943
+            },
+            {
+              "runbook": "search-release-recovery",
+              "section": "search v1 recovery policy",
+              "score": 0.11913599818944931
+            }
+          ]
+        },
+        {
+          "case_id": "recovery-v1/inventory/v2",
+          "supported": true,
+          "correct": true,
+          "top1_exact_version": true,
+          "answer": {
+            "status": "policy_found",
+            "policy": {
+              "policy_id": "inventory-v2-pool",
+              "service": "inventory",
+              "version": "v2",
+              "action": "restore_config",
+              "steps": [
+                "set_pool_max",
+                "canary_one_replica",
+                "verify_connection_wait"
+              ],
+              "limits": {
+                "pool_max_per_replica": 8,
+                "global_connection_limit": 40
+              }
+            },
+            "source": "inventory-release-recovery"
+          },
+          "retrieved": [
+            {
+              "runbook": "inventory-release-recovery",
+              "section": "inventory v2 recovery policy",
+              "score": 0.4378011226654053
+            },
+            {
+              "runbook": "inventory-release-recovery",
+              "section": "inventory v1 recovery policy",
+              "score": 0.18805533647537231
+            },
+            {
+              "runbook": "payments-release-recovery",
+              "section": "payments v2 recovery policy",
+              "score": 0.09811221063137054
+            }
+          ]
+        },
+        {
+          "case_id": "recovery-v1/auth/v1",
+          "supported": true,
+          "correct": true,
+          "top1_exact_version": true,
+          "answer": {
+            "status": "policy_found",
+            "policy": {
+              "policy_id": "auth-v1-tls",
+              "service": "auth",
+              "version": "v1",
+              "action": "renew_certificate",
+              "steps": [
+                "rotate_leaf_certificate",
+                "reload_tls",
+                "verify_handshake"
+              ],
+              "limits": {
+                "bundle_required": false
+              }
+            },
+            "source": "auth-release-recovery"
+          },
+          "retrieved": [
+            {
+              "runbook": "auth-release-recovery",
+              "section": "auth v1 recovery policy",
+              "score": 0.5022872686386108
+            },
+            {
+              "runbook": "auth-release-recovery",
+              "section": "auth v2 recovery policy",
+              "score": 0.21023060381412506
+            },
+            {
+              "runbook": "search-release-recovery",
+              "section": "search v1 recovery policy",
+              "score": 0.13008302450180054
+            }
+          ]
+        },
+        {
+          "case_id": "recovery-v1/auth/v2",
+          "supported": true,
+          "correct": true,
+          "top1_exact_version": true,
+          "answer": {
+            "status": "policy_found",
+            "policy": {
+              "policy_id": "auth-v2-tls",
+              "service": "auth",
+              "version": "v2",
+              "action": "renew_certificate",
+              "steps": [
+                "stage_dual_trust_bundle",
+                "rotate_leaf_certificate",
+                "reload_tls",
+                "verify_handshake"
+              ],
+              "limits": {
+                "bundle_required": true
+              }
+            },
+            "source": "auth-release-recovery"
+          },
+          "retrieved": [
+            {
+              "runbook": "auth-release-recovery",
+              "section": "auth v2 recovery policy",
+              "score": 0.449910044670105
+            },
+            {
+              "runbook": "auth-release-recovery",
+              "section": "auth v1 recovery policy",
+              "score": 0.2327873408794403
+            },
+            {
+              "runbook": "payments-release-recovery",
+              "section": "payments v2 recovery policy",
+              "score": 0.10785849392414093
+            }
+          ]
+        },
+        {
+          "case_id": "recovery-v1/search/v1",
+          "supported": true,
+          "correct": true,
+          "top1_exact_version": true,
+          "answer": {
+            "status": "policy_found",
+            "policy": {
+              "policy_id": "search-v1-traffic",
+              "service": "search",
+              "version": "v1",
+              "action": "scale",
+              "steps": [
+                "scale_within_quota",
+                "verify_queue_depth"
+              ],
+              "limits": {
+                "max_replicas": 6
+              }
+            },
+            "source": "search-release-recovery"
+          },
+          "retrieved": [
+            {
+              "runbook": "search-release-recovery",
+              "section": "search v1 recovery policy",
+              "score": 0.44159984588623047
+            },
+            {
+              "runbook": "search-release-recovery",
+              "section": "search v2 recovery policy",
+              "score": 0.23123428225517273
+            },
+            {
+              "runbook": "auth-release-recovery",
+              "section": "auth v1 recovery policy",
+              "score": 0.12176909297704697
+            }
+          ]
+        },
+        {
+          "case_id": "recovery-v1/search/v2",
+          "supported": true,
+          "correct": true,
+          "top1_exact_version": true,
+          "answer": {
+            "status": "policy_found",
+            "policy": {
+              "policy_id": "search-v2-traffic",
+              "service": "search",
+              "version": "v2",
+              "action": "rate_limit",
+              "steps": [
+                "shed_excess_traffic",
+                "scale_within_quota",
+                "verify_queue_depth"
+              ],
+              "limits": {
+                "max_replicas": 3
+              }
+            },
+            "source": "search-release-recovery"
+          },
+          "retrieved": [
+            {
+              "runbook": "search-release-recovery",
+              "section": "search v2 recovery policy",
+              "score": 0.4758347272872925
+            },
+            {
+              "runbook": "search-release-recovery",
+              "section": "search v1 recovery policy",
+              "score": 0.17070429027080536
+            },
+            {
+              "runbook": "payments-release-recovery",
+              "section": "payments v2 recovery policy",
+              "score": 0.1026308685541153
+            }
+          ]
+        },
+        {
+          "case_id": "recovery-v1/postgres/v14",
+          "supported": true,
+          "correct": true,
+          "top1_exact_version": true,
+          "answer": {
+            "status": "policy_found",
+            "policy": {
+              "policy_id": "postgres-v14-query",
+              "service": "postgres",
+              "version": "v14",
+              "action": "optimize_query",
+              "steps": [
+                "create_index_concurrently",
+                "verify_query_plan"
+              ],
+              "limits": {
+                "index_creation_allowed": true
+              }
+            },
+            "source": "postgres-release-recovery"
+          },
+          "retrieved": [
+            {
+              "runbook": "postgres-release-recovery",
+              "section": "postgres v14 recovery policy",
+              "score": 0.554946780204773
+            },
+            {
+              "runbook": "postgres-release-recovery",
+              "section": "postgres v15 recovery policy",
+              "score": 0.18688900768756866
+            },
+            {
+              "runbook": "auth-release-recovery",
+              "section": "auth v1 recovery policy",
+              "score": 0.0
+            }
+          ]
+        },
+        {
+          "case_id": "recovery-v1/postgres/v15",
+          "supported": true,
+          "correct": true,
+          "top1_exact_version": true,
+          "answer": {
+            "status": "policy_found",
+            "policy": {
+              "policy_id": "postgres-v15-query",
+              "service": "postgres",
+              "version": "v15",
+              "action": "reroute_reads",
+              "steps": [
+                "route_reads_to_primary",
+                "verify_replication_lag",
+                "verify_query_plan"
+              ],
+              "limits": {
+                "index_creation_allowed": false
+              }
+            },
+            "source": "postgres-release-recovery"
+          },
+          "retrieved": [
+            {
+              "runbook": "postgres-release-recovery",
+              "section": "postgres v15 recovery policy",
+              "score": 0.48840421438217163
+            },
+            {
+              "runbook": "postgres-release-recovery",
+              "section": "postgres v14 recovery policy",
+              "score": 0.23099252581596375
+            },
+            {
+              "runbook": "auth-release-recovery",
+              "section": "auth v1 recovery policy",
+              "score": 0.0
+            }
+          ]
+        },
+        {
+          "case_id": "recovery-v1/orders/v8",
+          "supported": false,
+          "correct": true,
+          "top1_exact_version": null,
+          "answer": {
+            "status": "insufficient_evidence",
+            "policy": null,
+            "source": null
+          },
+          "retrieved": [
+            {
+              "runbook": "orders-release-recovery",
+              "section": "orders v3 recovery policy",
+              "score": 0.3199794888496399
+            },
+            {
+              "runbook": "orders-release-recovery",
+              "section": "orders v4 recovery policy",
+              "score": 0.30729442834854126
+            },
+            {
+              "runbook": "search-release-recovery",
+              "section": "search v1 recovery policy",
+              "score": 0.07403682172298431
+            }
+          ]
+        },
+        {
+          "case_id": "recovery-v1/payments/v9",
+          "supported": false,
+          "correct": true,
+          "top1_exact_version": null,
+          "answer": {
+            "status": "insufficient_evidence",
+            "policy": null,
+            "source": null
+          },
+          "retrieved": [
+            {
+              "runbook": "payments-release-recovery",
+              "section": "payments v2 recovery policy",
+              "score": 0.33381766080856323
+            },
+            {
+              "runbook": "payments-release-recovery",
+              "section": "payments v3 recovery policy",
+              "score": 0.3125542402267456
+            },
+            {
+              "runbook": "search-release-recovery",
+              "section": "search v1 recovery policy",
+              "score": 0.07403682172298431
+            }
+          ]
+        },
+        {
+          "case_id": "recovery-v1/auth/v7",
+          "supported": false,
+          "correct": true,
+          "top1_exact_version": null,
+          "answer": {
+            "status": "insufficient_evidence",
+            "policy": null,
+            "source": null
+          },
+          "retrieved": [
+            {
+              "runbook": "auth-release-recovery",
+              "section": "auth v1 recovery policy",
+              "score": 0.3345937430858612
+            },
+            {
+              "runbook": "auth-release-recovery",
+              "section": "auth v2 recovery policy",
+              "score": 0.30743852257728577
+            },
+            {
+              "runbook": "search-release-recovery",
+              "section": "search v1 recovery policy",
+              "score": 0.07403682172298431
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

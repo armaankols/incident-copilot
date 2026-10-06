@@ -1,0 +1,265 @@
+[
+  {
+    "case_id": "recovery-v1/orders/v3",
+    "service": "orders",
+    "version": "v3",
+    "q": "orders v3 checkout error after code release: is reverting the build safe?",
+    "expect": {
+      "policy_id": "orders-v3-rollback",
+      "service": "orders",
+      "version": "v3",
+      "action": "rollback",
+      "steps": [
+        "verify_schema_compatibility",
+        "rollback_previous_release",
+        "verify_checkout"
+      ],
+      "limits": {
+        "rollback_allowed": true
+      }
+    }
+  },
+  {
+    "case_id": "recovery-v1/orders/v4",
+    "service": "orders",
+    "version": "v4",
+    "q": "orders v4 checkout error after code release: is reverting the build safe?",
+    "expect": {
+      "policy_id": "orders-v4-rollforward",
+      "service": "orders",
+      "version": "v4",
+      "action": "rollforward",
+      "steps": [
+        "disable_checkout_flag",
+        "deploy_forward_fix",
+        "verify_checkout"
+      ],
+      "limits": {
+        "rollback_allowed": false
+      }
+    }
+  },
+  {
+    "case_id": "recovery-v1/payments/v2",
+    "service": "payments",
+    "version": "v2",
+    "q": "payments v2 increasing heap and process death: what is the safe restart order?",
+    "expect": {
+      "policy_id": "payments-v2-restart",
+      "service": "payments",
+      "version": "v2",
+      "action": "restart",
+      "steps": [
+        "drain_inflight_payments",
+        "restart_one_replica",
+        "verify_ledger_consistency"
+      ],
+      "limits": {
+        "parallel_restarts": 1
+      }
+    }
+  },
+  {
+    "case_id": "recovery-v1/payments/v3",
+    "service": "payments",
+    "version": "v3",
+    "q": "payments v3 increasing heap and process death: what is the safe restart order?",
+    "expect": {
+      "policy_id": "payments-v3-restart",
+      "service": "payments",
+      "version": "v3",
+      "action": "restart",
+      "steps": [
+        "release_leader_lease",
+        "drain_inflight_payments",
+        "restart_one_replica",
+        "verify_ledger_consistency"
+      ],
+      "limits": {
+        "parallel_restarts": 1
+      }
+    }
+  },
+  {
+    "case_id": "recovery-v1/inventory/v1",
+    "service": "inventory",
+    "version": "v1",
+    "q": "inventory v1 database client slots exhausted: which connection limits should be restored?",
+    "expect": {
+      "policy_id": "inventory-v1-pool",
+      "service": "inventory",
+      "version": "v1",
+      "action": "restore_config",
+      "steps": [
+        "set_pool_max",
+        "canary_one_replica",
+        "verify_connection_wait"
+      ],
+      "limits": {
+        "pool_max_per_replica": 20,
+        "global_connection_limit": 100
+      }
+    }
+  },
+  {
+    "case_id": "recovery-v1/inventory/v2",
+    "service": "inventory",
+    "version": "v2",
+    "q": "inventory v2 database client slots exhausted: which connection limits should be restored?",
+    "expect": {
+      "policy_id": "inventory-v2-pool",
+      "service": "inventory",
+      "version": "v2",
+      "action": "restore_config",
+      "steps": [
+        "set_pool_max",
+        "canary_one_replica",
+        "verify_connection_wait"
+      ],
+      "limits": {
+        "pool_max_per_replica": 8,
+        "global_connection_limit": 40
+      }
+    }
+  },
+  {
+    "case_id": "recovery-v1/auth/v1",
+    "service": "auth",
+    "version": "v1",
+    "q": "auth v1 secure negotiation failures after certificate expiration: what rotation order is required?",
+    "expect": {
+      "policy_id": "auth-v1-tls",
+      "service": "auth",
+      "version": "v1",
+      "action": "renew_certificate",
+      "steps": [
+        "rotate_leaf_certificate",
+        "reload_tls",
+        "verify_handshake"
+      ],
+      "limits": {
+        "bundle_required": false
+      }
+    }
+  },
+  {
+    "case_id": "recovery-v1/auth/v2",
+    "service": "auth",
+    "version": "v2",
+    "q": "auth v2 secure negotiation failures after certificate expiration: what rotation order is required?",
+    "expect": {
+      "policy_id": "auth-v2-tls",
+      "service": "auth",
+      "version": "v2",
+      "action": "renew_certificate",
+      "steps": [
+        "stage_dual_trust_bundle",
+        "rotate_leaf_certificate",
+        "reload_tls",
+        "verify_handshake"
+      ],
+      "limits": {
+        "bundle_required": true
+      }
+    }
+  },
+  {
+    "case_id": "recovery-v1/search/v1",
+    "service": "search",
+    "version": "v1",
+    "q": "search v1 requests rose sharply and the queue grew: what capacity recovery is permitted?",
+    "expect": {
+      "policy_id": "search-v1-traffic",
+      "service": "search",
+      "version": "v1",
+      "action": "scale",
+      "steps": [
+        "scale_within_quota",
+        "verify_queue_depth"
+      ],
+      "limits": {
+        "max_replicas": 6
+      }
+    }
+  },
+  {
+    "case_id": "recovery-v1/search/v2",
+    "service": "search",
+    "version": "v2",
+    "q": "search v2 requests rose sharply and the queue grew: what capacity recovery is permitted?",
+    "expect": {
+      "policy_id": "search-v2-traffic",
+      "service": "search",
+      "version": "v2",
+      "action": "rate_limit",
+      "steps": [
+        "shed_excess_traffic",
+        "scale_within_quota",
+        "verify_queue_depth"
+      ],
+      "limits": {
+        "max_replicas": 3
+      }
+    }
+  },
+  {
+    "case_id": "recovery-v1/postgres/v14",
+    "service": "postgres",
+    "version": "v14",
+    "q": "postgres v14 query latency and sequential scans: can we build an index here?",
+    "expect": {
+      "policy_id": "postgres-v14-query",
+      "service": "postgres",
+      "version": "v14",
+      "action": "optimize_query",
+      "steps": [
+        "create_index_concurrently",
+        "verify_query_plan"
+      ],
+      "limits": {
+        "index_creation_allowed": true
+      }
+    }
+  },
+  {
+    "case_id": "recovery-v1/postgres/v15",
+    "service": "postgres",
+    "version": "v15",
+    "q": "postgres v15 query latency and sequential scans: can we build an index here?",
+    "expect": {
+      "policy_id": "postgres-v15-query",
+      "service": "postgres",
+      "version": "v15",
+      "action": "reroute_reads",
+      "steps": [
+        "route_reads_to_primary",
+        "verify_replication_lag",
+        "verify_query_plan"
+      ],
+      "limits": {
+        "index_creation_allowed": false
+      }
+    }
+  },
+  {
+    "case_id": "recovery-v1/orders/v8",
+    "service": "orders",
+    "version": "v8",
+    "q": "orders v8 incident recovery order and permitted limits",
+    "expect": null
+  },
+  {
+    "case_id": "recovery-v1/payments/v9",
+    "service": "payments",
+    "version": "v9",
+    "q": "payments v9 incident recovery order and permitted limits",
+    "expect": null
+  },
+  {
+    "case_id": "recovery-v1/auth/v7",
+    "service": "auth",
+    "version": "v7",
+    "q": "auth v7 incident recovery order and permitted limits",
+    "expect": null
+  }
+]

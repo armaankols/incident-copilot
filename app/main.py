@@ -10,6 +10,7 @@ from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from copilot.budget import AdmissionDenied, Ledger
@@ -26,6 +27,7 @@ MAX_STEPS = 12
 MAX_INPUT_TOKENS = 24000
 MAX_OUTPUT_TOKENS = 1000
 app = FastAPI(title="Incident Copilot")
+app.mount("/static", StaticFiles(directory=STATIC), name="static")
 _jobs = {}
 _tasks = set()
 

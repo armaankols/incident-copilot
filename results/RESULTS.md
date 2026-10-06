@@ -12,3 +12,10 @@ Outcome accuracy counts a correct abstention on redacted cases. Latency quantile
 
 Retrieval smoke checks (small author-written query set):
 - tfidf: 14 queries, recall@1 100.0%, recall@3 100.0%.
+
+Version-specific recovery policy lookup (offline structured reader, not an LLM ablation):
+
+| Retrieval | Exact policies | Correct unknown-version abstentions |
+|---|---:|---:|
+| no-retrieval | 0/12 | 3/3 |
+| tfidf | 12/12 | 3/3 |
