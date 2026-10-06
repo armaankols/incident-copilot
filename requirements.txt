@@ -1,0 +1,7 @@
+anthropic>=0.50
+langgraph>=1.0
+mcp>=1.12,<2
+fastapi>=0.115
+uvicorn[standard]>=0.30
+numpy>=1.26
+scikit-learn>=1.4

@@ -1,0 +1,1865 @@
+{
+  "name": "verified-latest-deploy-12179792f358",
+  "config": {
+    "agent": "baseline",
+    "suite": "original",
+    "model": "claude-haiku-4-5-20251001",
+    "n": 60,
+    "seed": 0,
+    "no_rag": false,
+    "embedder": "tfidf",
+    "max_steps": 12,
+    "concurrency": 4,
+    "save_traces": false,
+    "name": "verified-latest-deploy"
+  },
+  "metadata": {
+    "run_id": "12179792f358",
+    "started_at": "2026-10-05T18:19:48.323387+00:00",
+    "source_sha256": "2a551974299eb465a1ece241bd0d9b4789e2b8b451c730b5abc3fcaf5e207363",
+    "dataset_version": "original",
+    "prompt_version": "evidence-v2",
+    "python": "3.9.6",
+    "baseline_transport": null
+  },
+  "summary": {
+    "n": 60,
+    "errors": 0,
+    "root_cause_service_acc": 8.3,
+    "fault_type_acc": 16.7,
+    "both_correct_acc": 5.0,
+    "both_correct_ci95": [
+      1.7,
+      13.7
+    ],
+    "action_compatibility_rate": 0.0,
+    "avg_tool_calls": 0,
+    "avg_steps": 0,
+    "avg_input_tokens": 0,
+    "avg_output_tokens": 0,
+    "avg_cost_usd": 0.0,
+    "total_cost_usd": 0.0,
+    "error_rate": 0.0,
+    "cost_per_correct_diagnosis_usd": 0.0,
+    "billing_uncertain_runs": 0,
+    "latency_scope": "successful runs only",
+    "total_attempted_latency_s": 0.000165,
+    "latency_p50_s": 2e-06,
+    "latency_p95_s": 6e-06,
+    "accuracy_by_fault_type": {
+      "bad_deploy": 30.0,
+      "memory_leak": 0.0,
+      "slow_dependency": 0.0,
+      "config_error": 0.0,
+      "cert_expiry": 0.0,
+      "traffic_spike": 0.0
+    },
+    "outcome_accuracy_by_variant": {
+      "original": 5.0
+    },
+    "insufficient_evidence_cases": 0,
+    "abstention_accuracy": 0.0
+  },
+  "records": [
+    {
+      "seed": 0,
+      "fault_type": "bad_deploy",
+      "root_service": "auth",
+      "diagnosis": {
+        "root_cause_service": "orders",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": true,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 4.541999999996271e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/0",
+      "variant": "original"
+    },
+    {
+      "seed": 1,
+      "fault_type": "memory_leak",
+      "root_service": "payments",
+      "diagnosis": {
+        "root_cause_service": "postgres",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 2.707999999962407e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/1",
+      "variant": "original"
+    },
+    {
+      "seed": 2,
+      "fault_type": "slow_dependency",
+      "root_service": "postgres",
+      "diagnosis": {
+        "root_cause_service": "auth",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 1.3333000000004258e-05,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/2",
+      "variant": "original"
+    },
+    {
+      "seed": 3,
+      "fault_type": "config_error",
+      "root_service": "orders",
+      "diagnosis": {
+        "root_cause_service": "gateway",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 4.375000000000906e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/3",
+      "variant": "original"
+    },
+    {
+      "seed": 4,
+      "fault_type": "cert_expiry",
+      "root_service": "payments",
+      "diagnosis": {
+        "root_cause_service": "gateway",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 2.458000000038485e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/4",
+      "variant": "original"
+    },
+    {
+      "seed": 5,
+      "fault_type": "traffic_spike",
+      "root_service": "search",
+      "diagnosis": {
+        "root_cause_service": "orders",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 5.250000000012189e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/5",
+      "variant": "original"
+    },
+    {
+      "seed": 6,
+      "fault_type": "bad_deploy",
+      "root_service": "search",
+      "diagnosis": {
+        "root_cause_service": "search",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 6.0410000000121755e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/6",
+      "variant": "original"
+    },
+    {
+      "seed": 7,
+      "fault_type": "memory_leak",
+      "root_service": "inventory",
+      "diagnosis": {
+        "root_cause_service": "auth",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 5.666999999986988e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/7",
+      "variant": "original"
+    },
+    {
+      "seed": 8,
+      "fault_type": "slow_dependency",
+      "root_service": "postgres",
+      "diagnosis": {
+        "root_cause_service": "search",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 4.416999999978799e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/8",
+      "variant": "original"
+    },
+    {
+      "seed": 9,
+      "fault_type": "config_error",
+      "root_service": "payments",
+      "diagnosis": {
+        "root_cause_service": "payments",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 4.791999999975705e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/9",
+      "variant": "original"
+    },
+    {
+      "seed": 10,
+      "fault_type": "cert_expiry",
+      "root_service": "inventory",
+      "diagnosis": {
+        "root_cause_service": "orders",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 5.957999999972596e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/10",
+      "variant": "original"
+    },
+    {
+      "seed": 11,
+      "fault_type": "traffic_spike",
+      "root_service": "search",
+      "diagnosis": {
+        "root_cause_service": "orders",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 5.167000000028121e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/11",
+      "variant": "original"
+    },
+    {
+      "seed": 12,
+      "fault_type": "bad_deploy",
+      "root_service": "auth",
+      "diagnosis": {
+        "root_cause_service": "auth",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 2.1250000000194724e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/12",
+      "variant": "original"
+    },
+    {
+      "seed": 13,
+      "fault_type": "memory_leak",
+      "root_service": "inventory",
+      "diagnosis": {
+        "root_cause_service": "gateway",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 6.541999999998271e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/13",
+      "variant": "original"
+    },
+    {
+      "seed": 14,
+      "fault_type": "slow_dependency",
+      "root_service": "postgres",
+      "diagnosis": {
+        "root_cause_service": "payments",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 4.457999999984974e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/14",
+      "variant": "original"
+    },
+    {
+      "seed": 15,
+      "fault_type": "config_error",
+      "root_service": "orders",
+      "diagnosis": {
+        "root_cause_service": "postgres",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 2.7089999999896364e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/15",
+      "variant": "original"
+    },
+    {
+      "seed": 16,
+      "fault_type": "cert_expiry",
+      "root_service": "auth",
+      "diagnosis": {
+        "root_cause_service": "search",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 2.457999999982974e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/16",
+      "variant": "original"
+    },
+    {
+      "seed": 17,
+      "fault_type": "traffic_spike",
+      "root_service": "search",
+      "diagnosis": {
+        "root_cause_service": "payments",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 2.3749999999989058e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/17",
+      "variant": "original"
+    },
+    {
+      "seed": 18,
+      "fault_type": "bad_deploy",
+      "root_service": "payments",
+      "diagnosis": {
+        "root_cause_service": "orders",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": true,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 2.459000000010203e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/18",
+      "variant": "original"
+    },
+    {
+      "seed": 19,
+      "fault_type": "memory_leak",
+      "root_service": "orders",
+      "diagnosis": {
+        "root_cause_service": "auth",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 2.6670000000117433e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/19",
+      "variant": "original"
+    },
+    {
+      "seed": 20,
+      "fault_type": "slow_dependency",
+      "root_service": "payments",
+      "diagnosis": {
+        "root_cause_service": "inventory",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 1.084000000040053e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/20",
+      "variant": "original"
+    },
+    {
+      "seed": 21,
+      "fault_type": "config_error",
+      "root_service": "orders",
+      "diagnosis": {
+        "root_cause_service": "auth",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 2.540999999967042e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/21",
+      "variant": "original"
+    },
+    {
+      "seed": 22,
+      "fault_type": "cert_expiry",
+      "root_service": "payments",
+      "diagnosis": {
+        "root_cause_service": "search",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 2.41700000003231e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/22",
+      "variant": "original"
+    },
+    {
+      "seed": 23,
+      "fault_type": "traffic_spike",
+      "root_service": "search",
+      "diagnosis": {
+        "root_cause_service": "auth",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 2.7919999999737044e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/23",
+      "variant": "original"
+    },
+    {
+      "seed": 24,
+      "fault_type": "bad_deploy",
+      "root_service": "auth",
+      "diagnosis": {
+        "root_cause_service": "auth",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 2.375000000054417e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/24",
+      "variant": "original"
+    },
+    {
+      "seed": 25,
+      "fault_type": "memory_leak",
+      "root_service": "auth",
+      "diagnosis": {
+        "root_cause_service": "postgres",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 1.125000000046228e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/25",
+      "variant": "original"
+    },
+    {
+      "seed": 26,
+      "fault_type": "slow_dependency",
+      "root_service": "payments",
+      "diagnosis": {
+        "root_cause_service": "search",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 1.875000000040039e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/26",
+      "variant": "original"
+    },
+    {
+      "seed": 27,
+      "fault_type": "config_error",
+      "root_service": "inventory",
+      "diagnosis": {
+        "root_cause_service": "auth",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 1.8330000000066349e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/27",
+      "variant": "original"
+    },
+    {
+      "seed": 28,
+      "fault_type": "cert_expiry",
+      "root_service": "payments",
+      "diagnosis": {
+        "root_cause_service": "gateway",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 1.1249999999907168e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/28",
+      "variant": "original"
+    },
+    {
+      "seed": 29,
+      "fault_type": "traffic_spike",
+      "root_service": "gateway",
+      "diagnosis": {
+        "root_cause_service": "payments",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 1.1249999999907168e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/29",
+      "variant": "original"
+    },
+    {
+      "seed": 30,
+      "fault_type": "bad_deploy",
+      "root_service": "search",
+      "diagnosis": {
+        "root_cause_service": "orders",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": true,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 1.5829999999716904e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/30",
+      "variant": "original"
+    },
+    {
+      "seed": 31,
+      "fault_type": "memory_leak",
+      "root_service": "orders",
+      "diagnosis": {
+        "root_cause_service": "payments",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 4.375000000000906e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/31",
+      "variant": "original"
+    },
+    {
+      "seed": 32,
+      "fault_type": "slow_dependency",
+      "root_service": "postgres",
+      "diagnosis": {
+        "root_cause_service": "gateway",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 4.375000000000906e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/32",
+      "variant": "original"
+    },
+    {
+      "seed": 33,
+      "fault_type": "config_error",
+      "root_service": "inventory",
+      "diagnosis": {
+        "root_cause_service": "orders",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 4.375000000000906e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/33",
+      "variant": "original"
+    },
+    {
+      "seed": 34,
+      "fault_type": "cert_expiry",
+      "root_service": "inventory",
+      "diagnosis": {
+        "root_cause_service": "payments",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 4.416999999978799e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/34",
+      "variant": "original"
+    },
+    {
+      "seed": 35,
+      "fault_type": "traffic_spike",
+      "root_service": "search",
+      "diagnosis": {
+        "root_cause_service": "postgres",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 4.416000000007081e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/35",
+      "variant": "original"
+    },
+    {
+      "seed": 36,
+      "fault_type": "bad_deploy",
+      "root_service": "inventory",
+      "diagnosis": {
+        "root_cause_service": "auth",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": true,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 4.458000000040485e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/36",
+      "variant": "original"
+    },
+    {
+      "seed": 37,
+      "fault_type": "memory_leak",
+      "root_service": "search",
+      "diagnosis": {
+        "root_cause_service": "inventory",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 1.167000000024121e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/37",
+      "variant": "original"
+    },
+    {
+      "seed": 38,
+      "fault_type": "slow_dependency",
+      "root_service": "payments",
+      "diagnosis": {
+        "root_cause_service": "search",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 1.0830000000128237e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/38",
+      "variant": "original"
+    },
+    {
+      "seed": 39,
+      "fault_type": "config_error",
+      "root_service": "orders",
+      "diagnosis": {
+        "root_cause_service": "inventory",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 1.250000000008189e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/39",
+      "variant": "original"
+    },
+    {
+      "seed": 40,
+      "fault_type": "cert_expiry",
+      "root_service": "auth",
+      "diagnosis": {
+        "root_cause_service": "inventory",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 1.0409999999794195e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/40",
+      "variant": "original"
+    },
+    {
+      "seed": 41,
+      "fault_type": "traffic_spike",
+      "root_service": "search",
+      "diagnosis": {
+        "root_cause_service": "auth",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 1.1249999999907168e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/41",
+      "variant": "original"
+    },
+    {
+      "seed": 42,
+      "fault_type": "bad_deploy",
+      "root_service": "orders",
+      "diagnosis": {
+        "root_cause_service": "auth",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": true,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 1.1249999999907168e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/42",
+      "variant": "original"
+    },
+    {
+      "seed": 43,
+      "fault_type": "memory_leak",
+      "root_service": "orders",
+      "diagnosis": {
+        "root_cause_service": "auth",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 1.209000000002014e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/43",
+      "variant": "original"
+    },
+    {
+      "seed": 44,
+      "fault_type": "slow_dependency",
+      "root_service": "inventory",
+      "diagnosis": {
+        "root_cause_service": "orders",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 1.1249999999907168e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/44",
+      "variant": "original"
+    },
+    {
+      "seed": 45,
+      "fault_type": "config_error",
+      "root_service": "payments",
+      "diagnosis": {
+        "root_cause_service": "auth",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 1.1659999999968917e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/45",
+      "variant": "original"
+    },
+    {
+      "seed": 46,
+      "fault_type": "cert_expiry",
+      "root_service": "payments",
+      "diagnosis": {
+        "root_cause_service": "orders",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 1.0410000000349307e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/46",
+      "variant": "original"
+    },
+    {
+      "seed": 47,
+      "fault_type": "traffic_spike",
+      "root_service": "search",
+      "diagnosis": {
+        "root_cause_service": "inventory",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 1.167000000024121e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/47",
+      "variant": "original"
+    },
+    {
+      "seed": 48,
+      "fault_type": "bad_deploy",
+      "root_service": "search",
+      "diagnosis": {
+        "root_cause_service": "orders",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": true,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 1.3750000000256613e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/48",
+      "variant": "original"
+    },
+    {
+      "seed": 49,
+      "fault_type": "memory_leak",
+      "root_service": "orders",
+      "diagnosis": {
+        "root_cause_service": "payments",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 1.250000000008189e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/49",
+      "variant": "original"
+    },
+    {
+      "seed": 50,
+      "fault_type": "slow_dependency",
+      "root_service": "inventory",
+      "diagnosis": {
+        "root_cause_service": "orders",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 1.0420000000066487e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/50",
+      "variant": "original"
+    },
+    {
+      "seed": 51,
+      "fault_type": "config_error",
+      "root_service": "orders",
+      "diagnosis": {
+        "root_cause_service": "orders",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 1.3750000000256613e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/51",
+      "variant": "original"
+    },
+    {
+      "seed": 52,
+      "fault_type": "cert_expiry",
+      "root_service": "auth",
+      "diagnosis": {
+        "root_cause_service": "gateway",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 1.1669999999686098e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/52",
+      "variant": "original"
+    },
+    {
+      "seed": 53,
+      "fault_type": "traffic_spike",
+      "root_service": "gateway",
+      "diagnosis": {
+        "root_cause_service": "orders",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 1.1249999999907168e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/53",
+      "variant": "original"
+    },
+    {
+      "seed": 54,
+      "fault_type": "bad_deploy",
+      "root_service": "payments",
+      "diagnosis": {
+        "root_cause_service": "orders",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": true,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 1.37499999997015e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/54",
+      "variant": "original"
+    },
+    {
+      "seed": 55,
+      "fault_type": "memory_leak",
+      "root_service": "orders",
+      "diagnosis": {
+        "root_cause_service": "gateway",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 1.4999999999876223e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/55",
+      "variant": "original"
+    },
+    {
+      "seed": 56,
+      "fault_type": "slow_dependency",
+      "root_service": "payments",
+      "diagnosis": {
+        "root_cause_service": "gateway",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 1.2920000000415932e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/56",
+      "variant": "original"
+    },
+    {
+      "seed": 57,
+      "fault_type": "config_error",
+      "root_service": "orders",
+      "diagnosis": {
+        "root_cause_service": "postgres",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 1.291999999986082e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/57",
+      "variant": "original"
+    },
+    {
+      "seed": 58,
+      "fault_type": "cert_expiry",
+      "root_service": "inventory",
+      "diagnosis": {
+        "root_cause_service": "postgres",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 1.2499999999526779e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/58",
+      "variant": "original"
+    },
+    {
+      "seed": 59,
+      "fault_type": "traffic_spike",
+      "root_service": "gateway",
+      "diagnosis": {
+        "root_cause_service": "inventory",
+        "fault_type": "bad_deploy",
+        "evidence": [],
+        "remediation": "roll back"
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 0,
+      "cost_usd": 0.0,
+      "latency_s": 1.7920000000004599e-06,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/59",
+      "variant": "original"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+[
+ {"q": "pods restarting with exit code 137 and memory climbing", "expect": "memory-leak-oom"},
+ {"q": "latency creeps up steadily then the process gets killed and restarts", "expect": "memory-leak-oom"},
+ {"q": "x509 certificate has expired TLS handshake failed", "expect": "tls-certificate-expiry"},
+ {"q": "callers suddenly fail at an exact minute while the target service goes quiet", "expect": "tls-certificate-expiry"},
+ {"q": "connection pool exhausted timed out waiting for connection", "expect": "db-connection-pool-exhaustion"},
+ {"q": "503s right after someone shrank max connections in a config change", "expect": "db-connection-pool-exhaustion"},
+ {"q": "autoscaler at max replicas and 429 load shedding", "expect": "traffic-spike-load-shedding"},
+ {"q": "one client is sending five times normal requests per second", "expect": "traffic-spike-load-shedding"},
+ {"q": "errors started minutes after a release, new NullPointerException with the build version", "expect": "bad-deploy-rollback"},
+ {"q": "slow query seq scan and lock wait, callers timing out", "expect": "slow-dependency-latency"},
+ {"q": "downstream service is slow with saturated thread pool, upstream gets timeouts", "expect": "slow-dependency-latency"},
+ {"q": "no space left on device writing logs", "expect": "disk-pressure"},
+ {"q": "temporary failure in name resolution NXDOMAIN across services", "expect": "dns-resolution-failures"},
+ {"q": "consumer group lag keeps growing and partitions rebalance", "expect": "kafka-consumer-lag"}
+]

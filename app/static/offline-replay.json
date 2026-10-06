@@ -1,0 +1,120 @@
+{
+  "alert": "ALERT [SEV2] gateway: p95 latency 604ms (SLO 500ms), 5xx rate 7.3% (SLO 1%). Firing since 13:20:00 (39 min). Current time 13:59:00. Find the root cause and recommend remediation.",
+  "diagnosis": {
+    "status": "diagnosed",
+    "root_cause_service": "orders",
+    "fault_type": "config_error",
+    "evidence": [
+      {
+        "observation_id": "obs-5",
+        "quote": "13:58:00 orders ERROR connection pool exhausted: timed out after 3000ms waiting for connection (pool max=5, active=5, waiting=36)"
+      }
+    ],
+    "action": "restore_config",
+    "target": "orders",
+    "remediation": "Recommend restore_config on orders; approval and verification required."
+  },
+  "trace": [
+    {
+      "type": "tool_call",
+      "tool": "search_logs",
+      "args": {
+        "query": "unhandled exception"
+      }
+    },
+    {
+      "type": "tool_result",
+      "tool": "search_logs",
+      "observation_id": "obs-1",
+      "output": ""
+    },
+    {
+      "type": "tool_call",
+      "tool": "search_logs",
+      "args": {
+        "query": "OOMKilled"
+      }
+    },
+    {
+      "type": "tool_result",
+      "tool": "search_logs",
+      "observation_id": "obs-2",
+      "output": ""
+    },
+    {
+      "type": "tool_call",
+      "tool": "search_logs",
+      "args": {
+        "query": "slow query"
+      }
+    },
+    {
+      "type": "tool_result",
+      "tool": "search_logs",
+      "observation_id": "obs-3",
+      "output": ""
+    },
+    {
+      "type": "tool_call",
+      "tool": "search_logs",
+      "args": {
+        "query": "thread pool saturated"
+      }
+    },
+    {
+      "type": "tool_result",
+      "tool": "search_logs",
+      "observation_id": "obs-4",
+      "output": ""
+    },
+    {
+      "type": "tool_call",
+      "tool": "search_logs",
+      "args": {
+        "query": "connection pool exhausted"
+      }
+    },
+    {
+      "type": "tool_result",
+      "tool": "search_logs",
+      "observation_id": "obs-5",
+      "output": "13:30:00 orders ERROR connection pool exhausted: timed out after 3000ms waiting for connection (pool max=5, active=5, waiting=52)\n13:32:00 orders ERROR connection pool exhausted: timed out after 3000ms waiting for connection (pool max=5, active=5, waiting=33)\n13:34:00 orders ERROR connection pool exhausted: timed out after 3000ms waiting for connection (pool max=5, active=5, waiting=60)\n13:36:00 orders ERROR connection pool exhausted: timed out after 3000ms waiting for connection (pool max=5, active=5, waiting=44)\n13:38:00 orders ERROR connection pool exhausted: timed out after 3000ms waiting for connection (pool max=5, active=5, waiting=28)\n13:40:00 orders ERROR connection pool exhausted: timed out after 3000ms waiting for connection (pool max=5, active=5, waiting=26)\n13:42:00 orders ERROR connection pool exhausted: timed out after 3000ms waiting for connection (pool max=5, active=5, waiting=24)\n13:44:00 orders ERROR connection pool exhausted: timed out after 3000ms waiting for connection (pool max=5, active=5, waiting=59)\n13:46:00 orders ERROR connection pool exhausted: timed out after 3000ms waiting for connection (pool max=5, active=5, waiting=36)\n13:48:00 orders ERROR connection pool exhausted: timed out after 3000ms waiting for connection (pool max=5, active=5, waiting=58)\n13:50:00 orders ERROR connection pool exhausted: timed out after 3000ms waiting for connection (pool max=5, active=5, waiting=43)\n13:52:00 orders ERROR connection pool exhausted: timed out after 3000ms waiting for connection (pool max=5, active=5, waiting=54)\n13:54:00 orders ERROR connection pool exhausted: timed out after 3000ms waiting for connection (pool max=5, active=5, waiting=35)\n13:56:00 orders ERROR connection pool exhausted: timed out after 3000ms waiting for connection (pool max=5, active=5, waiting=25)\n13:58:00 orders ERROR connection pool exhausted: timed out after 3000ms waiting for connection (pool max=5, active=5, waiting=36)"
+    },
+    {
+      "type": "diagnosis",
+      "args": {
+        "status": "diagnosed",
+        "root_cause_service": "orders",
+        "fault_type": "config_error",
+        "evidence": [
+          {
+            "observation_id": "obs-5",
+            "quote": "13:58:00 orders ERROR connection pool exhausted: timed out after 3000ms waiting for connection (pool max=5, active=5, waiting=36)"
+          }
+        ],
+        "action": "restore_config",
+        "target": "orders",
+        "remediation": "Recommend restore_config on orders; approval and verification required."
+      }
+    }
+  ],
+  "grade": {
+    "service_ok": true,
+    "type_ok": true,
+    "both_ok": true,
+    "remediation_ok": true,
+    "abstained": false
+  },
+  "ground_truth": {
+    "root_service": "orders",
+    "fault_type": "config_error"
+  },
+  "tool_calls": 5,
+  "steps": 0,
+  "model_calls": 0,
+  "cost_usd": 0,
+  "latency_s": null,
+  "model": "offline rules (direct log search; no model API)",
+  "run_id": "offline-example",
+  "latency_note": "Not measured for this replay"
+}

@@ -1,0 +1,2340 @@
+{
+  "name": "measured-rules-original-2ec23894e2e9",
+  "config": {
+    "agent": "rules",
+    "suite": "original",
+    "model": "claude-haiku-4-5-20251001",
+    "n": 60,
+    "seed": 0,
+    "no_rag": false,
+    "embedder": "tfidf",
+    "max_steps": 12,
+    "concurrency": 4,
+    "save_traces": true,
+    "name": "measured-rules-original"
+  },
+  "metadata": {
+    "run_id": "2ec23894e2e9",
+    "started_at": "2026-10-05T18:16:37.467556+00:00",
+    "source_sha256": "f7dc650ec3c1cac3c3cc75adaa57353f0fcd648db82c6902774c239ab797cfa9",
+    "dataset_version": "original",
+    "prompt_version": "evidence-v2",
+    "python": "3.9.6",
+    "baseline_transport": "direct simulator log search"
+  },
+  "summary": {
+    "n": 60,
+    "errors": 0,
+    "root_cause_service_acc": 100.0,
+    "fault_type_acc": 100.0,
+    "both_correct_acc": 100.0,
+    "both_correct_ci95": [
+      94.0,
+      100.0
+    ],
+    "action_compatibility_rate": 100.0,
+    "avg_tool_calls": 4.1,
+    "avg_steps": 0,
+    "avg_input_tokens": 0,
+    "avg_output_tokens": 0,
+    "avg_cost_usd": 0.0,
+    "total_cost_usd": 0.0,
+    "error_rate": 0.0,
+    "cost_per_correct_diagnosis_usd": 0.0,
+    "billing_uncertain_runs": 0,
+    "latency_scope": "successful runs only",
+    "total_attempted_latency_s": 0.067118,
+    "latency_p50_s": 0.0,
+    "latency_p95_s": 0.0,
+    "accuracy_by_fault_type": {
+      "bad_deploy": 100.0,
+      "memory_leak": 100.0,
+      "slow_dependency": 100.0,
+      "config_error": 100.0,
+      "cert_expiry": 100.0,
+      "traffic_spike": 100.0
+    }
+  },
+  "records": [
+    {
+      "seed": 0,
+      "fault_type": "bad_deploy",
+      "root_service": "auth",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "auth",
+        "fault_type": "bad_deploy",
+        "evidence": [
+          {
+            "observation_id": "obs-1",
+            "quote": "13:58:00 auth ERROR unhandled exception in validate_request: KeyError 'customer_tier' (build v3.1.1)"
+          }
+        ],
+        "action": "rollback",
+        "target": "auth",
+        "remediation": "Recommend rollback on auth; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 1,
+      "cost_usd": 0.0,
+      "latency_s": 0.0011188749999999636,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/0",
+      "variant": "original"
+    },
+    {
+      "seed": 1,
+      "fault_type": "memory_leak",
+      "root_service": "payments",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "payments",
+        "fault_type": "memory_leak",
+        "evidence": [
+          {
+            "observation_id": "obs-2",
+            "quote": "13:24:00 payments ERROR container terminated: OOMKilled (exit code 137)"
+          }
+        ],
+        "action": "restart",
+        "target": "payments",
+        "remediation": "Recommend restart on payments; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 2,
+      "cost_usd": 0.0,
+      "latency_s": 0.0002310419999999591,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/1",
+      "variant": "original"
+    },
+    {
+      "seed": 2,
+      "fault_type": "slow_dependency",
+      "root_service": "postgres",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "postgres",
+        "fault_type": "slow_dependency",
+        "evidence": [
+          {
+            "observation_id": "obs-3",
+            "quote": "13:59:00 postgres WARN slow query (1444ms): SELECT ... FROM orders WHERE customer_id=$1 (seq scan)"
+          }
+        ],
+        "action": "optimize_query",
+        "target": "postgres",
+        "remediation": "Recommend optimize_query on postgres; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 3,
+      "cost_usd": 0.0,
+      "latency_s": 0.001267832999999996,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/2",
+      "variant": "original"
+    },
+    {
+      "seed": 3,
+      "fault_type": "config_error",
+      "root_service": "orders",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "orders",
+        "fault_type": "config_error",
+        "evidence": [
+          {
+            "observation_id": "obs-5",
+            "quote": "13:58:00 orders ERROR connection pool exhausted: timed out after 3000ms waiting for connection (pool max=5, active=5, waiting=36)"
+          }
+        ],
+        "action": "restore_config",
+        "target": "orders",
+        "remediation": "Recommend restore_config on orders; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 5,
+      "cost_usd": 0.0,
+      "latency_s": 0.0013662500000000133,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/3",
+      "variant": "original"
+    },
+    {
+      "seed": 4,
+      "fault_type": "cert_expiry",
+      "root_service": "payments",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "payments",
+        "fault_type": "cert_expiry",
+        "evidence": [
+          {
+            "observation_id": "obs-6",
+            "quote": "13:58:00 orders ERROR TLS handshake failed calling payments: x509: certificate has expired (notAfter=2026-10-01T13:20:00Z)"
+          }
+        ],
+        "action": "renew_certificate",
+        "target": "payments",
+        "remediation": "Recommend renew_certificate on payments; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 6,
+      "cost_usd": 0.0,
+      "latency_s": 0.001479375000000005,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/4",
+      "variant": "original"
+    },
+    {
+      "seed": 5,
+      "fault_type": "traffic_spike",
+      "root_service": "search",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "search",
+        "fault_type": "traffic_spike",
+        "evidence": [
+          {
+            "observation_id": "obs-7",
+            "quote": "13:59:00 search WARN rate limiter shedding load: 429 returned for 14% of requests"
+          }
+        ],
+        "action": "scale",
+        "target": "search",
+        "remediation": "Recommend scale on search; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 7,
+      "cost_usd": 0.0,
+      "latency_s": 0.001354999999999995,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/5",
+      "variant": "original"
+    },
+    {
+      "seed": 6,
+      "fault_type": "bad_deploy",
+      "root_service": "search",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "search",
+        "fault_type": "bad_deploy",
+        "evidence": [
+          {
+            "observation_id": "obs-1",
+            "quote": "13:58:00 search ERROR unhandled exception in validate_request: NullPointerException (build v1.19.3)"
+          }
+        ],
+        "action": "rollback",
+        "target": "search",
+        "remediation": "Recommend rollback on search; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 1,
+      "cost_usd": 0.0,
+      "latency_s": 0.001057750000000024,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/6",
+      "variant": "original"
+    },
+    {
+      "seed": 7,
+      "fault_type": "memory_leak",
+      "root_service": "inventory",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "inventory",
+        "fault_type": "memory_leak",
+        "evidence": [
+          {
+            "observation_id": "obs-2",
+            "quote": "13:26:00 inventory ERROR container terminated: OOMKilled (exit code 137)"
+          }
+        ],
+        "action": "restart",
+        "target": "inventory",
+        "remediation": "Recommend restart on inventory; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 2,
+      "cost_usd": 0.0,
+      "latency_s": 0.00021595799999996057,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/7",
+      "variant": "original"
+    },
+    {
+      "seed": 8,
+      "fault_type": "slow_dependency",
+      "root_service": "postgres",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "postgres",
+        "fault_type": "slow_dependency",
+        "evidence": [
+          {
+            "observation_id": "obs-3",
+            "quote": "13:59:00 postgres WARN slow query (926ms): SELECT ... FROM orders WHERE customer_id=$1 (seq scan)"
+          }
+        ],
+        "action": "optimize_query",
+        "target": "postgres",
+        "remediation": "Recommend optimize_query on postgres; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 3,
+      "cost_usd": 0.0,
+      "latency_s": 0.0012683330000000104,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/8",
+      "variant": "original"
+    },
+    {
+      "seed": 9,
+      "fault_type": "config_error",
+      "root_service": "payments",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "payments",
+        "fault_type": "config_error",
+        "evidence": [
+          {
+            "observation_id": "obs-5",
+            "quote": "13:58:00 payments ERROR connection pool exhausted: timed out after 3000ms waiting for connection (pool max=5, active=5, waiting=55)"
+          }
+        ],
+        "action": "restore_config",
+        "target": "payments",
+        "remediation": "Recommend restore_config on payments; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 5,
+      "cost_usd": 0.0,
+      "latency_s": 0.001355167000000046,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/9",
+      "variant": "original"
+    },
+    {
+      "seed": 10,
+      "fault_type": "cert_expiry",
+      "root_service": "inventory",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "inventory",
+        "fault_type": "cert_expiry",
+        "evidence": [
+          {
+            "observation_id": "obs-6",
+            "quote": "13:58:00 orders ERROR TLS handshake failed calling inventory: x509: certificate has expired (notAfter=2026-10-01T13:20:00Z)"
+          }
+        ],
+        "action": "renew_certificate",
+        "target": "inventory",
+        "remediation": "Recommend renew_certificate on inventory; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 6,
+      "cost_usd": 0.0,
+      "latency_s": 0.0014333750000000145,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/10",
+      "variant": "original"
+    },
+    {
+      "seed": 11,
+      "fault_type": "traffic_spike",
+      "root_service": "search",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "search",
+        "fault_type": "traffic_spike",
+        "evidence": [
+          {
+            "observation_id": "obs-7",
+            "quote": "13:59:00 search WARN rate limiter shedding load: 429 returned for 29% of requests"
+          }
+        ],
+        "action": "scale",
+        "target": "search",
+        "remediation": "Recommend scale on search; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 7,
+      "cost_usd": 0.0,
+      "latency_s": 0.001368917000000025,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/11",
+      "variant": "original"
+    },
+    {
+      "seed": 12,
+      "fault_type": "bad_deploy",
+      "root_service": "auth",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "auth",
+        "fault_type": "bad_deploy",
+        "evidence": [
+          {
+            "observation_id": "obs-1",
+            "quote": "13:58:00 auth ERROR unhandled exception in price_lookup: KeyError 'customer_tier' (build v3.0.5)"
+          }
+        ],
+        "action": "rollback",
+        "target": "auth",
+        "remediation": "Recommend rollback on auth; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 1,
+      "cost_usd": 0.0,
+      "latency_s": 0.0010568329999999793,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/12",
+      "variant": "original"
+    },
+    {
+      "seed": 13,
+      "fault_type": "memory_leak",
+      "root_service": "inventory",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "inventory",
+        "fault_type": "memory_leak",
+        "evidence": [
+          {
+            "observation_id": "obs-2",
+            "quote": "13:28:00 inventory ERROR container terminated: OOMKilled (exit code 137)"
+          }
+        ],
+        "action": "restart",
+        "target": "inventory",
+        "remediation": "Recommend restart on inventory; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 2,
+      "cost_usd": 0.0,
+      "latency_s": 0.00021966700000003447,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/13",
+      "variant": "original"
+    },
+    {
+      "seed": 14,
+      "fault_type": "slow_dependency",
+      "root_service": "postgres",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "postgres",
+        "fault_type": "slow_dependency",
+        "evidence": [
+          {
+            "observation_id": "obs-3",
+            "quote": "13:59:00 postgres WARN slow query (1169ms): SELECT ... FROM orders WHERE customer_id=$1 (seq scan)"
+          }
+        ],
+        "action": "optimize_query",
+        "target": "postgres",
+        "remediation": "Recommend optimize_query on postgres; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 3,
+      "cost_usd": 0.0,
+      "latency_s": 0.001249374999999997,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/14",
+      "variant": "original"
+    },
+    {
+      "seed": 15,
+      "fault_type": "config_error",
+      "root_service": "orders",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "orders",
+        "fault_type": "config_error",
+        "evidence": [
+          {
+            "observation_id": "obs-5",
+            "quote": "13:58:00 orders ERROR connection pool exhausted: timed out after 3000ms waiting for connection (pool max=5, active=5, waiting=26)"
+          }
+        ],
+        "action": "restore_config",
+        "target": "orders",
+        "remediation": "Recommend restore_config on orders; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 5,
+      "cost_usd": 0.0,
+      "latency_s": 0.0013927499999999982,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/15",
+      "variant": "original"
+    },
+    {
+      "seed": 16,
+      "fault_type": "cert_expiry",
+      "root_service": "auth",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "auth",
+        "fault_type": "cert_expiry",
+        "evidence": [
+          {
+            "observation_id": "obs-6",
+            "quote": "13:58:00 gateway ERROR TLS handshake failed calling auth: x509: certificate has expired (notAfter=2026-10-01T13:20:00Z)"
+          }
+        ],
+        "action": "renew_certificate",
+        "target": "auth",
+        "remediation": "Recommend renew_certificate on auth; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 6,
+      "cost_usd": 0.0,
+      "latency_s": 0.0014082919999999777,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/16",
+      "variant": "original"
+    },
+    {
+      "seed": 17,
+      "fault_type": "traffic_spike",
+      "root_service": "search",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "search",
+        "fault_type": "traffic_spike",
+        "evidence": [
+          {
+            "observation_id": "obs-7",
+            "quote": "13:59:00 search WARN rate limiter shedding load: 429 returned for 28% of requests"
+          }
+        ],
+        "action": "scale",
+        "target": "search",
+        "remediation": "Recommend scale on search; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 7,
+      "cost_usd": 0.0,
+      "latency_s": 0.0013876250000000034,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/17",
+      "variant": "original"
+    },
+    {
+      "seed": 18,
+      "fault_type": "bad_deploy",
+      "root_service": "payments",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "payments",
+        "fault_type": "bad_deploy",
+        "evidence": [
+          {
+            "observation_id": "obs-1",
+            "quote": "13:58:00 payments ERROR unhandled exception in validate_request: KeyError 'customer_tier' (build v3.13.0)"
+          }
+        ],
+        "action": "rollback",
+        "target": "payments",
+        "remediation": "Recommend rollback on payments; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 1,
+      "cost_usd": 0.0,
+      "latency_s": 0.0010848330000000073,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/18",
+      "variant": "original"
+    },
+    {
+      "seed": 19,
+      "fault_type": "memory_leak",
+      "root_service": "orders",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "orders",
+        "fault_type": "memory_leak",
+        "evidence": [
+          {
+            "observation_id": "obs-2",
+            "quote": "13:27:00 orders ERROR container terminated: OOMKilled (exit code 137)"
+          }
+        ],
+        "action": "restart",
+        "target": "orders",
+        "remediation": "Recommend restart on orders; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 2,
+      "cost_usd": 0.0,
+      "latency_s": 0.0002147500000000413,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/19",
+      "variant": "original"
+    },
+    {
+      "seed": 20,
+      "fault_type": "slow_dependency",
+      "root_service": "payments",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "payments",
+        "fault_type": "slow_dependency",
+        "evidence": [
+          {
+            "observation_id": "obs-4",
+            "quote": "13:59:00 payments WARN thread pool saturated, queue depth 200; request exceeded 500ms budget"
+          }
+        ],
+        "action": "scale",
+        "target": "payments",
+        "remediation": "Recommend scale on payments; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 4,
+      "cost_usd": 0.0,
+      "latency_s": 0.0012817079999999925,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/20",
+      "variant": "original"
+    },
+    {
+      "seed": 21,
+      "fault_type": "config_error",
+      "root_service": "orders",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "orders",
+        "fault_type": "config_error",
+        "evidence": [
+          {
+            "observation_id": "obs-5",
+            "quote": "13:58:00 orders ERROR connection pool exhausted: timed out after 3000ms waiting for connection (pool max=5, active=5, waiting=34)"
+          }
+        ],
+        "action": "restore_config",
+        "target": "orders",
+        "remediation": "Recommend restore_config on orders; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 5,
+      "cost_usd": 0.0,
+      "latency_s": 0.0013684580000000168,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/21",
+      "variant": "original"
+    },
+    {
+      "seed": 22,
+      "fault_type": "cert_expiry",
+      "root_service": "payments",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "payments",
+        "fault_type": "cert_expiry",
+        "evidence": [
+          {
+            "observation_id": "obs-6",
+            "quote": "13:58:00 orders ERROR TLS handshake failed calling payments: x509: certificate has expired (notAfter=2026-10-01T13:20:00Z)"
+          }
+        ],
+        "action": "renew_certificate",
+        "target": "payments",
+        "remediation": "Recommend renew_certificate on payments; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 6,
+      "cost_usd": 0.0,
+      "latency_s": 0.001427125000000029,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/22",
+      "variant": "original"
+    },
+    {
+      "seed": 23,
+      "fault_type": "traffic_spike",
+      "root_service": "search",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "search",
+        "fault_type": "traffic_spike",
+        "evidence": [
+          {
+            "observation_id": "obs-7",
+            "quote": "13:59:00 search WARN rate limiter shedding load: 429 returned for 17% of requests"
+          }
+        ],
+        "action": "scale",
+        "target": "search",
+        "remediation": "Recommend scale on search; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 7,
+      "cost_usd": 0.0,
+      "latency_s": 0.0013839169999999568,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/23",
+      "variant": "original"
+    },
+    {
+      "seed": 24,
+      "fault_type": "bad_deploy",
+      "root_service": "auth",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "auth",
+        "fault_type": "bad_deploy",
+        "evidence": [
+          {
+            "observation_id": "obs-1",
+            "quote": "13:58:00 auth ERROR unhandled exception in validate_request: IndexError: list index out of range (build v2.5.7)"
+          }
+        ],
+        "action": "rollback",
+        "target": "auth",
+        "remediation": "Recommend rollback on auth; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 1,
+      "cost_usd": 0.0,
+      "latency_s": 0.001045209000000047,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/24",
+      "variant": "original"
+    },
+    {
+      "seed": 25,
+      "fault_type": "memory_leak",
+      "root_service": "auth",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "auth",
+        "fault_type": "memory_leak",
+        "evidence": [
+          {
+            "observation_id": "obs-2",
+            "quote": "13:22:00 auth ERROR container terminated: OOMKilled (exit code 137)"
+          }
+        ],
+        "action": "restart",
+        "target": "auth",
+        "remediation": "Recommend restart on auth; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 2,
+      "cost_usd": 0.0,
+      "latency_s": 0.00021825000000003092,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/25",
+      "variant": "original"
+    },
+    {
+      "seed": 26,
+      "fault_type": "slow_dependency",
+      "root_service": "payments",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "payments",
+        "fault_type": "slow_dependency",
+        "evidence": [
+          {
+            "observation_id": "obs-4",
+            "quote": "13:59:00 payments WARN thread pool saturated, queue depth 245; request exceeded 500ms budget"
+          }
+        ],
+        "action": "scale",
+        "target": "payments",
+        "remediation": "Recommend scale on payments; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 4,
+      "cost_usd": 0.0,
+      "latency_s": 0.0013019999999999698,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/26",
+      "variant": "original"
+    },
+    {
+      "seed": 27,
+      "fault_type": "config_error",
+      "root_service": "inventory",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "inventory",
+        "fault_type": "config_error",
+        "evidence": [
+          {
+            "observation_id": "obs-5",
+            "quote": "13:58:00 inventory ERROR connection pool exhausted: timed out after 3000ms waiting for connection (pool max=5, active=5, waiting=55)"
+          }
+        ],
+        "action": "restore_config",
+        "target": "inventory",
+        "remediation": "Recommend restore_config on inventory; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 5,
+      "cost_usd": 0.0,
+      "latency_s": 0.0013655419999999974,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/27",
+      "variant": "original"
+    },
+    {
+      "seed": 28,
+      "fault_type": "cert_expiry",
+      "root_service": "payments",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "payments",
+        "fault_type": "cert_expiry",
+        "evidence": [
+          {
+            "observation_id": "obs-6",
+            "quote": "13:58:00 orders ERROR TLS handshake failed calling payments: x509: certificate has expired (notAfter=2026-10-01T13:20:00Z)"
+          }
+        ],
+        "action": "renew_certificate",
+        "target": "payments",
+        "remediation": "Recommend renew_certificate on payments; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 6,
+      "cost_usd": 0.0,
+      "latency_s": 0.0014096670000000033,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/28",
+      "variant": "original"
+    },
+    {
+      "seed": 29,
+      "fault_type": "traffic_spike",
+      "root_service": "gateway",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "gateway",
+        "fault_type": "traffic_spike",
+        "evidence": [
+          {
+            "observation_id": "obs-7",
+            "quote": "13:59:00 gateway WARN rate limiter shedding load: 429 returned for 30% of requests"
+          }
+        ],
+        "action": "scale",
+        "target": "gateway",
+        "remediation": "Recommend scale on gateway; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 7,
+      "cost_usd": 0.0,
+      "latency_s": 0.001378708999999978,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/29",
+      "variant": "original"
+    },
+    {
+      "seed": 30,
+      "fault_type": "bad_deploy",
+      "root_service": "search",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "search",
+        "fault_type": "bad_deploy",
+        "evidence": [
+          {
+            "observation_id": "obs-1",
+            "quote": "13:58:00 search ERROR unhandled exception in load_profile: TypeError: 'NoneType' has no attribute 'id' (build v2.12.5)"
+          }
+        ],
+        "action": "rollback",
+        "target": "search",
+        "remediation": "Recommend rollback on search; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 1,
+      "cost_usd": 0.0,
+      "latency_s": 0.001043874999999972,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/30",
+      "variant": "original"
+    },
+    {
+      "seed": 31,
+      "fault_type": "memory_leak",
+      "root_service": "orders",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "orders",
+        "fault_type": "memory_leak",
+        "evidence": [
+          {
+            "observation_id": "obs-2",
+            "quote": "13:23:00 orders ERROR container terminated: OOMKilled (exit code 137)"
+          }
+        ],
+        "action": "restart",
+        "target": "orders",
+        "remediation": "Recommend restart on orders; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 2,
+      "cost_usd": 0.0,
+      "latency_s": 0.0002107080000000039,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/31",
+      "variant": "original"
+    },
+    {
+      "seed": 32,
+      "fault_type": "slow_dependency",
+      "root_service": "postgres",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "postgres",
+        "fault_type": "slow_dependency",
+        "evidence": [
+          {
+            "observation_id": "obs-3",
+            "quote": "13:59:00 postgres WARN slow query (2018ms): SELECT ... FROM orders WHERE customer_id=$1 (seq scan)"
+          }
+        ],
+        "action": "optimize_query",
+        "target": "postgres",
+        "remediation": "Recommend optimize_query on postgres; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 3,
+      "cost_usd": 0.0,
+      "latency_s": 0.0012444580000000038,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/32",
+      "variant": "original"
+    },
+    {
+      "seed": 33,
+      "fault_type": "config_error",
+      "root_service": "inventory",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "inventory",
+        "fault_type": "config_error",
+        "evidence": [
+          {
+            "observation_id": "obs-5",
+            "quote": "13:58:00 inventory ERROR connection pool exhausted: timed out after 3000ms waiting for connection (pool max=5, active=5, waiting=47)"
+          }
+        ],
+        "action": "restore_config",
+        "target": "inventory",
+        "remediation": "Recommend restore_config on inventory; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 5,
+      "cost_usd": 0.0,
+      "latency_s": 0.0013762079999999899,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/33",
+      "variant": "original"
+    },
+    {
+      "seed": 34,
+      "fault_type": "cert_expiry",
+      "root_service": "inventory",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "inventory",
+        "fault_type": "cert_expiry",
+        "evidence": [
+          {
+            "observation_id": "obs-6",
+            "quote": "13:58:00 orders ERROR TLS handshake failed calling inventory: x509: certificate has expired (notAfter=2026-10-01T13:20:00Z)"
+          }
+        ],
+        "action": "renew_certificate",
+        "target": "inventory",
+        "remediation": "Recommend renew_certificate on inventory; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 6,
+      "cost_usd": 0.0,
+      "latency_s": 0.0014318329999999935,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/34",
+      "variant": "original"
+    },
+    {
+      "seed": 35,
+      "fault_type": "traffic_spike",
+      "root_service": "search",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "search",
+        "fault_type": "traffic_spike",
+        "evidence": [
+          {
+            "observation_id": "obs-7",
+            "quote": "13:59:00 search WARN rate limiter shedding load: 429 returned for 12% of requests"
+          }
+        ],
+        "action": "scale",
+        "target": "search",
+        "remediation": "Recommend scale on search; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 7,
+      "cost_usd": 0.0,
+      "latency_s": 0.001354666999999976,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/35",
+      "variant": "original"
+    },
+    {
+      "seed": 36,
+      "fault_type": "bad_deploy",
+      "root_service": "inventory",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "inventory",
+        "fault_type": "bad_deploy",
+        "evidence": [
+          {
+            "observation_id": "obs-1",
+            "quote": "13:58:00 inventory ERROR unhandled exception in build_response: IndexError: list index out of range (build v1.9.2)"
+          }
+        ],
+        "action": "rollback",
+        "target": "inventory",
+        "remediation": "Recommend rollback on inventory; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 1,
+      "cost_usd": 0.0,
+      "latency_s": 0.0010477499999999584,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/36",
+      "variant": "original"
+    },
+    {
+      "seed": 37,
+      "fault_type": "memory_leak",
+      "root_service": "search",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "search",
+        "fault_type": "memory_leak",
+        "evidence": [
+          {
+            "observation_id": "obs-2",
+            "quote": "13:28:00 search ERROR container terminated: OOMKilled (exit code 137)"
+          }
+        ],
+        "action": "restart",
+        "target": "search",
+        "remediation": "Recommend restart on search; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 2,
+      "cost_usd": 0.0,
+      "latency_s": 0.00022366600000001124,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/37",
+      "variant": "original"
+    },
+    {
+      "seed": 38,
+      "fault_type": "slow_dependency",
+      "root_service": "payments",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "payments",
+        "fault_type": "slow_dependency",
+        "evidence": [
+          {
+            "observation_id": "obs-4",
+            "quote": "13:59:00 payments WARN thread pool saturated, queue depth 238; request exceeded 500ms budget"
+          }
+        ],
+        "action": "scale",
+        "target": "payments",
+        "remediation": "Recommend scale on payments; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 4,
+      "cost_usd": 0.0,
+      "latency_s": 0.0012935419999999809,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/38",
+      "variant": "original"
+    },
+    {
+      "seed": 39,
+      "fault_type": "config_error",
+      "root_service": "orders",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "orders",
+        "fault_type": "config_error",
+        "evidence": [
+          {
+            "observation_id": "obs-5",
+            "quote": "13:58:00 orders ERROR connection pool exhausted: timed out after 3000ms waiting for connection (pool max=5, active=5, waiting=59)"
+          }
+        ],
+        "action": "restore_config",
+        "target": "orders",
+        "remediation": "Recommend restore_config on orders; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 5,
+      "cost_usd": 0.0,
+      "latency_s": 0.0013486250000000477,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/39",
+      "variant": "original"
+    },
+    {
+      "seed": 40,
+      "fault_type": "cert_expiry",
+      "root_service": "auth",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "auth",
+        "fault_type": "cert_expiry",
+        "evidence": [
+          {
+            "observation_id": "obs-6",
+            "quote": "13:58:00 gateway ERROR TLS handshake failed calling auth: x509: certificate has expired (notAfter=2026-10-01T13:20:00Z)"
+          }
+        ],
+        "action": "renew_certificate",
+        "target": "auth",
+        "remediation": "Recommend renew_certificate on auth; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 6,
+      "cost_usd": 0.0,
+      "latency_s": 0.0014395420000000159,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/40",
+      "variant": "original"
+    },
+    {
+      "seed": 41,
+      "fault_type": "traffic_spike",
+      "root_service": "search",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "search",
+        "fault_type": "traffic_spike",
+        "evidence": [
+          {
+            "observation_id": "obs-7",
+            "quote": "13:59:00 search WARN rate limiter shedding load: 429 returned for 14% of requests"
+          }
+        ],
+        "action": "scale",
+        "target": "search",
+        "remediation": "Recommend scale on search; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 7,
+      "cost_usd": 0.0,
+      "latency_s": 0.0013568330000000017,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/41",
+      "variant": "original"
+    },
+    {
+      "seed": 42,
+      "fault_type": "bad_deploy",
+      "root_service": "orders",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "orders",
+        "fault_type": "bad_deploy",
+        "evidence": [
+          {
+            "observation_id": "obs-1",
+            "quote": "13:58:00 orders ERROR unhandled exception in load_profile: NullPointerException (build v3.11.6)"
+          }
+        ],
+        "action": "rollback",
+        "target": "orders",
+        "remediation": "Recommend rollback on orders; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 1,
+      "cost_usd": 0.0,
+      "latency_s": 0.0010629999999999806,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/42",
+      "variant": "original"
+    },
+    {
+      "seed": 43,
+      "fault_type": "memory_leak",
+      "root_service": "orders",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "orders",
+        "fault_type": "memory_leak",
+        "evidence": [
+          {
+            "observation_id": "obs-2",
+            "quote": "13:27:00 orders ERROR container terminated: OOMKilled (exit code 137)"
+          }
+        ],
+        "action": "restart",
+        "target": "orders",
+        "remediation": "Recommend restart on orders; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 2,
+      "cost_usd": 0.0,
+      "latency_s": 0.00022220800000000152,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/43",
+      "variant": "original"
+    },
+    {
+      "seed": 44,
+      "fault_type": "slow_dependency",
+      "root_service": "inventory",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "inventory",
+        "fault_type": "slow_dependency",
+        "evidence": [
+          {
+            "observation_id": "obs-4",
+            "quote": "13:59:00 inventory WARN thread pool saturated, queue depth 197; request exceeded 500ms budget"
+          }
+        ],
+        "action": "scale",
+        "target": "inventory",
+        "remediation": "Recommend scale on inventory; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 4,
+      "cost_usd": 0.0,
+      "latency_s": 0.0012728329999999732,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/44",
+      "variant": "original"
+    },
+    {
+      "seed": 45,
+      "fault_type": "config_error",
+      "root_service": "payments",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "payments",
+        "fault_type": "config_error",
+        "evidence": [
+          {
+            "observation_id": "obs-5",
+            "quote": "13:58:00 payments ERROR connection pool exhausted: timed out after 3000ms waiting for connection (pool max=5, active=5, waiting=57)"
+          }
+        ],
+        "action": "restore_config",
+        "target": "payments",
+        "remediation": "Recommend restore_config on payments; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 5,
+      "cost_usd": 0.0,
+      "latency_s": 0.0013297500000000184,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/45",
+      "variant": "original"
+    },
+    {
+      "seed": 46,
+      "fault_type": "cert_expiry",
+      "root_service": "payments",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "payments",
+        "fault_type": "cert_expiry",
+        "evidence": [
+          {
+            "observation_id": "obs-6",
+            "quote": "13:58:00 orders ERROR TLS handshake failed calling payments: x509: certificate has expired (notAfter=2026-10-01T13:20:00Z)"
+          }
+        ],
+        "action": "renew_certificate",
+        "target": "payments",
+        "remediation": "Recommend renew_certificate on payments; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 6,
+      "cost_usd": 0.0,
+      "latency_s": 0.0014204170000000071,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/46",
+      "variant": "original"
+    },
+    {
+      "seed": 47,
+      "fault_type": "traffic_spike",
+      "root_service": "search",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "search",
+        "fault_type": "traffic_spike",
+        "evidence": [
+          {
+            "observation_id": "obs-7",
+            "quote": "13:59:00 search WARN rate limiter shedding load: 429 returned for 24% of requests"
+          }
+        ],
+        "action": "scale",
+        "target": "search",
+        "remediation": "Recommend scale on search; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 7,
+      "cost_usd": 0.0,
+      "latency_s": 0.0013587499999999642,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/47",
+      "variant": "original"
+    },
+    {
+      "seed": 48,
+      "fault_type": "bad_deploy",
+      "root_service": "search",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "search",
+        "fault_type": "bad_deploy",
+        "evidence": [
+          {
+            "observation_id": "obs-1",
+            "quote": "13:58:00 search ERROR unhandled exception in price_lookup: TypeError: 'NoneType' has no attribute 'id' (build v4.16.2)"
+          }
+        ],
+        "action": "rollback",
+        "target": "search",
+        "remediation": "Recommend rollback on search; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 1,
+      "cost_usd": 0.0,
+      "latency_s": 0.001044207999999991,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/48",
+      "variant": "original"
+    },
+    {
+      "seed": 49,
+      "fault_type": "memory_leak",
+      "root_service": "orders",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "orders",
+        "fault_type": "memory_leak",
+        "evidence": [
+          {
+            "observation_id": "obs-2",
+            "quote": "13:22:00 orders ERROR container terminated: OOMKilled (exit code 137)"
+          }
+        ],
+        "action": "restart",
+        "target": "orders",
+        "remediation": "Recommend restart on orders; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 2,
+      "cost_usd": 0.0,
+      "latency_s": 0.00023087499999996375,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/49",
+      "variant": "original"
+    },
+    {
+      "seed": 50,
+      "fault_type": "slow_dependency",
+      "root_service": "inventory",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "inventory",
+        "fault_type": "slow_dependency",
+        "evidence": [
+          {
+            "observation_id": "obs-4",
+            "quote": "13:59:00 inventory WARN thread pool saturated, queue depth 124; request exceeded 500ms budget"
+          }
+        ],
+        "action": "scale",
+        "target": "inventory",
+        "remediation": "Recommend scale on inventory; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 4,
+      "cost_usd": 0.0,
+      "latency_s": 0.0012759580000000215,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/50",
+      "variant": "original"
+    },
+    {
+      "seed": 51,
+      "fault_type": "config_error",
+      "root_service": "orders",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "orders",
+        "fault_type": "config_error",
+        "evidence": [
+          {
+            "observation_id": "obs-5",
+            "quote": "13:58:00 orders ERROR connection pool exhausted: timed out after 3000ms waiting for connection (pool max=5, active=5, waiting=23)"
+          }
+        ],
+        "action": "restore_config",
+        "target": "orders",
+        "remediation": "Recommend restore_config on orders; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 5,
+      "cost_usd": 0.0,
+      "latency_s": 0.0013921249999999663,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/51",
+      "variant": "original"
+    },
+    {
+      "seed": 52,
+      "fault_type": "cert_expiry",
+      "root_service": "auth",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "auth",
+        "fault_type": "cert_expiry",
+        "evidence": [
+          {
+            "observation_id": "obs-6",
+            "quote": "13:58:00 gateway ERROR TLS handshake failed calling auth: x509: certificate has expired (notAfter=2026-10-01T13:20:00Z)"
+          }
+        ],
+        "action": "renew_certificate",
+        "target": "auth",
+        "remediation": "Recommend renew_certificate on auth; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 6,
+      "cost_usd": 0.0,
+      "latency_s": 0.001411042000000029,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/52",
+      "variant": "original"
+    },
+    {
+      "seed": 53,
+      "fault_type": "traffic_spike",
+      "root_service": "gateway",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "gateway",
+        "fault_type": "traffic_spike",
+        "evidence": [
+          {
+            "observation_id": "obs-7",
+            "quote": "13:59:00 gateway WARN rate limiter shedding load: 429 returned for 27% of requests"
+          }
+        ],
+        "action": "scale",
+        "target": "gateway",
+        "remediation": "Recommend scale on gateway; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 7,
+      "cost_usd": 0.0,
+      "latency_s": 0.0013404169999999827,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/53",
+      "variant": "original"
+    },
+    {
+      "seed": 54,
+      "fault_type": "bad_deploy",
+      "root_service": "payments",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "payments",
+        "fault_type": "bad_deploy",
+        "evidence": [
+          {
+            "observation_id": "obs-1",
+            "quote": "13:58:00 payments ERROR unhandled exception in validate_request: NullPointerException (build v3.15.2)"
+          }
+        ],
+        "action": "rollback",
+        "target": "payments",
+        "remediation": "Recommend rollback on payments; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 1,
+      "cost_usd": 0.0,
+      "latency_s": 0.0010399580000000075,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/54",
+      "variant": "original"
+    },
+    {
+      "seed": 55,
+      "fault_type": "memory_leak",
+      "root_service": "orders",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "orders",
+        "fault_type": "memory_leak",
+        "evidence": [
+          {
+            "observation_id": "obs-2",
+            "quote": "13:25:00 orders ERROR container terminated: OOMKilled (exit code 137)"
+          }
+        ],
+        "action": "restart",
+        "target": "orders",
+        "remediation": "Recommend restart on orders; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 2,
+      "cost_usd": 0.0,
+      "latency_s": 0.00022170800000004265,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/55",
+      "variant": "original"
+    },
+    {
+      "seed": 56,
+      "fault_type": "slow_dependency",
+      "root_service": "payments",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "payments",
+        "fault_type": "slow_dependency",
+        "evidence": [
+          {
+            "observation_id": "obs-4",
+            "quote": "13:59:00 payments WARN thread pool saturated, queue depth 242; request exceeded 500ms budget"
+          }
+        ],
+        "action": "scale",
+        "target": "payments",
+        "remediation": "Recommend scale on payments; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 4,
+      "cost_usd": 0.0,
+      "latency_s": 0.0012848749999999631,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/56",
+      "variant": "original"
+    },
+    {
+      "seed": 57,
+      "fault_type": "config_error",
+      "root_service": "orders",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "orders",
+        "fault_type": "config_error",
+        "evidence": [
+          {
+            "observation_id": "obs-5",
+            "quote": "13:58:00 orders ERROR connection pool exhausted: timed out after 3000ms waiting for connection (pool max=5, active=5, waiting=21)"
+          }
+        ],
+        "action": "restore_config",
+        "target": "orders",
+        "remediation": "Recommend restore_config on orders; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 5,
+      "cost_usd": 0.0,
+      "latency_s": 0.0013723749999999812,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/57",
+      "variant": "original"
+    },
+    {
+      "seed": 58,
+      "fault_type": "cert_expiry",
+      "root_service": "inventory",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "inventory",
+        "fault_type": "cert_expiry",
+        "evidence": [
+          {
+            "observation_id": "obs-6",
+            "quote": "13:58:00 orders ERROR TLS handshake failed calling inventory: x509: certificate has expired (notAfter=2026-10-01T13:20:00Z)"
+          }
+        ],
+        "action": "renew_certificate",
+        "target": "inventory",
+        "remediation": "Recommend renew_certificate on inventory; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 6,
+      "cost_usd": 0.0,
+      "latency_s": 0.0013885000000000147,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/58",
+      "variant": "original"
+    },
+    {
+      "seed": 59,
+      "fault_type": "traffic_spike",
+      "root_service": "gateway",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "gateway",
+        "fault_type": "traffic_spike",
+        "evidence": [
+          {
+            "observation_id": "obs-7",
+            "quote": "13:59:00 gateway WARN rate limiter shedding load: 429 returned for 19% of requests"
+          }
+        ],
+        "action": "scale",
+        "target": "gateway",
+        "remediation": "Recommend scale on gateway; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 7,
+      "cost_usd": 0.0,
+      "latency_s": 0.0013648339999999815,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "original/original/59",
+      "variant": "original"
+    }
+  ]
+}

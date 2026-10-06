@@ -1,0 +1,8 @@
+[
+  {
+    "embedder": "tfidf",
+    "n_queries": 14,
+    "recall@1": 100.0,
+    "recall@3": 100.0
+  }
+]

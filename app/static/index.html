@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Incident Copilot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#EDF1F3;--panel:#fff;--ink:#0F1E2A;--muted:#5B6B76;--line:#CBD5DB;--alert:#C8321E;--ok:#1F7A5A;--steel:#2F5D7C;
+        --serif:"Newsreader",Georgia,serif;--mono:"JetBrains Mono",ui-monospace,Menlo,monospace;--sans:system-ui,-apple-system,"Segoe UI",sans-serif}
+  *{box-sizing:border-box} html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 var(--sans)}
+  main{max-width:1080px;margin:0 auto;padding:40px 20px 80px;display:grid;grid-template-columns:320px 1fr;gap:36px}
+  @media(max-width:820px){main{grid-template-columns:1fr}}
+  h1{font:700 40px/1.05 var(--serif);margin:0 0 10px;letter-spacing:-.01em}
+  .lede{color:var(--muted);margin:0 0 28px;max-width:34ch}
+  label{display:block;font-weight:600;font-size:14px;margin:16px 0 6px}
+  select,button{font:inherit;width:100%;padding:10px 12px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:4px}
+  button{background:var(--ink);color:#fff;border-color:var(--ink);font-weight:600;cursor:pointer;margin-top:22px}
+  button:disabled{opacity:.55;cursor:wait} :focus-visible{outline:3px solid var(--steel);outline-offset:2px}
+  .meta{font-size:13px;color:var(--muted);margin-top:14px}
+  .alert{border-left:5px solid var(--alert);background:var(--panel);padding:14px 16px;font:14px/1.5 var(--mono);margin-bottom:28px}
+  .rail{position:relative;margin:0;padding:0 0 0 22px;list-style:none;border-left:2px solid var(--line)}
+  .rail li{position:relative;margin:0 0 14px}
+  .rail li::before{content:"";position:absolute;left:-29px;top:7px;width:10px;height:10px;border-radius:50%;background:var(--steel);border:2px solid var(--bg)}
+  .rail li.thought::before{background:var(--muted)} .rail li.diag::before{background:var(--ok);width:14px;height:14px;left:-31px}
+  .call{font:600 14px var(--mono)} .args{color:var(--muted);font:400 13px var(--mono)}
+  .thought .txt{color:var(--muted);font-style:italic}
+  details{margin-top:6px} summary{cursor:pointer;font-size:13px;color:var(--steel)}
+  pre{margin:6px 0 0;padding:10px 12px;background:var(--panel);border:1px solid var(--line);overflow-x:auto;font:12.5px/1.45 var(--mono);white-space:pre-wrap}
+  .verdict{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--line);background:var(--panel);margin-top:26px}
+  .verdict>div{padding:16px 18px} .verdict>div+div{border-left:1px solid var(--line)}
+  .verdict h3{margin:0 0 8px;font:700 20px var(--serif)} .row{display:flex;justify-content:space-between;gap:12px;font-size:14px;padding:4px 0}
+  .ok{color:var(--ok);font-weight:600} .bad{color:var(--alert);font-weight:600}
+  .stats{font:13px var(--mono);color:var(--muted);margin-top:12px}
+  .err{color:var(--alert);margin-top:16px;font-weight:600}
+</style>
+</head>
+<body>
+<main>
+  <section aria-labelledby="t">
+    <h1 id="t">Incident Copilot</h1>
+    <p class="lede">Investigate synthetic telemetry through MCP tools. Compare the diagnosis with the injected fault, or inspect a saved offline rule-baseline replay.</p>
+    <label for="fault">Injected fault</label>
+    <select id="fault"><option value="">Random</option></select>
+    <label for="model">Model</label>
+    <select id="model"></select>
+    <button id="go">Page the agent</button>
+    <button id="replay">View offline replay</button><div class="meta" id="meta"></div>
+  </section>
+  <section aria-live="polite">
+    <div id="out"><p class="lede">Pick a synthetic fault or view the saved offline replay. Live investigations require a configured model API.</p></div>
+  </section>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+async function init(){
+  const c=await (await fetch("/api/config")).json();
+  if (!$("fault").dataset.loaded) {
+  c.fault_types.forEach(f=>$("fault").insertAdjacentHTML("beforeend",`<option>${f}</option>`));
+  c.models.forEach(m=>$("model").insertAdjacentHTML("beforeend",`<option>${m}</option>`));
+  $("fault").dataset.loaded="1";
+  }
+  $("go").disabled=!c.live_enabled;
+  $("meta").textContent=`Application budget: $${c.spent_today_usd} of $${c.daily_budget_usd} used today.`;
+}
+function render(r){
+  const steps=r.trace.map(t=>{
+    if(t.type==="investigation_update") return `<li class="thought"><span class="txt">${esc(t.text)}</span></li>`;
+    if(t.type==="tool_call") return `<li><span class="call">${esc(t.tool)}</span> <span class="args">${esc(JSON.stringify(t.args))}</span>`;
+    if(t.type==="tool_result") return `<details><summary>evidence ${esc(t.observation_id||"")}</summary><pre>${esc(t.output)}</pre></details></li>`;
+    if(t.type==="diagnosis") return `<li class="diag"><span class="call">submit_diagnosis</span><pre>${esc(JSON.stringify(t.args,null,2))}</pre></li>`;
+    return "";
+  }).join("");
+  const d=r.diagnosis||{}, g=r.grade, gt=r.ground_truth;
+  const mark=ok=>ok?'<span class="ok">match</span>':'<span class="bad">miss</span>';
+  $("out").innerHTML=`<div class="alert">${esc(r.alert)}</div><ol class="rail">${steps}</ol>
+  <div class="verdict"><div><h3>Agent said</h3><div class="row"><span>Service</span><b>${esc(d.root_cause_service||"none")}</b></div><div class="row"><span>Fault type</span><b>${esc(d.fault_type||"none")}</b></div></div>
+  <div><h3>Actually injected</h3><div class="row"><span>Service ${mark(g.service_ok)}</span><b>${esc(gt.root_service)}</b></div><div class="row"><span>Fault type ${mark(g.type_ok)}</span><b>${esc(gt.fault_type)}</b></div></div></div>
+  <div class="stats">${r.tool_calls} tool calls, ${r.model_calls||r.steps} model calls, ${r.latency_s===null?"latency not measured":r.latency_s+"s"}, $${r.cost_usd} on ${esc(r.model)}</div>`;
+}
+$("go").onclick=async()=>{
+  $("go").disabled=true;$("go").textContent="Investigating...";
+  $("out").innerHTML='<p class="lede">The agent is reading metrics, logs and runbooks.</p>';
+  try{
+    const res=await fetch("/api/runs",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({fault_type:$("fault").value||null,model:$("model").value})});
+    let data=await res.json();
+    if(!res.ok) throw new Error(data.detail||res.statusText);
+    const rid=data.run_id;
+    history.replaceState(null,"",`?run=${encodeURIComponent(rid)}`);
+    for(;;){
+      const poll=await fetch(`/api/runs/${encodeURIComponent(rid)}`);
+      data=await poll.json();
+      if(!poll.ok) throw new Error(data.detail||poll.statusText);
+      if(data.status==="completed") {if(data.result.error) throw new Error(data.result.error); render(data.result); break;}
+      $("out").innerHTML=`<p class="lede">Investigating: ${data.progress.model_calls||0} model calls completed or in progress.</p><pre>${esc(JSON.stringify(data.progress.trace||[],null,2))}</pre>`;
+      await new Promise(resolve=>setTimeout(resolve,1000));
+    }
+    await init();
+  }catch(e){$("out").innerHTML=`<p class="err">${esc(e.message)}</p>`}
+  $("go").disabled=false;$("go").textContent="Page the agent";
+};
+$("replay").onclick=async()=>{try{render(await (await fetch("/api/replay")).json())}catch(e){$("out").textContent=e.message}};
+async function boot(){
+  await init();
+  const rid=new URLSearchParams(location.search).get("run");
+  if(rid){const res=await fetch(`/api/runs/${encodeURIComponent(rid)}`);const data=await res.json();if(res.ok&&data.result) render(data.result);}
+}
+boot().catch(e=>$("meta").textContent=e.message);
+</script>
+</body>
+</html>
