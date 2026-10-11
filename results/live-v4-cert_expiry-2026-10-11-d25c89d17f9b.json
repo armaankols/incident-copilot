@@ -1,0 +1,134 @@
+{
+  "name": "live-v4-cert_expiry-2026-10-11-d25c89d17f9b",
+  "config": {
+    "agent": "llm",
+    "suite": "original",
+    "model": "claude-haiku-4-5-20251001",
+    "n": 1,
+    "seed": 0,
+    "case_offset": 4,
+    "no_rag": false,
+    "embedder": "tfidf",
+    "max_steps": 12,
+    "concurrency": 1,
+    "save_traces": true,
+    "name": "live-v4-cert_expiry-2026-10-11"
+  },
+  "metadata": {
+    "run_id": "d25c89d17f9b",
+    "started_at": "2026-10-11T23:15:47.503094+00:00",
+    "source_sha256": "7babb938ede21cb71112a58bd38eadcd8990eadb7de717126d90d46060fd35f3",
+    "dataset_sha256": "6d9c631231d9d14eac0e8fad96207886db035761904e0f7a48293742a3d141b1",
+    "dataset_version": "original",
+    "prompt_version": "evidence-v4-operational-checks",
+    "python": "3.12.15",
+    "baseline_transport": null
+  },
+  "summary": {
+    "n": 1,
+    "errors": 0,
+    "root_cause_service_acc": 100.0,
+    "fault_type_acc": 100.0,
+    "both_correct_acc": 100.0,
+    "both_correct_ci95": [
+      20.7,
+      100.0
+    ],
+    "action_compatibility_rate": 100.0,
+    "avg_tool_calls": 14,
+    "avg_steps": 5,
+    "avg_input_tokens": 22040,
+    "avg_output_tokens": 2106,
+    "avg_cost_usd": 0.03257,
+    "total_cost_usd": 0.03257,
+    "error_rate": 0.0,
+    "cost_per_correct_diagnosis_usd": 0.03257,
+    "billing_uncertain_runs": 0,
+    "latency_scope": "successful runs only",
+    "total_attempted_latency_s": 22.802807,
+    "latency_p50_s": 22.802807,
+    "latency_p95_s": 22.802807,
+    "accuracy_by_fault_type": {
+      "bad_deploy": 0.0,
+      "memory_leak": 0.0,
+      "slow_dependency": 0.0,
+      "config_error": 0.0,
+      "cert_expiry": 100.0,
+      "traffic_spike": 0.0
+    },
+    "total_observed_usage": {
+      "input_tokens": 22040,
+      "output_tokens": 2106,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0
+    },
+    "outcome_accuracy_by_variant": {
+      "original": 100.0
+    },
+    "insufficient_evidence_cases": 0,
+    "abstention_accuracy": 0.0
+  },
+  "records": [
+    {
+      "seed": 4,
+      "fault_type": "cert_expiry",
+      "root_service": "payments",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "payments",
+        "fault_type": "cert_expiry",
+        "target": "payments",
+        "action": "renew_certificate",
+        "evidence": [
+          {
+            "observation_id": "obs-9",
+            "quote": "13:32:00 orders ERROR TLS handshake failed calling payments: x509: certificate has expired (notAfter=2026-10-01T13:20:00Z)"
+          },
+          {
+            "observation_id": "obs-5",
+            "quote": "orders.error_rate last 120m: min=0.1 mean=10.5 max=31.2 latest=31.0\nsamples: 12:00=0.2, 12:10=0.1, 12:20=0.3, 12:30=0.2, 12:40=0.2, 12:50=0.2, 13:00=0.2, 13:10=0.2, 13:20=31.0, 13:30=31.1, 13:40=31.1, 13:50=31.1"
+          },
+          {
+            "observation_id": "obs-12",
+            "quote": "tls: certificate for payments.internal expires in 25m (auto-renewal job disabled)"
+          },
+          {
+            "observation_id": "obs-3",
+            "quote": "gateway.error_rate last 120m: min=0.1 mean=1.2 max=3.3 latest=3.1\nsamples: 12:00=0.2, 12:10=0.3, 12:20=0.3, 12:30=0.3, 12:40=0.2, 12:50=0.2, 13:00=0.2, 13:10=0.3, 13:20=3.0, 13:30=3.1, 13:40=3.0, 13:50=3.0"
+          }
+        ],
+        "remediation": "Recommendation only; no change has been executed. Verify payments's certificate, issuer, expiry and trust-chain requirements. Follow the service certificate-rotation procedure, including any required overlap of trust bundles, before replacing it. After any approved change, check service and caller error rates and latency against their configured SLOs."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "error": null,
+      "steps": 5,
+      "tool_calls": 14,
+      "model_calls": 5,
+      "billing_uncertain": false,
+      "usage": {
+        "input_tokens": 22040,
+        "output_tokens": 2106,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "latency_s": 22.802807250001933,
+      "cost_usd": 0.03257,
+      "case_id": "original/original/4",
+      "variant": "original"
+    }
+  ],
+  "trace_review": {
+    "derived_from": "results/traces/live-v4-cert_expiry-2026-10-11-d25c89d17f9b.jsonl",
+    "finalization_source": "model_submission",
+    "rejected_submissions": 0,
+    "citation_rejections": 0,
+    "blocked_scaling_rejections": 0,
+    "accepted_evidence_refs": 4
+  }
+}

@@ -1,0 +1,138 @@
+{
+  "name": "live-v4-traffic_spike-2026-10-11-efcbd431f4ec",
+  "config": {
+    "agent": "llm",
+    "suite": "original",
+    "model": "claude-haiku-4-5-20251001",
+    "n": 1,
+    "seed": 0,
+    "case_offset": 5,
+    "no_rag": false,
+    "embedder": "tfidf",
+    "max_steps": 12,
+    "concurrency": 1,
+    "save_traces": true,
+    "name": "live-v4-traffic_spike-2026-10-11"
+  },
+  "metadata": {
+    "run_id": "efcbd431f4ec",
+    "started_at": "2026-10-11T23:16:11.661190+00:00",
+    "source_sha256": "7babb938ede21cb71112a58bd38eadcd8990eadb7de717126d90d46060fd35f3",
+    "dataset_sha256": "5d6b41e3138b784d21949f667cf5efc0eec971e9c5f0930918885a40462feb4b",
+    "dataset_version": "original",
+    "prompt_version": "evidence-v4-operational-checks",
+    "python": "3.12.15",
+    "baseline_transport": null
+  },
+  "summary": {
+    "n": 1,
+    "errors": 0,
+    "root_cause_service_acc": 0.0,
+    "fault_type_acc": 0.0,
+    "both_correct_acc": 0.0,
+    "both_correct_ci95": [
+      0.0,
+      79.3
+    ],
+    "action_compatibility_rate": 0.0,
+    "avg_tool_calls": 21,
+    "avg_steps": 12,
+    "avg_input_tokens": 97919,
+    "avg_output_tokens": 6728,
+    "avg_cost_usd": 0.131559,
+    "total_cost_usd": 0.131559,
+    "error_rate": 0.0,
+    "cost_per_correct_diagnosis_usd": null,
+    "billing_uncertain_runs": 0,
+    "latency_scope": "successful runs only",
+    "total_attempted_latency_s": 56.09451,
+    "latency_p50_s": 56.09451,
+    "latency_p95_s": 56.09451,
+    "accuracy_by_fault_type": {
+      "bad_deploy": 0.0,
+      "memory_leak": 0.0,
+      "slow_dependency": 0.0,
+      "config_error": 0.0,
+      "cert_expiry": 0.0,
+      "traffic_spike": 0.0
+    },
+    "total_observed_usage": {
+      "input_tokens": 97919,
+      "output_tokens": 6728,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0
+    },
+    "outcome_accuracy_by_variant": {
+      "original": 0.0
+    },
+    "insufficient_evidence_cases": 0,
+    "abstention_accuracy": 0.0
+  },
+  "records": [
+    {
+      "seed": 5,
+      "fault_type": "traffic_spike",
+      "root_service": "search",
+      "diagnosis": {
+        "status": "insufficient_evidence",
+        "root_cause_service": null,
+        "fault_type": null,
+        "target": null,
+        "action": null,
+        "remediation": "Insufficient evidence to recommend a recovery action. Gather missing telemetry and consult the service owner before selecting a change.",
+        "evidence": [
+          {
+            "observation_id": "obs-20",
+            "quote": "samples: 13:00=190.1, 13:05=182.0, 13:10=193.3, 13:15=193.1, 13:20=325.2, 13:25=893.8, 13:30=902.9, 13:35=936.7, 13:40=896.5, 13:45=963.1, 13:50=916.7, 13:55=908.6"
+          },
+          {
+            "observation_id": "obs-10",
+            "quote": "13:41:00 search WARN autoscaler at max replicas (12/12), cannot add capacity"
+          },
+          {
+            "observation_id": "obs-10",
+            "quote": "13:50:00 search WARN rate limiter shedding load: 429 returned for 27% of requests"
+          },
+          {
+            "observation_id": "obs-17",
+            "quote": "\"status\": \"blocked\""
+          },
+          {
+            "observation_id": "obs-4",
+            "quote": "13:15:00 (44 min ago) inventory v3.11.6 by yuki: Migrate metrics client"
+          }
+        ]
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": true
+      },
+      "error": null,
+      "steps": 12,
+      "tool_calls": 21,
+      "model_calls": 12,
+      "billing_uncertain": false,
+      "usage": {
+        "input_tokens": 97919,
+        "output_tokens": 6728,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "latency_s": 56.094510291994084,
+      "cost_usd": 0.131559,
+      "case_id": "original/original/5",
+      "variant": "original"
+    }
+  ],
+  "trace_review": {
+    "derived_from": "results/traces/live-v4-traffic_spike-2026-10-11-efcbd431f4ec.jsonl",
+    "finalization_source": "model_submission",
+    "rejected_submissions": 5,
+    "citation_rejections": 2,
+    "blocked_scaling_rejections": 2,
+    "accepted_evidence_refs": 5
+  }
+}

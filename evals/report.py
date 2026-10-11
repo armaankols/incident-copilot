@@ -9,13 +9,14 @@ def main():
     runs = [json.loads(p.read_text()) for p in sorted((ROOT/"results").glob("*.json")) if p.name not in ("retrieval.json", "recovery.json")]
     runs = [r for r in runs if "metadata" in r]
     md = ["Measured offline baselines and live-model runs on synthetic telemetry. Transport is recorded per experiment.", "",
-          "| Run | Transport | Cases | Outcome correct (95% CI) | Errors | Total observed API cost | p50 / p95 seconds |",
-          "|---|---|---:|---|---:|---:|---|"]
+          "| Run | Transport | Cases | Outcome correct (95% CI) | Errors | Finalization | Total observed API cost | p50 / p95 seconds |",
+          "|---|---|---:|---|---:|---|---:|---|"]
     for r in runs:
         s = r["summary"]
         transport = r['metadata'].get('baseline_transport') or ('live LLM + in-memory MCP' if r['config']['agent'] == 'llm' else 'deploy history')
-        md.append(f"| {r['name']} | {transport} | {s['n']} | {s['both_correct_acc']}% ({s['both_correct_ci95'][0]}–{s['both_correct_ci95'][1]}) | {s['errors']} | ${s['total_cost_usd']:.6f} | {s['latency_p50_s']:.6f} / {s['latency_p95_s']:.6f} |")
-    md += ["", "Outcome accuracy counts a correct abstention on redacted cases. Latency quantiles describe successful runs; failure elapsed time and observed spend remain in JSON records. API cost is calculated from provider-reported token usage at list prices, not reconciled against an invoice. Structured action compatibility is not a remediation-quality score. The live smoke runs are too small to establish reliability; see docs/live-smoke.md, docs/live-config-smoke.md and docs/live-remaining-smoke.md for citation checks, failures and recommendation limitations."]
+        finalization = r.get('trace_review', {}).get('finalization_source', 'not recorded') if r['config']['agent'] == 'llm' else 'not applicable'
+        md.append(f"| {r['name']} | {transport} | {s['n']} | {s['both_correct_acc']}% ({s['both_correct_ci95'][0]}–{s['both_correct_ci95'][1]}) | {s['errors']} | {finalization} | ${s['total_cost_usd']:.6f} | {s['latency_p50_s']:.6f} / {s['latency_p95_s']:.6f} |")
+    md += ["", "Outcome accuracy counts a budget-forced abstention as correct on redacted cases; it does not demonstrate model-selected stopping. Finalization is shown where the saved trace has been reviewed, otherwise not recorded. Latency quantiles describe runs without exceptions; diagnostic misses remain included. Failure elapsed time and observed spend remain in JSON records. API cost is calculated from provider-reported token usage at list prices, not reconciled against an invoice. Structured action compatibility is not a remediation-quality score. These small live smoke runs do not establish reliability; see docs/live-v4-validation.md for current findings and the earlier live-smoke, live-config-smoke and live-remaining-smoke documents for prior runs."]
     retrieval = ROOT/"results"/"retrieval.json"
     if retrieval.exists():
         md += ["", "Retrieval smoke checks (small author-written query set):"]

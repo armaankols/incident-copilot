@@ -9,12 +9,12 @@ Python 3.12.15 is installed at `/opt/homebrew/bin/python3.12`; `.venv` is ready.
 The user installed dependencies from a terminal outside the restricted shell.
 `requirements.lock` pins 72 runtime packages; `requirements-dev.lock` pins 76
 packages, including the development dependencies. Locks have no wheel hashes.
-Six authorized live smoke investigations completed on 2026-10-11. No deployment
+Nine authorized live smoke investigations completed on 2026-10-11. No deployment
 has been performed; further paid runs require approval.
 
 Measured on Python 3.12.15:
 
-- `python -m pytest -q tests`: 53 passed (2026-10-11; 2.08 seconds).
+- `python -m pytest -q tests`: 53 passed (2026-10-11; 3.33 seconds).
 - `python -m pip check`: no broken requirements.
 - `python -m evals.retrieval_eval`: TF-IDF recall@1 and recall@3 both 14/14;
   optional FastEmbed skipped because it is not installed.
@@ -71,7 +71,7 @@ author-written synthetic fixtures; it is not a live-model comparison.
 
 Live-model smoke results, token usage, citation retries and qualitative limitations
 are recorded in [live-smoke.md](live-smoke.md). Latest offline test run: 53 passed
-in 2.08 seconds on 2026-10-11. Recommendation/citation checks are recorded in
+in 3.33 seconds on 2026-10-11. Recommendation/citation checks are recorded in
 [recommendation-grounding.md](recommendation-grounding.md).
 
 The updated prompt/validator was exercised on one live configuration-error case:
@@ -91,3 +91,9 @@ gates. Both saved failure payloads are rejected under the new gates, and scripte
 MCP/graph corrections and unknown-evidence abstention passed offline. See
 [operational-checks.md](operational-checks.md). No new paid calls were made;
 live effects remain unmeasured.
+
+Prompt-v4 live validation returned a correct payments certificate diagnosis, a
+model-submitted traffic abstention after blocked scaling proposals, and a
+budget-forced abstention on missing evidence. Token-cost estimate: $0.274801.
+See [live-v4-validation.md](live-v4-validation.md) for the distinction between
+model and system outcomes and the remaining diagnosis/stopping issues.
