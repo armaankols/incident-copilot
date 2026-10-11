@@ -79,7 +79,7 @@ def summarize(records: list[dict]) -> dict:
 
 async def evaluate(args) -> dict:
     started_at = datetime.now(timezone.utc).isoformat()
-    cases = scenarios(args.n, args.seed, args.suite)
+    cases = scenarios(args.n, args.seed, args.suite, offset=getattr(args, "case_offset", 0))
     if args.n < 1 or args.concurrency < 1 or args.max_steps < 1:
         raise ValueError("n, concurrency and max_steps must be positive")
     records = []
@@ -147,6 +147,7 @@ def main():
     ap.add_argument("--model", default=DEFAULT_MODEL)
     ap.add_argument("--n", type=int, default=30)
     ap.add_argument("--seed", type=int, default=0, help="base seed; scenario i uses seed*1000+i")
+    ap.add_argument("--case-offset", type=int, default=0, help="start at this case index in the selected suite; n is the number of cases to run")
     ap.add_argument("--no-rag", action="store_true")
     ap.add_argument("--embedder", default="tfidf", choices=["tfidf", "fastembed"])
     ap.add_argument("--max-steps", type=int, default=12)

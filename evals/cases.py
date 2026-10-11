@@ -19,10 +19,12 @@ PARAPHRASES = {
 }
 
 
-def scenarios(n, seed, suite="original"):
+def scenarios(n, seed, suite="original", offset=0):
+    if offset < 0:
+        raise ValueError("case offset must be nonnegative")
     out = []
     variants = ["paraphrase", "healthy_decoy", "recovered_error", "redacted"]
-    for i in range(n):
+    for i in range(offset, offset+n):
         sc = copy.deepcopy(generate(seed*1000+i, FAULT_TYPES[i % 6]))
         variant = "original" if suite == "original" else variants[(i//6) % len(variants)]
         if variant == "paraphrase":

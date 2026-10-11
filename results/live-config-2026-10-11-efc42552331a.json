@@ -1,0 +1,130 @@
+{
+  "name": "live-config-2026-10-11-efc42552331a",
+  "config": {
+    "agent": "llm",
+    "suite": "original",
+    "model": "claude-haiku-4-5-20251001",
+    "n": 1,
+    "seed": 0,
+    "case_offset": 3,
+    "no_rag": false,
+    "embedder": "tfidf",
+    "max_steps": 12,
+    "concurrency": 1,
+    "save_traces": true,
+    "name": "live-config-2026-10-11"
+  },
+  "metadata": {
+    "run_id": "efc42552331a",
+    "started_at": "2026-10-11T21:23:19.033005+00:00",
+    "source_sha256": "e30b9fa00f5908ced4d6730100245373259dd6fd752080414f1777680ec4b477",
+    "dataset_sha256": "afd2dbfab239ceb78d4239c67ade3f7289e29d51cb987964415c51affca088e1",
+    "dataset_version": "original",
+    "prompt_version": "evidence-v3-policy-remediation",
+    "python": "3.12.15",
+    "baseline_transport": null
+  },
+  "summary": {
+    "n": 1,
+    "errors": 0,
+    "root_cause_service_acc": 100.0,
+    "fault_type_acc": 100.0,
+    "both_correct_acc": 100.0,
+    "both_correct_ci95": [
+      20.7,
+      100.0
+    ],
+    "action_compatibility_rate": 100.0,
+    "avg_tool_calls": 13,
+    "avg_steps": 6,
+    "avg_input_tokens": 26603,
+    "avg_output_tokens": 1981,
+    "avg_cost_usd": 0.036508,
+    "total_cost_usd": 0.036508,
+    "error_rate": 0.0,
+    "cost_per_correct_diagnosis_usd": 0.036508,
+    "billing_uncertain_runs": 0,
+    "latency_scope": "successful runs only",
+    "total_attempted_latency_s": 22.930292,
+    "latency_p50_s": 22.930292,
+    "latency_p95_s": 22.930292,
+    "accuracy_by_fault_type": {
+      "bad_deploy": 0.0,
+      "memory_leak": 0.0,
+      "slow_dependency": 0.0,
+      "config_error": 100.0,
+      "cert_expiry": 0.0,
+      "traffic_spike": 0.0
+    },
+    "total_observed_usage": {
+      "input_tokens": 26603,
+      "output_tokens": 1981,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0
+    },
+    "outcome_accuracy_by_variant": {
+      "original": 100.0
+    },
+    "insufficient_evidence_cases": 0,
+    "abstention_accuracy": 0.0
+  },
+  "records": [
+    {
+      "seed": 3,
+      "fault_type": "config_error",
+      "root_service": "orders",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "orders",
+        "fault_type": "config_error",
+        "target": "orders",
+        "action": "restore_config",
+        "evidence": [
+          {
+            "observation_id": "obs-4",
+            "quote": "13:17:00 (42 min ago) orders v4.3.5 by lena: Tune connection pool settings"
+          },
+          {
+            "observation_id": "obs-12",
+            "quote": "13:17:00 orders INFO deployed v4.3.5; loaded config: db.pool.max=5 db.pool.timeout=3000ms"
+          },
+          {
+            "observation_id": "obs-8",
+            "quote": "13:32:00 orders ERROR connection pool exhausted: timed out after 3000ms waiting for connection (pool max=5, active=5, waiting=33)"
+          },
+          {
+            "observation_id": "obs-3",
+            "quote": "gateway.error_rate last 60m: min=0.1 mean=4.9 max=7.5 latest=7.3\nsamples: 13:00=0.1, 13:05=0.3, 13:10=0.3, 13:15=0.2, 13:20=3.8, 13:25=7.3"
+          },
+          {
+            "observation_id": "obs-7",
+            "quote": "13:20:00 gateway ERROR upstream orders returned 503 for GET /v1/checkout"
+          }
+        ],
+        "remediation": "Recommendation only; no change has been executed. Compare orders's active configuration with a verified healthy configuration. Confirm compatibility and the service rollback procedure before restoring it; no specific configuration revision has been verified. After any approved change, check service and caller error rates and latency against their configured SLOs."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "error": null,
+      "steps": 6,
+      "tool_calls": 13,
+      "model_calls": 6,
+      "billing_uncertain": false,
+      "usage": {
+        "input_tokens": 26603,
+        "output_tokens": 1981,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "latency_s": 22.930291708005825,
+      "cost_usd": 0.036508,
+      "case_id": "original/original/3",
+      "variant": "original"
+    }
+  ]
+}
