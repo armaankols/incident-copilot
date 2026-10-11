@@ -20,6 +20,8 @@ exact minute things changed and compare it with deploys and log timestamps.
 Cite observation_id and exact quote from successful tool outputs. Copy a contiguous excerpt verbatim, preserving timestamps, punctuation and spacing; do not paraphrase or add ellipses. Use only successful observation IDs. If a submission is rejected, correct the indicated field and resubmit.
 Use insufficient_evidence if evidence is missing or ambiguous. A deploy near an error is correlation, not proof of an implementation mechanism. Do not assert a specific cache implementation, code change or previous stable version unless retrieved evidence establishes it. Never infer a rollback version by decrementing a version number.
 Choose a structured action compatible with the fault and target the root-cause service. Remediation is a recommendation only, not an executed change. The server generates conservative action-specific advice and requires service-policy verification before acting; do not supply concrete commands, unverified versions or invented thresholds.
+For certificate expiry, distinguish the caller reporting TLS failure from the peer whose certificate it verifies. The peer can have normal application metrics because rejected handshakes never reach the application. Use check_certificate on the suspected owner and cite an expiry_supported assessment before recommending renewal; if ownership or expiry remains unknown/conflicting, abstain.
+Before choosing scale, use check_capacity on the target and cite a headroom assessment. At max replicas, or with unknown/conflicting capacity, do not assume permission or resources to raise limits. Investigate another compatible action (such as policy-checked rate limiting for a traffic spike), or abstain. Neither operational check executes an action.
 When you are confident, call submit_diagnosis. Only one validated final diagnosis is accepted. Do not write long prose answers."""
 
 from .diagnosis import SCHEMA, insufficient, validate_diagnosis
@@ -36,6 +38,7 @@ class AgentState(TypedDict):
     tool_calls: int
     trace: list[dict]
     observations: dict
+    observation_tools: dict
 
 
 def _add_usage(usage: dict, resp) -> dict:
@@ -81,13 +84,14 @@ def build_graph(llm, session, tool_specs: list[dict], max_steps: int = 12, progr
     async def act_node(state: AgentState) -> dict[str, Any]:
         results, trace, diagnosis, n_calls = [], list(state["trace"]), state["diagnosis"], 0
         observations = dict(state["observations"])
+        observation_tools = dict(state.get("observation_tools", {}))
         for call in state["pending"]:
             name, args = call["name"], call["input"]
             if name == "submit_diagnosis":
                 try:
                     if diagnosis is not None:
                         raise ValueError("Only one final diagnosis is accepted")
-                    diagnosis = validate_diagnosis(args, observations)
+                    diagnosis = validate_diagnosis(args, observations, observation_tools)
                     event = {"type": "diagnosis", "args": diagnosis}
                     trace.append(event)
                     record(event)
@@ -114,13 +118,15 @@ def build_graph(llm, session, tool_specs: list[dict], max_steps: int = 12, progr
                 oid = f"obs-{state['tool_calls'] + n_calls}"
                 if text and not text.startswith("ERROR:"):
                     observations[oid] = text
+                    observation_tools[oid] = name
                 event = {"type": "tool_result", "tool": name, "observation_id": oid, "output": text}
                 trace.append(event)
                 record(event)
                 text = f"Observation ID: {oid}\n{text}"
             results.append({"type": "tool_result", "tool_use_id": call["id"], "content": text})
         return {"messages": _append_user(state["messages"], results), "pending": [], "diagnosis": diagnosis,
-                "tool_calls": state["tool_calls"] + n_calls, "trace": trace, "observations": observations}
+                "tool_calls": state["tool_calls"] + n_calls, "trace": trace, "observations": observations,
+                "observation_tools": observation_tools}
 
     async def finish_node(state: AgentState) -> dict[str, Any]:
         diagnosis = insufficient()

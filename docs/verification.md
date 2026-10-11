@@ -14,7 +14,7 @@ has been performed; further paid runs require approval.
 
 Measured on Python 3.12.15:
 
-- `python -m pytest -q tests`: 38 passed (2026-10-11; 1.81 seconds).
+- `python -m pytest -q tests`: 53 passed (2026-10-11; 2.08 seconds).
 - `python -m pip check`: no broken requirements.
 - `python -m evals.retrieval_eval`: TF-IDF recall@1 and recall@3 both 14/14;
   optional FastEmbed skipped because it is not installed.
@@ -70,8 +70,8 @@ unknown versions. This is an offline structured-reader ablation over small,
 author-written synthetic fixtures; it is not a live-model comparison.
 
 Live-model smoke results, token usage, citation retries and qualitative limitations
-are recorded in [live-smoke.md](live-smoke.md). Latest offline test run: 38 passed
-in 1.81 seconds on 2026-10-11. Recommendation/citation checks are recorded in
+are recorded in [live-smoke.md](live-smoke.md). Latest offline test run: 53 passed
+in 2.08 seconds on 2026-10-11. Recommendation/citation checks are recorded in
 [recommendation-grounding.md](recommendation-grounding.md).
 
 The updated prompt/validator was exercised on one live configuration-error case:
@@ -85,3 +85,9 @@ instead of payments. Batch token-cost estimate: $0.194307. All six fault types n
 have one live smoke case, with five correct service-and-fault diagnoses across
 mixed prompt versions. See [live-remaining-smoke.md](live-remaining-smoke.md) for
 retry counts, capacity-limit caveats and next correctness work.
+
+Certificate ownership and scaling headroom now have log-backed MCP assessment
+gates. Both saved failure payloads are rejected under the new gates, and scripted
+MCP/graph corrections and unknown-evidence abstention passed offline. See
+[operational-checks.md](operational-checks.md). No new paid calls were made;
+live effects remain unmeasured.

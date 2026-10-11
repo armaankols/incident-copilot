@@ -24,7 +24,7 @@ Across the batch, all 14 final evidence references passed exact-quote validation
 
 Across all live smoke runs, there is now one case per simulator fault type: five of six service-and-fault diagnoses were correct. The initial bad-deploy and memory-leak cases used the older prompt/validator; subsequent cases used the updated one. This small mixed-version set is not a controlled comparison or evidence of production reliability. Live abstention and challenge variants remain untested.
 
-Prioritize verified TLS certificate ownership/caller-versus-peer reasoning and action feasibility at capacity limits before deployment. Add offline regression cases for these findings; any live rerun or missing-evidence investigation requires another paid-run approval. Unspent budget from this three-case approval was not used for additional cases.
+Follow-up log-backed certificate ownership and capacity gates and offline regression cases are implemented; see [operational-checks.md](operational-checks.md). The live outcomes above still describe the original prompt/validator and are not regraded. Any live rerun or missing-evidence investigation requires another paid-run approval. Unspent budget from this three-case approval was not used for additional cases.
 
 ## Records and verification
 

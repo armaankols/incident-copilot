@@ -83,7 +83,7 @@ def test_web_app_roundtrip(monkeypatch):
             [{"type": "tool_use", "id": "d", "name": "submit_diagnosis", "input": {
                 "status": "diagnosed", "root_cause_service": "gateway", "fault_type": "traffic_spike",
                 "evidence": [{"observation_id": "obs-1", "quote": "Time now:"}],
-                "action": "scale", "target": "gateway", "remediation": "Recommend scaling after approval"}}]
+                "action": "rate_limit", "target": "gateway", "remediation": "Recommend rate limiting after approval"}}]
         ], model=model)
 
     monkeypatch.setattr(m, "make_llm", fake_llm)

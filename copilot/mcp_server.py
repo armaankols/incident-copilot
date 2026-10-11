@@ -8,10 +8,12 @@ Used two ways:
 from __future__ import annotations
 
 import argparse
+import json
 
 from mcp.server.fastmcp import FastMCP
 
 from .retrieval import get_index
+from .checks import capacity_check, certificate_check
 from .sim import METRICS, MINUTES, SERVICES, TOPOLOGY, Scenario, callers_of, generate, ts
 
 
@@ -64,6 +66,16 @@ def build_server(sc: Scenario, use_rag: bool = True, embedder: str = "tfidf") ->
         if len(hits) > len(shown):
             out.insert(0, f"({len(hits)} matches, showing most recent {len(shown)}; narrow with service/level/query)")
         return "\n".join(out)
+
+    @mcp.tool()
+    def check_certificate(service: str) -> str:
+        """Assess certificate ownership/expiry from service-local renewal warnings and recent caller peer-verification errors. Returns structured evidence or unknown/conflicting; no live TLS probe. Normal application metrics do not prove a certificate is healthy."""
+        return json.dumps(certificate_check(sc.logs, now, service), indent=2)
+
+    @mcp.tool()
+    def check_capacity(service: str) -> str:
+        """Check recent autoscaler replica headroom for a service from telemetry. Returns headroom, blocked, unknown or conflicting. Does not authorize changing limits or verify infrastructure resources."""
+        return json.dumps(capacity_check(sc.logs, now, service), indent=2)
 
     @mcp.tool()
     def get_recent_deploys(hours: float = 2.0) -> str:

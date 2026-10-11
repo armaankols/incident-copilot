@@ -79,9 +79,9 @@ class CorrectnessTests(unittest.TestCase):
             Ledger(self.path).reserve(.1, 2, "visitor", hourly_limit=1)
 
     def diagnosis(self):
-        return dict(status="diagnosed", root_cause_service="auth", fault_type="cert_expiry",
+        return dict(status="diagnosed", root_cause_service="auth", fault_type="memory_leak",
                     evidence=[{"observation_id": "obs-1", "quote": "x509 certificate expired"}],
-                    action="renew_certificate", target="auth", remediation="renew after approval")
+                    action="restart", target="auth", remediation="restart after approval")
 
     def test_forged_evidence_and_malformed_diagnoses_rejected(self):
         d = self.diagnosis()

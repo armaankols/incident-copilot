@@ -2,9 +2,11 @@
 
 Reference validation establishes provenance, not that an inference is correct.
 """
+import json
+
 from .sim import FAULT_TYPES, SERVICES
 
-PROMPT_VERSION = "evidence-v3-policy-remediation"
+PROMPT_VERSION = "evidence-v4-operational-checks"
 
 ACTIONS = {
     "bad_deploy": {"rollback"}, "memory_leak": {"restart", "rollback"},
@@ -55,9 +57,33 @@ def insufficient(reason="Investigation budget exhausted."):
                 evidence=[], action=None, target=None, remediation=reason)
 
 
-def validate_diagnosis(d, observations):
-    if not isinstance(d, dict) or set(d) != set(SCHEMA["required"]):
-        raise ValueError("Diagnosis must contain exactly the required fields")
+def _require_check(d, observations, observation_tools, tool, kind, expected):
+    assessments = []
+    for oid, text in observations.items():
+        if observation_tools.get(oid) != tool:
+            continue
+        try:
+            assessment = json.loads(text)
+        except (ValueError, TypeError):
+            continue
+        if (isinstance(assessment, dict) and assessment.get("kind") == kind
+                and assessment.get("service") == d["target"]):
+            assessments.append((oid, assessment.get("status")))
+    cited = {ref["observation_id"] for ref in d["evidence"]}
+    if not assessments or any(status != expected for _, status in assessments) or not any(oid in cited for oid, _ in assessments):
+        statuses = ", ".join(sorted({str(status) for _, status in assessments})) or "missing"
+        detail = ("The log-emitting caller is not necessarily the certificate owner; normal peer metrics do not establish certificate health. If ownership/expiry is unknown or conflicting, use insufficient_evidence."
+                  if kind == "certificate" else "Scaling is not verified at a replica limit or with unknown headroom. Do not infer permission to raise limits; consider another compatible action with service-policy verification, or insufficient_evidence.")
+        raise ValueError(f"Call {tool}(service={d['target']!r}) and cite its {expected} assessment. Current assessment: {statuses}. {detail}")
+
+
+def validate_diagnosis(d, observations, observation_tools=None):
+    if not isinstance(d, dict):
+        raise ValueError("Diagnosis must be an object")
+    if set(d) != set(SCHEMA["required"]):
+        missing = ", ".join(sorted(set(SCHEMA["required"])-set(d))) or "none"
+        extra = ", ".join(sorted(set(d)-set(SCHEMA["required"]))) or "none"
+        raise ValueError(f"Diagnosis fields invalid; missing: {missing}; unexpected: {extra}")
     if d["status"] not in ("diagnosed", "insufficient_evidence"):
         raise ValueError("Invalid status")
     if not isinstance(d["remediation"], str) or len(d["remediation"]) > 2000:
@@ -89,5 +115,9 @@ def validate_diagnosis(d, observations):
             raise ValueError(f"Action is incompatible with {d['fault_type']}; allowed: {', '.join(sorted(ACTIONS[d['fault_type']]))}")
         if d["target"] != d["root_cause_service"]:
             raise ValueError("Action target must match the diagnosed root-cause service")
+        if d["fault_type"] == "cert_expiry":
+            _require_check(d, observations, observation_tools or {}, "check_certificate", "certificate", "expiry_supported")
+        if d["action"] == "scale":
+            _require_check(d, observations, observation_tools or {}, "check_capacity", "capacity", "headroom")
         return {**d, "remediation": recommend(d["action"], d["target"])}
     return d

@@ -34,7 +34,7 @@ async def run_scenario(sc: Scenario, llm, use_rag: bool = True, max_steps: int =
             graph = build_graph(metered, session, specs, max_steps=max_steps, progress=progress)
             return await graph.ainvoke(
                 {"messages": [{"role": "user", "content": [{"type": "text", "text": sc.alert}]}], "steps": 0, "pending": [],
-                 "diagnosis": None, "usage": dict(progress["usage"]), "tool_calls": 0, "trace": [], "observations": {}},
+                 "diagnosis": None, "usage": dict(progress["usage"]), "tool_calls": 0, "trace": [], "observations": {}, "observation_tools": {}},
                 config={"recursion_limit": 4 * max_steps + 10})
     try:
         state = await asyncio.wait_for(investigate(), timeout=timeout_s)

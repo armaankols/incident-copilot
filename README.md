@@ -19,6 +19,9 @@ requested, but cache savings have not been measured.
 - Validated diagnoses contain an explicit outcome, structured action and target,
   and exact quotations referencing successful retrieved observations. Provenance
   validation does not establish that the evidence supports the diagnosis.
+- Certificate renewal and scaling require cited, target-specific MCP operational
+  assessments. Unknown ownership or blocked/unknown replica headroom cannot support
+  those recommendations. See [operational checks](docs/operational-checks.md).
 - Budget exhaustion returns `insufficient_evidence` without a forced model guess.
   Model calls, graph steps, tool calls, usage and partial failure traces are distinct.
 - Web admission uses atomic SQLite reservations, durable rate limits and bounded
@@ -107,7 +110,7 @@ python3 scripts/check_benchmarks.py
 python3 -m evals.report
 ```
 
-The full offline suite passed 38 tests, including FastAPI/MCP/LangGraph
+The full offline suite passed 53 tests, including FastAPI/MCP/LangGraph
 integration, evidence validation, partial failure accounting, cancellation
 settlement and replay persistence. TF-IDF retrieval checks passed. The local demo now runs with elevated execution
 permission. Initial replay and completed-run reload were inspected in Chrome;
