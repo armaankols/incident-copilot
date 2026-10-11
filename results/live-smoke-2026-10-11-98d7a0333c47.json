@@ -1,0 +1,182 @@
+{
+  "name": "live-smoke-2026-10-11-98d7a0333c47",
+  "config": {
+    "agent": "llm",
+    "suite": "original",
+    "model": "claude-haiku-4-5-20251001",
+    "n": 2,
+    "seed": 0,
+    "no_rag": false,
+    "embedder": "tfidf",
+    "max_steps": 12,
+    "concurrency": 1,
+    "save_traces": true,
+    "name": "live-smoke-2026-10-11"
+  },
+  "metadata": {
+    "run_id": "98d7a0333c47",
+    "started_at": "2026-10-11T20:41:37.850712+00:00",
+    "source_sha256": "651d81fed98e9a8f2ef408c778de66f267d76328491236c0c16b5a8a0e04a64d",
+    "dataset_sha256": "a9d9597934386340bffaac1c745e8dbbde69178604caca6485d49bd361faf616",
+    "dataset_version": "original",
+    "prompt_version": "evidence-v2",
+    "python": "3.12.15",
+    "baseline_transport": null
+  },
+  "summary": {
+    "n": 2,
+    "errors": 0,
+    "root_cause_service_acc": 100.0,
+    "fault_type_acc": 100.0,
+    "both_correct_acc": 100.0,
+    "both_correct_ci95": [
+      34.2,
+      100.0
+    ],
+    "action_compatibility_rate": 100.0,
+    "avg_tool_calls": 13,
+    "avg_steps": 6,
+    "avg_input_tokens": 27836,
+    "avg_output_tokens": 3200,
+    "avg_cost_usd": 0.043836,
+    "total_cost_usd": 0.087672,
+    "error_rate": 0.0,
+    "cost_per_correct_diagnosis_usd": 0.043836,
+    "billing_uncertain_runs": 0,
+    "latency_scope": "successful runs only",
+    "total_attempted_latency_s": 62.62302,
+    "latency_p50_s": 31.31151,
+    "latency_p95_s": 34.786287,
+    "accuracy_by_fault_type": {
+      "bad_deploy": 100.0,
+      "memory_leak": 100.0,
+      "slow_dependency": 0.0,
+      "config_error": 0.0,
+      "cert_expiry": 0.0,
+      "traffic_spike": 0.0
+    },
+    "total_observed_usage": {
+      "input_tokens": 55672,
+      "output_tokens": 6400,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0
+    },
+    "outcome_accuracy_by_variant": {
+      "original": 100.0
+    },
+    "insufficient_evidence_cases": 0,
+    "abstention_accuracy": 0.0
+  },
+  "records": [
+    {
+      "seed": 0,
+      "fault_type": "bad_deploy",
+      "root_service": "auth",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "auth",
+        "fault_type": "bad_deploy",
+        "target": "auth",
+        "action": "rollback",
+        "evidence": [
+          {
+            "observation_id": "obs-4",
+            "quote": "13:18:00 (41 min ago) auth v3.1.1 by diego: Migrate metrics client"
+          },
+          {
+            "observation_id": "obs-9",
+            "quote": "13:30:00 auth ERROR unhandled exception in validate_request: KeyError 'customer_tier' (build v3.1.1)"
+          },
+          {
+            "observation_id": "obs-5",
+            "quote": "13:20:00 gateway ERROR upstream auth returned 500 for POST /v1/items"
+          },
+          {
+            "observation_id": "obs-6",
+            "quote": "auth.error_rate last 60m: min=0.2 mean=11.2 max=16.9 latest=16.9"
+          },
+          {
+            "observation_id": "obs-10",
+            "quote": "Error rate on one service jumps sharply within minutes of a release. Logs show new unhandled exceptions (NullPointerException, KeyError, TypeError) tagged with the new build version."
+          }
+        ],
+        "remediation": "Rollback auth service to the previous stable version (prior to v3.1.1). The metrics client migration in v3.1.1 introduced a KeyError when accessing 'customer_tier' field in validate_request, causing auth to return 500 errors. This cascades to gateway (which depends on auth) and degrades user-facing latency/error rates. Once rolled back, confirm auth error_rate returns to <1% baseline and gateway p95_latency drops below 200ms."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "error": null,
+      "steps": 6,
+      "tool_calls": 11,
+      "model_calls": 6,
+      "billing_uncertain": false,
+      "usage": {
+        "input_tokens": 27747,
+        "output_tokens": 2792,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "latency_s": 27.836732833005954,
+      "cost_usd": 0.041707,
+      "case_id": "original/original/0",
+      "variant": "original"
+    },
+    {
+      "seed": 1,
+      "fault_type": "memory_leak",
+      "root_service": "payments",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "payments",
+        "fault_type": "memory_leak",
+        "target": "payments",
+        "action": "rollback",
+        "evidence": [
+          {
+            "observation_id": "obs-10",
+            "quote": "13:24:00 payments ERROR container terminated: OOMKilled (exit code 137)"
+          },
+          {
+            "observation_id": "obs-13",
+            "quote": "samples: 13:00=669.1, 13:05=738.8, 13:10=808.6, 13:15=878.4, 13:20=948.2, 13:25=589.5, 13:30=659.3, 13:35=729.1, 13:40=798.8, 13:45=868.6, 13:50=938.4, 13:55=1008.2"
+          },
+          {
+            "observation_id": "obs-4",
+            "quote": "12:50:00 (69 min ago) payments v3.1.9 by yuki: Memoize pricing rules"
+          },
+          {
+            "observation_id": "obs-7",
+            "quote": "samples: 13:00=0.8, 13:05=1.2, 13:10=2.1, 13:15=3.2, 13:20=4.6, 13:25=18.3, 13:30=0.6, 13:35=1.2, 13:40=2.0, 13:45=3.0, 13:50=4.4, 13:55=5.9"
+          }
+        ],
+        "remediation": "IMMEDIATE: Rollback payments to v3.1.8. The v3.1.9 deployment (12:50) introduced an unbounded in-process memoization cache in pricing rules. Memory climbed linearly from 669MB to 948MB, hit OOMKill at 13:24, restarted, and continued climbing to 1019MB\u2014guaranteeing another OOMKill. This caused payments error spike to 18.3% and cascaded to orders (4.8% errors) and gateway (2.9% errors, 323ms p95). Rollback will immediately stop the leak. Post-incident: add cache eviction policy or size limits to v3.1.9 before redeployment."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "error": null,
+      "steps": 6,
+      "tool_calls": 15,
+      "model_calls": 6,
+      "billing_uncertain": false,
+      "usage": {
+        "input_tokens": 27925,
+        "output_tokens": 3608,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "latency_s": 34.786286875008955,
+      "cost_usd": 0.045965,
+      "case_id": "original/original/1",
+      "variant": "original"
+    }
+  ]
+}

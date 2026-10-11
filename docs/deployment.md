@@ -4,7 +4,8 @@ The application is not deployed. Python 3.12.15 is configured; 29 offline tests
 and the required TF-IDF retrieval checks passed. Runtime/development version
 locks are generated. The Linux/ARM64 Docker image built successfully and passed HTTP, non-root
 server, and budget/replay persistence checks. Browser active-run/error/dropdown
-checks await the user's report. Paid API work remains paused at the user's request.
+checks were reported working by the user on 2026-10-06. Two authorized live smoke
+investigations completed on 2026-10-11; further paid runs require approval.
 No deployment has been performed; account/destination access is still needed.
 
 ## Local setup

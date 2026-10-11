@@ -1,4 +1,4 @@
-# Local verification — updated 2026-10-06
+# Local verification — updated 2026-10-11
 
 Working directory: `/Users/armaankolsawala/IdeaProjects/incident-copilot`.
 The initial inspection found no Git repository or applicable AGENTS.md. Git is
@@ -9,7 +9,8 @@ Python 3.12.15 is installed at `/opt/homebrew/bin/python3.12`; `.venv` is ready.
 The user installed dependencies from a terminal outside the restricted shell.
 `requirements.lock` pins 72 runtime packages; `requirements-dev.lock` pins 76
 packages, including the development dependencies. Locks have no wheel hashes.
-No API requests or deployment have been made; paid API work is paused.
+Two authorized live smoke investigations completed on 2026-10-11. No deployment
+has been performed; further paid runs require approval.
 
 Measured on Python 3.12.15:
 
@@ -47,9 +48,9 @@ Each experiment saves configuration, source hash, records and elapsed times unde
 Previously supplied results are preserved under `results/archive/` and excluded
 from the current report. The local app now runs with elevated execution permission. Chrome displayed the
 initial offline replay and evidence controls, and restored a completed scripted
-run from its saved URL. User verification of active-run reload, partial error
-traces and duplicate-free dropdowns is pending. The offline fixture is served at
-port 8002; it has no provider adapter and deliberately fails after an observation.
+run from its saved URL. The user reported active-run reload, partial error traces and dropdown checks
+working on 2026-10-06 using the offline fixture on port 8002. That fixture has no
+provider adapter and deliberately fails after an observation.
 
 Docker CLI and Colima were installed through Homebrew. The Linux/ARM64 container
 built from pinned runtime dependencies. The isolated smoke check verified:
@@ -61,9 +62,13 @@ built from pinned runtime dependencies. The isolated smoke check verified:
 - A root-owned mount directory is repaired on startup before privileges drop.
 
 The test resources were removed. The image fingerprint and platform are in
-`container-verification.json`. No provider spending occurred.
+`container-verification.json`. No provider spending occurred during the container checks.
 
 The versioned recovery lookup benchmark returned 12/12 exact policies with
 TF-IDF and 0/12 without retrieval. Both modes correctly abstained on all three
 unknown versions. This is an offline structured-reader ablation over small,
 author-written synthetic fixtures; it is not a live-model comparison.
+
+Live-model smoke results, token usage, citation retries and qualitative limitations
+are recorded in [live-smoke.md](live-smoke.md). Latest offline test run: 29 passed
+in 1.66 seconds on 2026-10-11.

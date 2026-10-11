@@ -8,13 +8,14 @@ ROOT = Path(__file__).resolve().parent.parent
 def main():
     runs = [json.loads(p.read_text()) for p in sorted((ROOT/"results").glob("*.json")) if p.name not in ("retrieval.json", "recovery.json")]
     runs = [r for r in runs if "metadata" in r]
-    md = ["Measured offline baselines on synthetic telemetry. Transport is recorded per experiment.", "",
+    md = ["Measured offline baselines and live-model runs on synthetic telemetry. Transport is recorded per experiment.", "",
           "| Run | Transport | Cases | Outcome correct (95% CI) | Errors | Total observed API cost | p50 / p95 seconds |",
           "|---|---|---:|---|---:|---:|---|"]
     for r in runs:
         s = r["summary"]
-        md.append(f"| {r['name']} | {r['metadata'].get('baseline_transport') or 'deploy history'} | {s['n']} | {s['both_correct_acc']}% ({s['both_correct_ci95'][0]}–{s['both_correct_ci95'][1]}) | {s['errors']} | ${s['total_cost_usd']:.6f} | {s['latency_p50_s']:.6f} / {s['latency_p95_s']:.6f} |")
-    md += ["", "Outcome accuracy counts a correct abstention on redacted cases. Latency quantiles describe successful runs; failure elapsed time and observed spend remain in JSON records. Structured action compatibility is not a remediation-quality score. No live-model results have been measured."]
+        transport = r['metadata'].get('baseline_transport') or ('live LLM + in-memory MCP' if r['config']['agent'] == 'llm' else 'deploy history')
+        md.append(f"| {r['name']} | {transport} | {s['n']} | {s['both_correct_acc']}% ({s['both_correct_ci95'][0]}–{s['both_correct_ci95'][1]}) | {s['errors']} | ${s['total_cost_usd']:.6f} | {s['latency_p50_s']:.6f} / {s['latency_p95_s']:.6f} |")
+    md += ["", "Outcome accuracy counts a correct abstention on redacted cases. Latency quantiles describe successful runs; failure elapsed time and observed spend remain in JSON records. API cost is calculated from provider-reported token usage at list prices, not reconciled against an invoice. Structured action compatibility is not a remediation-quality score. The two-case live smoke run is too small to establish reliability; see docs/live-smoke.md for citation retries and unsupported recommendation details."]
     retrieval = ROOT/"results"/"retrieval.json"
     if retrieval.exists():
         md += ["", "Retrieval smoke checks (small author-written query set):"]
