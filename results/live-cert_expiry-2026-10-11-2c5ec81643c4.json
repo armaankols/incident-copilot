@@ -1,0 +1,130 @@
+{
+  "name": "live-cert_expiry-2026-10-11-2c5ec81643c4",
+  "config": {
+    "agent": "llm",
+    "suite": "original",
+    "model": "claude-haiku-4-5-20251001",
+    "n": 1,
+    "seed": 0,
+    "case_offset": 4,
+    "no_rag": false,
+    "embedder": "tfidf",
+    "max_steps": 12,
+    "concurrency": 1,
+    "save_traces": true,
+    "name": "live-cert_expiry-2026-10-11"
+  },
+  "metadata": {
+    "run_id": "2c5ec81643c4",
+    "started_at": "2026-10-11T21:37:28.988531+00:00",
+    "source_sha256": "4c7a57b13dc08c540d0177cd366eb45e0573849165f1aee09858d450bc8ba0e5",
+    "dataset_sha256": "6d9c631231d9d14eac0e8fad96207886db035761904e0f7a48293742a3d141b1",
+    "dataset_version": "original",
+    "prompt_version": "evidence-v3-policy-remediation",
+    "python": "3.12.15",
+    "baseline_transport": null
+  },
+  "summary": {
+    "n": 1,
+    "errors": 0,
+    "root_cause_service_acc": 0.0,
+    "fault_type_acc": 100.0,
+    "both_correct_acc": 0.0,
+    "both_correct_ci95": [
+      0.0,
+      79.3
+    ],
+    "action_compatibility_rate": 0.0,
+    "avg_tool_calls": 11,
+    "avg_steps": 4,
+    "avg_input_tokens": 15267,
+    "avg_output_tokens": 1927,
+    "avg_cost_usd": 0.024902,
+    "total_cost_usd": 0.024902,
+    "error_rate": 0.0,
+    "cost_per_correct_diagnosis_usd": null,
+    "billing_uncertain_runs": 0,
+    "latency_scope": "successful runs only",
+    "total_attempted_latency_s": 19.132095,
+    "latency_p50_s": 19.132095,
+    "latency_p95_s": 19.132095,
+    "accuracy_by_fault_type": {
+      "bad_deploy": 0.0,
+      "memory_leak": 0.0,
+      "slow_dependency": 0.0,
+      "config_error": 0.0,
+      "cert_expiry": 0.0,
+      "traffic_spike": 0.0
+    },
+    "total_observed_usage": {
+      "input_tokens": 15267,
+      "output_tokens": 1927,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0
+    },
+    "outcome_accuracy_by_variant": {
+      "original": 0.0
+    },
+    "insufficient_evidence_cases": 0,
+    "abstention_accuracy": 0.0
+  },
+  "records": [
+    {
+      "seed": 4,
+      "fault_type": "cert_expiry",
+      "root_service": "payments",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "orders",
+        "fault_type": "cert_expiry",
+        "target": "orders",
+        "action": "renew_certificate",
+        "evidence": [
+          {
+            "observation_id": "obs-9",
+            "quote": "13:32:00 orders ERROR TLS handshake failed calling payments: x509: certificate has expired (notAfter=2026-10-01T13:20:00Z)"
+          },
+          {
+            "observation_id": "obs-6",
+            "quote": "orders.error_rate last 60m: min=0.1 mean=20.8 max=31.2 latest=31.0\nsamples: 13:00=0.2, 13:05=0.3, 13:10=0.2, 13:15=0.3, 13:20=31.0"
+          },
+          {
+            "observation_id": "obs-5",
+            "quote": "orders.p95_latency_ms last 60m: min=124.2 mean=433.4 max=604.4 latest=602.9\nsamples: 13:00=129.8, 13:05=124.2, 13:10=129.2, 13:15=140.2, 13:20=578.2"
+          },
+          {
+            "observation_id": "obs-3",
+            "quote": "gateway.error_rate last 60m: min=0.2 mean=2.1 max=3.3 latest=3.1\nsamples: 13:00=0.2, 13:05=0.2, 13:10=0.3, 13:15=0.3, 13:20=3.0"
+          },
+          {
+            "observation_id": "obs-8",
+            "quote": "postgres.error_rate last 60m: min=0.1 mean=0.3 max=0.4 latest=0.2"
+          }
+        ],
+        "remediation": "Recommendation only; no change has been executed. Verify orders's certificate, issuer, expiry and trust-chain requirements. Follow the service certificate-rotation procedure, including any required overlap of trust bundles, before replacing it. After any approved change, check service and caller error rates and latency against their configured SLOs."
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": true,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "error": null,
+      "steps": 4,
+      "tool_calls": 11,
+      "model_calls": 4,
+      "billing_uncertain": false,
+      "usage": {
+        "input_tokens": 15267,
+        "output_tokens": 1927,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "latency_s": 19.13209454200114,
+      "cost_usd": 0.024902,
+      "case_id": "original/original/4",
+      "variant": "original"
+    }
+  ]
+}

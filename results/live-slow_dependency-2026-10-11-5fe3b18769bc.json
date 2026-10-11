@@ -1,0 +1,130 @@
+{
+  "name": "live-slow_dependency-2026-10-11-5fe3b18769bc",
+  "config": {
+    "agent": "llm",
+    "suite": "original",
+    "model": "claude-haiku-4-5-20251001",
+    "n": 1,
+    "seed": 0,
+    "case_offset": 2,
+    "no_rag": false,
+    "embedder": "tfidf",
+    "max_steps": 12,
+    "concurrency": 1,
+    "save_traces": true,
+    "name": "live-slow_dependency-2026-10-11"
+  },
+  "metadata": {
+    "run_id": "5fe3b18769bc",
+    "started_at": "2026-10-11T21:36:47.490146+00:00",
+    "source_sha256": "4c7a57b13dc08c540d0177cd366eb45e0573849165f1aee09858d450bc8ba0e5",
+    "dataset_sha256": "f3d02ab6d10cd0ed17f674b13b3cb2eceba1cd58886daec8ab470bdb47ff6a5c",
+    "dataset_version": "original",
+    "prompt_version": "evidence-v3-policy-remediation",
+    "python": "3.12.15",
+    "baseline_transport": null
+  },
+  "summary": {
+    "n": 1,
+    "errors": 0,
+    "root_cause_service_acc": 100.0,
+    "fault_type_acc": 100.0,
+    "both_correct_acc": 100.0,
+    "both_correct_ci95": [
+      20.7,
+      100.0
+    ],
+    "action_compatibility_rate": 100.0,
+    "avg_tool_calls": 20,
+    "avg_steps": 9,
+    "avg_input_tokens": 52206,
+    "avg_output_tokens": 3972,
+    "avg_cost_usd": 0.072066,
+    "total_cost_usd": 0.072066,
+    "error_rate": 0.0,
+    "cost_per_correct_diagnosis_usd": 0.072066,
+    "billing_uncertain_runs": 0,
+    "latency_scope": "successful runs only",
+    "total_attempted_latency_s": 40.251977,
+    "latency_p50_s": 40.251977,
+    "latency_p95_s": 40.251977,
+    "accuracy_by_fault_type": {
+      "bad_deploy": 0.0,
+      "memory_leak": 0.0,
+      "slow_dependency": 100.0,
+      "config_error": 0.0,
+      "cert_expiry": 0.0,
+      "traffic_spike": 0.0
+    },
+    "total_observed_usage": {
+      "input_tokens": 52206,
+      "output_tokens": 3972,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0
+    },
+    "outcome_accuracy_by_variant": {
+      "original": 100.0
+    },
+    "insufficient_evidence_cases": 0,
+    "abstention_accuracy": 0.0
+  },
+  "records": [
+    {
+      "seed": 2,
+      "fault_type": "slow_dependency",
+      "root_service": "postgres",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "postgres",
+        "fault_type": "slow_dependency",
+        "target": "postgres",
+        "action": "optimize_query",
+        "evidence": [
+          {
+            "observation_id": "obs-7",
+            "quote": "postgres.p95_latency_ms last 60m: min=12.0 mean=592.7 max=919.2 latest=916.1\nsamples: 13:00=17.9, 13:05=15.1, 13:10=14.4, 13:15=17.8, 13:20=243.3, 13:25=912.8"
+          },
+          {
+            "observation_id": "obs-13",
+            "quote": "13:49:00 postgres WARN slow query (1073ms): SELECT ... FROM orders WHERE customer_id=$1 (seq scan)\n13:49:00 postgres WARN lock wait on relation orders held by autovacuum"
+          },
+          {
+            "observation_id": "obs-16",
+            "quote": "13:31:00 orders ERROR timeout after 1000ms calling postgres\n13:33:00 orders ERROR timeout after 1000ms calling postgres"
+          },
+          {
+            "observation_id": "obs-10",
+            "quote": "postgres.cpu_pct last 60m: min=32.3 mean=67.1 max=88.5 latest=83.0\nsamples: 13:00=43.2, 13:05=42.1, 13:10=39.3, 13:15=42.0, 13:20=48.8, 13:25=82.3"
+          },
+          {
+            "observation_id": "obs-14",
+            "quote": "Runbook: Slow dependency causing upstream timeouts - Diagnosis\nFind the service where latency rose first and where traffic did not change. Errors in callers are symptoms, not the cause. For databases, inspect slow query logs and lock waits such as autovacuum holding locks."
+          }
+        ],
+        "remediation": "Recommendation only; no change has been executed. Investigate slow queries affecting postgres using query plans and the service runbook before making a query or index change. No specific query change has been verified. After any approved change, check service and caller error rates and latency against their configured SLOs."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "error": null,
+      "steps": 9,
+      "tool_calls": 20,
+      "model_calls": 9,
+      "billing_uncertain": false,
+      "usage": {
+        "input_tokens": 52206,
+        "output_tokens": 3972,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "latency_s": 40.251977417006856,
+      "cost_usd": 0.072066,
+      "case_id": "original/original/2",
+      "variant": "original"
+    }
+  ]
+}

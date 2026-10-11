@@ -9,12 +9,12 @@ Python 3.12.15 is installed at `/opt/homebrew/bin/python3.12`; `.venv` is ready.
 The user installed dependencies from a terminal outside the restricted shell.
 `requirements.lock` pins 72 runtime packages; `requirements-dev.lock` pins 76
 packages, including the development dependencies. Locks have no wheel hashes.
-Three authorized live smoke investigations completed on 2026-10-11. No deployment
+Six authorized live smoke investigations completed on 2026-10-11. No deployment
 has been performed; further paid runs require approval.
 
 Measured on Python 3.12.15:
 
-- `python -m pytest -q tests`: 38 passed (2026-10-11; 2.04 seconds).
+- `python -m pytest -q tests`: 38 passed (2026-10-11; 1.81 seconds).
 - `python -m pip check`: no broken requirements.
 - `python -m evals.retrieval_eval`: TF-IDF recall@1 and recall@3 both 14/14;
   optional FastEmbed skipped because it is not installed.
@@ -71,10 +71,17 @@ author-written synthetic fixtures; it is not a live-model comparison.
 
 Live-model smoke results, token usage, citation retries and qualitative limitations
 are recorded in [live-smoke.md](live-smoke.md). Latest offline test run: 38 passed
-in 2.04 seconds on 2026-10-11. Recommendation/citation checks are recorded in
+in 1.81 seconds on 2026-10-11. Recommendation/citation checks are recorded in
 [recommendation-grounding.md](recommendation-grounding.md).
 
 The updated prompt/validator was exercised on one live configuration-error case:
 correct orders/config_error diagnosis, five exact citations, zero rejected
 submissions, 22.93 seconds, $0.036508 token-cost estimate. See
 [live-config-smoke.md](live-config-smoke.md) for scope and limitations.
+
+The remaining three fault types were tested live: slow_dependency and traffic_spike
+were correctly diagnosed; cert_expiry named the right type but blamed orders
+instead of payments. Batch token-cost estimate: $0.194307. All six fault types now
+have one live smoke case, with five correct service-and-fault diagnoses across
+mixed prompt versions. See [live-remaining-smoke.md](live-remaining-smoke.md) for
+retry counts, capacity-limit caveats and next correctness work.

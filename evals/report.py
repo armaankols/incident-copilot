@@ -15,7 +15,7 @@ def main():
         s = r["summary"]
         transport = r['metadata'].get('baseline_transport') or ('live LLM + in-memory MCP' if r['config']['agent'] == 'llm' else 'deploy history')
         md.append(f"| {r['name']} | {transport} | {s['n']} | {s['both_correct_acc']}% ({s['both_correct_ci95'][0]}–{s['both_correct_ci95'][1]}) | {s['errors']} | ${s['total_cost_usd']:.6f} | {s['latency_p50_s']:.6f} / {s['latency_p95_s']:.6f} |")
-    md += ["", "Outcome accuracy counts a correct abstention on redacted cases. Latency quantiles describe successful runs; failure elapsed time and observed spend remain in JSON records. API cost is calculated from provider-reported token usage at list prices, not reconciled against an invoice. Structured action compatibility is not a remediation-quality score. The live smoke runs are too small to establish reliability; see docs/live-smoke.md and docs/live-config-smoke.md for citation checks and recommendation limitations."]
+    md += ["", "Outcome accuracy counts a correct abstention on redacted cases. Latency quantiles describe successful runs; failure elapsed time and observed spend remain in JSON records. API cost is calculated from provider-reported token usage at list prices, not reconciled against an invoice. Structured action compatibility is not a remediation-quality score. The live smoke runs are too small to establish reliability; see docs/live-smoke.md, docs/live-config-smoke.md and docs/live-remaining-smoke.md for citation checks, failures and recommendation limitations."]
     retrieval = ROOT/"results"/"retrieval.json"
     if retrieval.exists():
         md += ["", "Retrieval smoke checks (small author-written query set):"]

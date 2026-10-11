@@ -22,7 +22,7 @@ The model retrieved the `orders` deployment/configuration record (`db.pool.max=5
 
 The provider proposed restoring the previous pool size or increasing it. The server replaced that prose with its conservative configuration policy: compare the active configuration with a verified healthy configuration, confirm compatibility and the rollback procedure, and check configured SLOs after an approved change. No configuration revision or replacement pool size was verified or supplied in the accepted recommendation.
 
-Unlike the prior two smoke runs, this case submitted all quotations correctly on its first diagnosis attempt. These runs use different cases and prompt/validator versions: this is not a controlled before/after comparison and does not establish a lower retry rate or improved general accuracy. Live coverage is now one case each for bad_deploy, memory_leak and config_error; slow_dependency, cert_expiry and traffic_spike remain untested with a live model.
+Unlike the prior two smoke runs, this case submitted all quotations correctly on its first diagnosis attempt. These runs use different cases and prompt/validator versions: this is not a controlled before/after comparison and does not establish a lower retry rate or improved general accuracy. At the time of this run, live coverage was one case each for bad_deploy, memory_leak and config_error. Subsequent coverage and failures are recorded in [live-remaining-smoke.md](live-remaining-smoke.md).
 
 ## Reproduction and records
 

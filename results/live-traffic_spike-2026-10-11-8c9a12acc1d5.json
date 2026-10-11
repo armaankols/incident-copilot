@@ -1,0 +1,126 @@
+{
+  "name": "live-traffic_spike-2026-10-11-8c9a12acc1d5",
+  "config": {
+    "agent": "llm",
+    "suite": "original",
+    "model": "claude-haiku-4-5-20251001",
+    "n": 1,
+    "seed": 0,
+    "case_offset": 5,
+    "no_rag": false,
+    "embedder": "tfidf",
+    "max_steps": 12,
+    "concurrency": 1,
+    "save_traces": true,
+    "name": "live-traffic_spike-2026-10-11"
+  },
+  "metadata": {
+    "run_id": "8c9a12acc1d5",
+    "started_at": "2026-10-11T21:37:48.150409+00:00",
+    "source_sha256": "4c7a57b13dc08c540d0177cd366eb45e0573849165f1aee09858d450bc8ba0e5",
+    "dataset_sha256": "5d6b41e3138b784d21949f667cf5efc0eec971e9c5f0930918885a40462feb4b",
+    "dataset_version": "original",
+    "prompt_version": "evidence-v3-policy-remediation",
+    "python": "3.12.15",
+    "baseline_transport": null
+  },
+  "summary": {
+    "n": 1,
+    "errors": 0,
+    "root_cause_service_acc": 100.0,
+    "fault_type_acc": 100.0,
+    "both_correct_acc": 100.0,
+    "both_correct_ci95": [
+      20.7,
+      100.0
+    ],
+    "action_compatibility_rate": 100.0,
+    "avg_tool_calls": 25,
+    "avg_steps": 12,
+    "avg_input_tokens": 76734,
+    "avg_output_tokens": 4121,
+    "avg_cost_usd": 0.097339,
+    "total_cost_usd": 0.097339,
+    "error_rate": 0.0,
+    "cost_per_correct_diagnosis_usd": 0.097339,
+    "billing_uncertain_runs": 0,
+    "latency_scope": "successful runs only",
+    "total_attempted_latency_s": 45.331751,
+    "latency_p50_s": 45.331751,
+    "latency_p95_s": 45.331751,
+    "accuracy_by_fault_type": {
+      "bad_deploy": 0.0,
+      "memory_leak": 0.0,
+      "slow_dependency": 0.0,
+      "config_error": 0.0,
+      "cert_expiry": 0.0,
+      "traffic_spike": 100.0
+    },
+    "total_observed_usage": {
+      "input_tokens": 76734,
+      "output_tokens": 4121,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0
+    },
+    "outcome_accuracy_by_variant": {
+      "original": 100.0
+    },
+    "insufficient_evidence_cases": 0,
+    "abstention_accuracy": 0.0
+  },
+  "records": [
+    {
+      "seed": 5,
+      "fault_type": "traffic_spike",
+      "root_service": "search",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "search",
+        "fault_type": "traffic_spike",
+        "target": "search",
+        "action": "scale",
+        "evidence": [
+          {
+            "observation_id": "obs-5",
+            "quote": "search.p95_latency_ms last 60m: min=91.3 mean=686.4 max=1047.2 latest=1004.9\nsamples: 13:00=108.2, 13:05=119.3, 13:10=115.2, 13:15=111.9, 13:20=291.9, 13:25=1003.0"
+          },
+          {
+            "observation_id": "obs-11",
+            "quote": "search.rps last 60m: min=153.6 mean=650.5 max=1010.9 latest=991.0\nsamples: 13:00=190.1, 13:05=182.0, 13:10=193.3, 13:15=193.1, 13:20=325.2, 13:25=893.8"
+          },
+          {
+            "observation_id": "obs-9",
+            "quote": "search.cpu_pct last 60m: min=29.9 mean=72.6 max=98.2 latest=95.5\nsamples: 13:00=38.1, 13:05=29.9, 13:10=36.7, 13:15=32.1, 13:20=45.9, 13:25=95.9"
+          },
+          {
+            "observation_id": "obs-15",
+            "quote": "13:41:00 search WARN autoscaler at max replicas (12/12), cannot add capacity\n13:41:00 search WARN rate limiter shedding load: 429 returned for 22% of requests"
+          }
+        ],
+        "remediation": "Recommendation only; no change has been executed. Consider scaling search after checking capacity limits and downstream bottlenecks. Verify the permitted replica or resource limits in the service runbook before changing capacity. After any approved change, check service and caller error rates and latency against their configured SLOs."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "error": null,
+      "steps": 12,
+      "tool_calls": 25,
+      "model_calls": 12,
+      "billing_uncertain": false,
+      "usage": {
+        "input_tokens": 76734,
+        "output_tokens": 4121,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "latency_s": 45.331750750003266,
+      "cost_usd": 0.097339,
+      "case_id": "original/original/5",
+      "variant": "original"
+    }
+  ]
+}
