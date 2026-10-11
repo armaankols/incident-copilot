@@ -19,6 +19,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from copilot.baselines import baseline_rules, baseline_rules_mcp
+from copilot.diagnosis import PROMPT_VERSION
 from copilot.pricing import DEFAULT_MODEL
 from copilot.grading import baseline_latest_deploy, grade
 from .cases import VERSION, scenarios
@@ -127,7 +128,7 @@ async def evaluate(args) -> dict:
         source_hash.update(p.read_bytes())
     out = {"name": name, "config": {k: v for k, v in vars(args).items()}, "metadata": {"run_id": run_id, "started_at": started_at,
                  "source_sha256": source_hash.hexdigest(), "dataset_sha256": dataset_hash, "dataset_version": args.suite,
-                 "prompt_version": "evidence-v2", "python": platform.python_version(),
+                 "prompt_version": PROMPT_VERSION, "python": platform.python_version(),
                  "baseline_transport": "direct simulator log search" if args.agent == "rules" else "in-memory MCP" if args.agent == "rules-mcp" else None},
            "summary": summarize(records),
            "records": [{k: v for k, v in r.items() if k != "trace"} for r in records]}

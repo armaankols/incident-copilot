@@ -31,7 +31,7 @@ async function init() {
 }
 function traceHTML(trace = []) {
   return trace.map(event => {
-    if (event.type === "investigation_update") return `<li class="update"><span class="txt">${esc(event.text)}</span></li>`;
+    if (event.type === "investigation_update") return `<li class="update"><span class="call">Model note (unverified)</span> <span class="txt">${esc(event.text)}</span></li>`;
     if (event.type === "tool_call") return `<li><span class="call">${esc(event.tool)}</span> <span class="args">${esc(JSON.stringify(event.args))}</span></li>`;
     if (event.type === "tool_result") return `<li><details><summary>Evidence ${esc(event.observation_id)}</summary><pre>${esc(event.output)}</pre></details></li>`;
     if (event.type === "validation_error") return `<li class="err">${esc(event.output)}</li>`;

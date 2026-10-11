@@ -14,7 +14,7 @@ has been performed; further paid runs require approval.
 
 Measured on Python 3.12.15:
 
-- `python -m pytest -q tests`: 29 passed (latest complete run before documentation changes).
+- `python -m pytest -q tests`: 36 passed (2026-10-11; 1.97 seconds).
 - `python -m pip check`: no broken requirements.
 - `python -m evals.retrieval_eval`: TF-IDF recall@1 and recall@3 both 14/14;
   optional FastEmbed skipped because it is not installed.
@@ -70,5 +70,6 @@ unknown versions. This is an offline structured-reader ablation over small,
 author-written synthetic fixtures; it is not a live-model comparison.
 
 Live-model smoke results, token usage, citation retries and qualitative limitations
-are recorded in [live-smoke.md](live-smoke.md). Latest offline test run: 29 passed
-in 1.66 seconds on 2026-10-11.
+are recorded in [live-smoke.md](live-smoke.md). Latest offline test run: 36 passed
+in 1.97 seconds on 2026-10-11. Recommendation/citation checks are recorded in
+[recommendation-grounding.md](recommendation-grounding.md).

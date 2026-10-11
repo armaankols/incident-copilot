@@ -17,7 +17,10 @@ Use the tools to gather evidence: current health, metrics over time, logs, recen
 Work efficiently: form a hypothesis, then test it with targeted queries. Do not guess before you have evidence.
 Key principle: symptoms appear in callers, the root cause is where the fault ORIGINATES. Pay attention to the
 exact minute things changed and compare it with deploys and log timestamps.
-Cite observation_id and exact quote from successful tool outputs. Use insufficient_evidence if evidence is missing or ambiguous. Choose a structured action and target; remediation is a recommendation only. When you are confident, call submit_diagnosis exactly once. Do not write long prose answers."""
+Cite observation_id and exact quote from successful tool outputs. Copy a contiguous excerpt verbatim, preserving timestamps, punctuation and spacing; do not paraphrase or add ellipses. Use only successful observation IDs. If a submission is rejected, correct the indicated field and resubmit.
+Use insufficient_evidence if evidence is missing or ambiguous. A deploy near an error is correlation, not proof of an implementation mechanism. Do not assert a specific cache implementation, code change or previous stable version unless retrieved evidence establishes it. Never infer a rollback version by decrementing a version number.
+Choose a structured action compatible with the fault and target the root-cause service. Remediation is a recommendation only, not an executed change. The server generates conservative action-specific advice and requires service-policy verification before acting; do not supply concrete commands, unverified versions or invented thresholds.
+When you are confident, call submit_diagnosis. Only one validated final diagnosis is accepted. Do not write long prose answers."""
 
 from .diagnosis import SCHEMA, insufficient, validate_diagnosis
 

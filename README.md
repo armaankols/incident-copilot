@@ -102,11 +102,16 @@ python3 scripts/check_benchmarks.py
 python3 -m evals.report
 ```
 
-The full offline suite passed 29 tests, including FastAPI/MCP/LangGraph
+The full offline suite passed 36 tests, including FastAPI/MCP/LangGraph
 integration, evidence validation, partial failure accounting, cancellation
 settlement and replay persistence. TF-IDF retrieval checks passed. The local demo now runs with elevated execution
 permission. Initial replay and completed-run reload were inspected in Chrome;
 the user reported active-run/error/dropdown checks working on 2026-10-06. See [verification notes](docs/verification.md).
+
+Accepted recommendations use conservative server policies derived from the
+validated action and target. Rollback advice requires a verified healthy release
+and compatibility checks; provider prose cannot introduce a rollback version.
+Model investigation notes remain unverified. See [recommendation checks](docs/recommendation-grounding.md).
 
 ## Live evaluation and deployment
 

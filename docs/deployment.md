@@ -1,6 +1,6 @@
 # Deployment preparation and remaining checks
 
-The application is not deployed. Python 3.12.15 is configured; 29 offline tests
+The application is not deployed. Python 3.12.15 is configured; 36 offline tests
 and the required TF-IDF retrieval checks passed. Runtime/development version
 locks are generated. The Linux/ARM64 Docker image built successfully and passed HTTP, non-root
 server, and budget/replay persistence checks. Browser active-run/error/dropdown
@@ -75,6 +75,10 @@ review provider billing before manually settling any orphaned reservation.
 Never blindly release a hold because its process stopped.
 
 The web app exposes no remediation execution. Structured actions are only
-recommendations. Quoted evidence is checked for provenance, not semantic support.
+recommendations. Accepted recommendation text is generated from conservative
+server policies; model prose is replaced, including on insufficient-evidence
+outcomes. Action/fault compatibility and target/service consistency are validated.
+Quoted evidence is checked for provenance, not semantic support. Deployment-specific
+recovery plans still require verified versions and service-policy checks.
 IP-based rate limiting trusts `fly-client-ip` only when explicitly enabled on Fly.
 Do not enable this trust setting on a directly reachable local server.

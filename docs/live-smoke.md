@@ -22,7 +22,7 @@ All nine final citation references passed provenance validation. Exact quotation
 
 Qualitative trace review found unsupported specificity: the memory-leak recommendation assumed the previous stable version was `v3.1.8` and asserted an unbounded memoization implementation; those details were not established by the retrieved telemetry. The bad-deploy recommendation attributed the exception to the metrics migration more strongly than the retrieved correlation supports. These limitations are not captured by the current compatibility score.
 
-Next correctness work: make uncertain mechanisms explicit, obtain a verified rollback target or state that it must be checked, and improve citation-error feedback. Any further live validation requires a new paid-run approval.
+Follow-up correctness changes were implemented and checked offline; see [recommendation-grounding.md](recommendation-grounding.md). The live results above describe the original prompt and validator. Any further live validation requires a new paid-run approval.
 
 Raw structured results: [`live-smoke-2026-10-11-98d7a0333c47.json`](../results/live-smoke-2026-10-11-98d7a0333c47.json). Local full trace: `results/traces/live-smoke-2026-10-11-98d7a0333c47.jsonl` (ignored by Git).
 Dataset SHA-256: `a9d9597934386340bffaac1c745e8dbbde69178604caca6485d49bd361faf616`.

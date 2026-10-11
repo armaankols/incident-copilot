@@ -4,11 +4,32 @@ Reference validation establishes provenance, not that an inference is correct.
 """
 from .sim import FAULT_TYPES, SERVICES
 
+PROMPT_VERSION = "evidence-v3-policy-remediation"
+
 ACTIONS = {
     "bad_deploy": {"rollback"}, "memory_leak": {"restart", "rollback"},
     "slow_dependency": {"optimize_query", "scale"}, "config_error": {"restore_config"},
     "cert_expiry": {"renew_certificate"}, "traffic_spike": {"scale", "rate_limit"},
 }
+
+# Conservative fallback policies, not version-specific recovery instructions.
+# Never interpolate provider prose or infer a deployment version from telemetry.
+RECOMMENDATIONS = {
+    "rollback": "Consider rolling back {target} only after verifying the previous healthy release in deployment records and checking schema/configuration compatibility. A rollback version has not been verified by this investigation.",
+    "restart": "Consider a controlled restart of {target} after checking redundancy, draining traffic where required, and confirming the service-specific restart procedure. A restart may only provide temporary relief.",
+    "optimize_query": "Investigate slow queries affecting {target} using query plans and the service runbook before making a query or index change. No specific query change has been verified.",
+    "scale": "Consider scaling {target} after checking capacity limits and downstream bottlenecks. Verify the permitted replica or resource limits in the service runbook before changing capacity.",
+    "restore_config": "Compare {target}'s active configuration with a verified healthy configuration. Confirm compatibility and the service rollback procedure before restoring it; no specific configuration revision has been verified.",
+    "renew_certificate": "Verify {target}'s certificate, issuer, expiry and trust-chain requirements. Follow the service certificate-rotation procedure, including any required overlap of trust bundles, before replacing it.",
+    "rate_limit": "Consider rate limiting or load shedding for {target} after verifying the service policy, protected traffic classes and permitted thresholds. No specific limit has been verified.",
+}
+
+
+def recommend(action, target):
+    return ("Recommendation only; no change has been executed. "
+            + RECOMMENDATIONS[action].format(target=target)
+            + " After any approved change, check service and caller error rates and latency against their configured SLOs.")
+
 
 SCHEMA = {
     "type": "object", "additionalProperties": False,
@@ -22,7 +43,8 @@ SCHEMA = {
             "required": ["observation_id", "quote"]}},
         "action": {"type": ["string", "null"], "enum": sorted(set().union(*ACTIONS.values())) + [None]},
         "target": {"type": ["string", "null"], "enum": SERVICES + [None]},
-        "remediation": {"type": "string", "maxLength": 2000},
+        "remediation": {"type": "string", "maxLength": 2000,
+                        "description": "Brief recommendation only. Do not invent release versions, implementation mechanisms or numeric thresholds. The server replaces this prose with a conservative action-specific recommendation."},
     },
     "required": ["status", "root_cause_service", "fault_type", "evidence", "action", "target", "remediation"],
 }
@@ -49,14 +71,23 @@ def validate_diagnosis(d, observations):
         oid, quote = ref["observation_id"], ref["quote"]
         if not isinstance(oid, str) or not isinstance(quote, str) or not quote.strip():
             raise ValueError("Invalid evidence reference")
-        if oid not in observations or quote not in observations[oid]:
-            raise ValueError("Evidence must quote a successful retrieved observation exactly")
+        if oid not in observations:
+            available = ", ".join(observations) or "none"
+            raise ValueError(f"Unknown observation_id {oid!r}. Successful observation IDs: {available}. Cite only a successful observation.")
+        if quote not in observations[oid]:
+            raise ValueError(f"Quote for {oid} is not an exact substring of that observation. Copy a contiguous excerpt verbatim, including timestamps, punctuation and spacing; do not paraphrase, add ellipses or combine lines.")
     if d["status"] == "insufficient_evidence":
         if any(d[k] is not None for k in ("root_cause_service", "fault_type", "action", "target")):
             raise ValueError("Insufficient evidence must not specify a diagnosis or action")
+        return {**d, "remediation": "Insufficient evidence to recommend a recovery action. Gather missing telemetry and consult the service owner before selecting a change."}
     else:
         if d["root_cause_service"] not in SERVICES or d["fault_type"] not in FAULT_TYPES:
             raise ValueError("Unknown service or fault")
         if not evidence or not isinstance(d["action"], str) or d["action"] not in set().union(*ACTIONS.values()) or d["target"] not in SERVICES:
             raise ValueError("Diagnosis needs evidence and a structured action/target")
+        if d["action"] not in ACTIONS[d["fault_type"]]:
+            raise ValueError(f"Action is incompatible with {d['fault_type']}; allowed: {', '.join(sorted(ACTIONS[d['fault_type']]))}")
+        if d["target"] != d["root_cause_service"]:
+            raise ValueError("Action target must match the diagnosed root-cause service")
+        return {**d, "remediation": recommend(d["action"], d["target"])}
     return d

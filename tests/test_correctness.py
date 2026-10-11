@@ -85,7 +85,9 @@ class CorrectnessTests(unittest.TestCase):
 
     def test_forged_evidence_and_malformed_diagnoses_rejected(self):
         d = self.diagnosis()
-        self.assertEqual(validate_diagnosis(d, {"obs-1": "x509 certificate expired"}), d)
+        validated = validate_diagnosis(d, {"obs-1": "x509 certificate expired"})
+        self.assertEqual(validated["evidence"], d["evidence"])
+        self.assertEqual(validated["action"], d["action"])
         for bad in ({}, {**d, "action": []}, {**d, "unknown": "x"},
                     {**d, "evidence": [{"observation_id": "obs-9", "quote": "invented"}]},
                     {**d, "evidence": [{"observation_id": "obs-1", "quote": "invented"}]},
