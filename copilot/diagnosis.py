@@ -90,7 +90,36 @@ def _require_check(d, observations, observation_tools, tool, kind, expected, fau
         raise OperationalCheckError(f"Call {tool}({args}) and select its observation ID in evidence; it must have status {expected}. Current assessment: {statuses}. {detail}", values)
 
 
-def _excerpt(text, tool, service):
+def _assessment_log_lines(observations, observation_tools, service, fault_type):
+    """Use the diagnostic tool's records to choose excerpts, not a new classifier."""
+    tool, kind, status = (("check_change", "change", "supported")
+                          if fault_type in ("bad_deploy", "config_error") else
+                          ("check_certificate", "certificate", "expiry_supported")
+                          if fault_type == "cert_expiry" else
+                          ("check_fault", "fault", "supported"))
+    lines = set()
+    for oid, text in observations.items():
+        if observation_tools.get(oid) != tool:
+            continue
+        try:
+            assessment = json.loads(text)
+        except (TypeError, ValueError):
+            continue
+        if (not isinstance(assessment, dict) or assessment.get("kind") != kind
+                or assessment.get("service") != service or assessment.get("status") != status
+                or (kind != "certificate" and assessment.get("fault_type") != fault_type)):
+            continue
+        records = assessment.get("evidence")
+        if not isinstance(records, list):
+            continue
+        for record in records:
+            if (isinstance(record, dict)
+                    and all(isinstance(record.get(k), str) for k in ("time", "service", "level", "message"))):
+                lines.add(" ".join(record[k] for k in ("time", "service", "level", "message")))
+    return lines
+
+
+def _excerpt(text, tool, service, assessed_log_lines=()):
     """Take a real substring; never reformat or paraphrase an observation."""
     if not isinstance(text, str) or not text.strip() or text.startswith("ERROR:"):
         raise ValueError("Observation has no successful, usable evidence excerpt")
@@ -110,13 +139,16 @@ def _excerpt(text, tool, service):
         line = next((line for line in lines if line.startswith(service+" |")), lines[0])
     elif tool == "search_logs" and not lines[0].startswith("UNAVAILABLE"):
         records = [line for line in lines if re.match(r"\d\d:\d\d:\d\d ", line)]
-        line = records[-1] if records else lines[0]
+        # Only select actual lines present in this observation. A later unrelated
+        # error must not displace a fault record used by the diagnostic assessment.
+        assessed = [line for line in records if line in assessed_log_lines]
+        line = (assessed or records)[-1] if records else lines[0]
     else:
         line = lines[0]
     return line[:MAX_QUOTE_CHARS]
 
 
-def _resolve_evidence(evidence, observations, observation_tools, service):
+def _resolve_evidence(evidence, observations, observation_tools, service, fault_type):
     if not isinstance(evidence, list) or len(evidence) > MAX_EVIDENCE:
         raise ValueError(f"Evidence must be an array of at most {MAX_EVIDENCE} observation IDs")
     id_mode = all(isinstance(ref, str) for ref in evidence)
@@ -125,6 +157,7 @@ def _resolve_evidence(evidence, observations, observation_tools, service):
         raise ValueError("Evidence must contain observation IDs only; mixed reference formats are invalid")
     if id_mode and len(set(evidence)) != len(evidence):
         raise ValueError("Evidence observation IDs must be unique")
+    assessed_log_lines = _assessment_log_lines(observations, observation_tools, service, fault_type) if id_mode else ()
     resolved = []
     for ref in evidence:
         if id_mode:
@@ -146,7 +179,7 @@ def _resolve_evidence(evidence, observations, observation_tools, service):
         if not isinstance(observations[oid], str) or not observations[oid].strip() or observations[oid].startswith("ERROR:"):
             raise ValueError(f"Observation {oid!r} has no successful, usable evidence excerpt")
         if id_mode:
-            quote = _excerpt(observations[oid], observation_tools.get(oid), service)
+            quote = _excerpt(observations[oid], observation_tools.get(oid), service, assessed_log_lines)
         elif quote not in observations[oid]:
             raise ValueError(f"Quote for {oid} is not an exact substring of that observation. Submit observation IDs so the server can attach exact excerpts; legacy quotes must be copied verbatim.")
         resolved.append({"observation_id": oid, "quote": quote})
@@ -173,7 +206,7 @@ def validate_diagnosis(d, observations, observation_tools=None):
             raise ValueError("Unknown service or fault")
     elif any(d[k] is not None for k in ("root_cause_service", "fault_type", "action", "target")):
         raise ValueError("Insufficient evidence must not specify a diagnosis or action")
-    evidence = _resolve_evidence(d["evidence"], observations, observation_tools or {}, d["root_cause_service"])
+    evidence = _resolve_evidence(d["evidence"], observations, observation_tools or {}, d["root_cause_service"], d["fault_type"])
     d = {**d, "evidence": evidence}
     if d["status"] == "insufficient_evidence":
         return {**d, "recovery_status": "unavailable", "recovery_reason": "Diagnostic evidence is insufficient.",

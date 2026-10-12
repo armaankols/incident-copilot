@@ -159,3 +159,10 @@ were reconciled. One memory log excerpt displays an unrelated later error despit
 a supported diagnostic assessment; improve excerpt relevance next. See
 [live-v8-fresh-faults.md](live-v8-fresh-faults.md). Local tests in this pass: 158
 passed in 3.48 seconds; fixture thresholds passed. No recovery was executed.
+
+Assessment-backed excerpt fix: 171 tests passed in 3.25 seconds. Revalidating five
+saved submissions changed only the memory log excerpt to the exact OOMKilled
+record; all five diagnoses/recovery fields stayed unchanged and all 15 excerpts
+match their sources. Evidence matrix and migrated replay passed without provider
+calls. See [excerpt-verification.json](excerpt-verification.json). User requested
+edge-case live tests before deployment after initially considering deferral.

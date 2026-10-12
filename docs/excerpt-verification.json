@@ -1,0 +1,51 @@
+{
+  "mode": "offline-revalidation-of-recorded-submissions",
+  "provider_calls": 0,
+  "diagnoses_unchanged": 5,
+  "exact_excerpts": 15,
+  "changed_excerpts": 1,
+  "diagnosis_source_sha256": "2e380a87e0b72d0bef65fa278e64d7ae7ad8eaf53e56e264617ac47d3e50b0f7",
+  "records": [
+    {
+      "source_run": "live-v8-fresh-bad_deploy-2026-10-12-9325ca477558",
+      "seed": 1000,
+      "diagnosis_unchanged": true,
+      "exact_excerpts": 3,
+      "changed_excerpts": []
+    },
+    {
+      "source_run": "live-v8-fresh-cert_expiry-2026-10-12-c4ff87345fd9",
+      "seed": 1004,
+      "diagnosis_unchanged": true,
+      "exact_excerpts": 3,
+      "changed_excerpts": []
+    },
+    {
+      "source_run": "live-v8-fresh-config_error-2026-10-12-0ae903125704",
+      "seed": 1003,
+      "diagnosis_unchanged": true,
+      "exact_excerpts": 3,
+      "changed_excerpts": []
+    },
+    {
+      "source_run": "live-v8-fresh-memory_leak-2026-10-12-25eb65130926",
+      "seed": 1001,
+      "diagnosis_unchanged": true,
+      "exact_excerpts": 3,
+      "changed_excerpts": [
+        {
+          "observation_id": "obs-9",
+          "before": "13:40:00 orders ERROR rejected malformed request body (400) on /v1/items",
+          "after": "13:22:00 orders ERROR container terminated: OOMKilled (exit code 137)"
+        }
+      ]
+    },
+    {
+      "source_run": "live-v8-fresh-slow_dependency-2026-10-12-fe10f352563a",
+      "seed": 1002,
+      "diagnosis_unchanged": true,
+      "exact_excerpts": 3,
+      "changed_excerpts": []
+    }
+  ]
+}

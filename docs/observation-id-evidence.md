@@ -23,7 +23,9 @@ the server. Model-authored quotes and remediation are absent from the new schema
 For structured MCP assessments, the server extracts the actual status field from
 the original JSON spelling/spacing. For metrics, it selects the actual summary
 header; for service snapshots, the diagnosed service row when present; for log
-search, a recent actual log line or the coverage warning. Other outputs use the
+search, the latest actual line also present in the matching trusted diagnostic
+assessment, falling back to the latest returned log record or coverage warning
+when no assessed record is present. Other outputs use the
 first nonempty line. Excerpts are bounded to 240 characters, without reformatting
 or paraphrasing. A selected ID links to the full observation in the investigation
 trace. An excerpt is a deterministic source selection, not a model-authored causal
@@ -129,3 +131,22 @@ The subsequent live pair met both expected outcomes with no validation rejection
 or truncations; see [live-v8-validation.md](live-v8-validation.md). The user now
 authorizes up to $0.50 per API test for this collaboration; higher or unverified
 bounds require approval. No automatic model switch was introduced.
+
+## Assessment-backed log excerpts — 2026-10-12
+
+The fresh-seed memory investigation selected a log observation containing both an
+OOMKilled record and a later unrelated malformed-request error. The server now
+prefers actual log lines listed by the matching fault assessment. It requires
+authentic tool provenance, matching kind/service/fault and supported status; the
+certificate tool uses `expiry_supported`. It introduces no new keyword classifier.
+Only a line present in the selected log observation can become its excerpt.
+Coverage warnings retain precedence, and legacy model-authored quotes still require
+exact validation. If no assessment record matches, the existing recent-record
+fallback remains; relevance is not guaranteed for arbitrary observations.
+
+Offline revalidation of all five saved submissions preserved all diagnoses and
+recovery fields. Exactly one of 15 excerpts changed, to the original OOMKilled
+line, and 15/15 remain exact source substrings. Historical live records are
+unchanged. See [excerpt-verification.json](excerpt-verification.json). No provider
+calls were made in this revalidation. The suite passed 171 tests in 3.25 seconds;
+the six-fault matrix and migrated-reference replay also passed.

@@ -98,6 +98,80 @@ def test_generated_excerpt_is_bounded_without_rewriting_source():
     assert d['evidence'][1]['quote']=='x'*240
 
 
+def test_recorded_memory_submission_selects_oom_instead_of_later_unrelated_error():
+    from pathlib import Path
+    from copilot.checks import fault_check
+    sc=generate(1001,'memory_leak')
+    path=Path(__file__).resolve().parents[1]/'results/live-v8-fresh-memory_leak-2026-10-12-25eb65130926.json'
+    saved=json.loads(path.read_text())
+    submission=saved['trace_review']['model_submissions'][0]
+    before=copy.deepcopy(submission)
+    logs=('13:22:00 orders ERROR container terminated: OOMKilled (exit code 137)\n'
+          '13:40:00 orders ERROR rejected malformed request body (400) on /v1/items')
+    observations={'obs-9':logs,
+                  'obs-10':json.dumps(fault_check(sc.logs,sc.metrics,sc.now,'orders','memory_leak')),
+                  'obs-12':'orders.memory_mb last 60m: min=577.3 mean=838.5 max=1019.0 latest=1019.0'}
+    tools={'obs-9':'search_logs','obs-10':'check_fault','obs-12':'query_metrics'}
+    accepted=validate_diagnosis(submission,observations,tools)
+    assert accepted['evidence'][2]['quote']==logs.splitlines()[0]
+    assert submission==before
+    assert {k:v for k,v in accepted.items() if k!='evidence'}=={
+        k:v for k,v in saved['records'][0]['diagnosis'].items() if k!='evidence'}
+    assert all(ref['quote'] in observations[ref['observation_id']] for ref in accepted['evidence'])
+
+
+@pytest.mark.parametrize('fault,tool,kind,status',[
+    ('bad_deploy','check_change','change','supported'),
+    ('config_error','check_change','change','supported'),
+    ('memory_leak','check_fault','fault','supported'),
+    ('slow_dependency','check_fault','fault','supported'),
+    ('traffic_spike','check_fault','fault','supported'),
+    ('cert_expiry','check_certificate','certificate','expiry_supported'),
+])
+def test_log_excerpt_uses_exact_matching_diagnostic_records(fault,tool,kind,status):
+    # The selector consumes the assessment's records; it does not classify these messages.
+    relevant='13:22:00 orders ERROR fault record using alternate wording'
+    newer='13:59:00 orders ERROR rejected malformed request body (400)'
+    assessment=dict(kind=kind,service='orders',fault_type=fault,status=status,
+                    evidence=[dict(time='13:22:00',service='orders',level='ERROR',
+                                   message='fault record using alternate wording')])
+    d={**candidate(['check','logs']),'root_cause_service':'orders','fault_type':fault}
+    source={'check':json.dumps(assessment),'logs':relevant+'\n'+newer}
+    accepted=validate_diagnosis(d,source,{'check':tool,'logs':'search_logs'})
+    assert accepted['evidence'][1]['quote']==relevant
+
+
+@pytest.mark.parametrize('change,tool',[
+    ({'service':'inventory'},'check_fault'),
+    ({'fault_type':'memory_leak'},'check_fault'),
+    ({'status':'unknown'},'check_fault'),
+    ({'kind':'capacity'},'check_fault'),
+    ({},'search_runbooks'),
+])
+def test_untrusted_or_mismatched_assessment_cannot_choose_log_excerpt(change,tool):
+    from copilot.diagnosis import _assessment_log_lines, _excerpt
+    old='13:22:00 search ERROR unrelated older record'
+    latest='13:59:00 search ERROR latest observed record'
+    other=dict(kind='fault',service='search',fault_type='traffic_spike',status='supported',
+               evidence=[dict(time='13:22:00',service='search',level='ERROR',message='unrelated older record')])
+    source={'check':fault_observation(),'other':json.dumps({**other,**change}),'logs':old+'\n'+latest}
+    assessed=_assessment_log_lines(source,{'check':'check_fault','other':tool,'logs':'search_logs'},
+                                   'search','traffic_spike')
+    assert _excerpt(source['logs'],'search_logs','search',assessed)==latest
+
+
+def test_assessment_records_missing_from_observation_are_never_invented_as_quotes():
+    assessment=dict(kind='fault',service='search',fault_type='traffic_spike',status='supported',
+                    evidence=[dict(time='13:22:00',service='search',level='ERROR',message='not in selected observation')])
+    source={'check':json.dumps(assessment),'logs':'13:59:00 search WARN actual observed record'}
+    tools={'check':'check_fault','logs':'search_logs'}
+    accepted=validate_diagnosis(candidate(['check','logs']),source,tools)
+    assert accepted['evidence'][1]['quote']==source['logs']
+    source['logs']='UNAVAILABLE: search logs not collected\n13:22:00 search ERROR not in selected observation'
+    accepted=validate_diagnosis(candidate(['check','logs']),source,tools)
+    assert accepted['evidence'][1]['quote']=='UNAVAILABLE: search logs not collected'
+
+
 def test_failed_mcp_output_id_is_not_selectable_then_correction_can_succeed():
     sc=generate(5,'traffic_spike')
     use=lambda name,args,id:dict(type='tool_use',name=name,input=args,id=id)

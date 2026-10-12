@@ -2,7 +2,7 @@
   "mode": "offline-migrated-reference-replay",
   "source_run": "live-v7-traffic_spike-2026-10-12-b13344078fec",
   "prompt_version": "evidence-v8-observation-id-submission",
-  "source_sha256": "dcb242bc962d5093777f74adc5ccd5a7f2946b480e13c032dbc2ce2b8f64f127",
+  "source_sha256": "78bbfc376e734321a69670252ba3df29555db41adecafa2b1aa94422b6c3ac58",
   "fixture_sha256": "ff0dbdb03eec7258dc22a7940e636781e3703850161590656b2754a346c71fe2",
   "case_id": "original/original/5",
   "summary": {

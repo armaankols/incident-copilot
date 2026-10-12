@@ -1,7 +1,7 @@
 # Deployment preparation and remaining checks
 
 The application is not deployed. Python 3.12.15 and locked dependencies are ready;
-the latest local suite passed 158 tests in 3.48 seconds. Linux ARM64 container
+the latest local suite passed 171 tests in 3.25 seconds. Linux ARM64 container
 verification passed HTTP, non-root execution and budget/replay persistence checks
 (`container-verification-v8.json`); CI also covers Linux AMD64. Browser checks were
 reported working by the user on 2026-10-06.
@@ -10,8 +10,9 @@ Twenty-two authorized Haiku smoke investigations completed across prompt version
 The current v8 interface met expected diagnostic outcomes on all seven exercised
 cases: six original fault types and one redacted-evidence case. Five original cases
 used fresh seeds. An observed memory-log excerpt selected an unrelated later
-record; improve excerpt relevance and run a small misleading/paraphrased telemetry
-challenge batch before public deployment. These smoke cases do not establish
+record; the assessment-backed excerpt fix now selects the OOMKilled line in
+offline revalidation. The user requested misleading/paraphrased telemetry
+challenge tests before public deployment. These smoke cases do not establish
 production reliability or recovery effectiveness. See [latest live validation](live-v8-fresh-faults.md).
 
 All six fault types now require matching MCP assessments, missing telemetry is
