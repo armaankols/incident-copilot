@@ -1,0 +1,256 @@
+{
+  "name": "live-v7-traffic_spike-2026-10-12-b13344078fec",
+  "config": {
+    "agent": "llm",
+    "suite": "original",
+    "model": "claude-haiku-4-5-20251001",
+    "n": 1,
+    "seed": 0,
+    "case_offset": 5,
+    "no_rag": false,
+    "embedder": "tfidf",
+    "max_steps": 12,
+    "concurrency": 1,
+    "save_traces": true,
+    "name": "live-v7-traffic_spike-2026-10-12",
+    "approved_batch_budget_usd": 1.0,
+    "batch_id": "01293770f24c"
+  },
+  "metadata": {
+    "run_id": "b13344078fec",
+    "started_at": "2026-10-12T20:05:03.112917+00:00",
+    "source_sha256": "3234d087f156839fa05cc2645e1702d268bacecce8b102f24b0de748ed007287",
+    "dataset_sha256": "5d6b41e3138b784d21949f667cf5efc0eec971e9c5f0930918885a40462feb4b",
+    "dataset_version": "original",
+    "prompt_version": "evidence-v7-all-faults-compact-submission",
+    "python": "3.12.15",
+    "baseline_transport": null,
+    "git_revision": "9b44702c5205ccc0903d5ecd0fccb0da84e7fb5b",
+    "live_call_limits": {
+      "model_calls": 12,
+      "max_input_tokens": 24000,
+      "max_output_tokens": 1000,
+      "sdk_retries": 0,
+      "timeout_s": 180,
+      "output_truncations": 3
+    },
+    "pricing_verified_on": "2026-10-12",
+    "pricing_source": "https://platform.claude.com/docs/en/about-claude/pricing"
+  },
+  "summary": {
+    "n": 1,
+    "errors": 0,
+    "root_cause_service_acc": 0.0,
+    "fault_type_acc": 0.0,
+    "both_correct_acc": 0.0,
+    "both_correct_ci95": [
+      0.0,
+      79.3
+    ],
+    "action_compatibility_rate": 0.0,
+    "avg_tool_calls": 16,
+    "avg_steps": 8,
+    "avg_input_tokens": 51729,
+    "avg_output_tokens": 2883,
+    "avg_cost_usd": 0.066144,
+    "total_cost_usd": 0.066144,
+    "error_rate": 0.0,
+    "cost_per_correct_diagnosis_usd": null,
+    "billing_uncertain_runs": 0,
+    "latency_scope": "successful runs only",
+    "total_attempted_latency_s": 32.630571,
+    "latency_p50_s": 32.630571,
+    "latency_p95_s": 32.630571,
+    "accuracy_by_fault_type": {
+      "bad_deploy": 0.0,
+      "memory_leak": 0.0,
+      "slow_dependency": 0.0,
+      "config_error": 0.0,
+      "cert_expiry": 0.0,
+      "traffic_spike": 0.0
+    },
+    "total_observed_usage": {
+      "input_tokens": 51729,
+      "output_tokens": 2883,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0
+    },
+    "outcome_accuracy_by_variant": {
+      "original": 0.0
+    },
+    "insufficient_evidence_cases": 0,
+    "abstention_accuracy": 0.0,
+    "model_submitted_abstentions": 0,
+    "forced_abstentions": 1,
+    "total_output_truncations": 0,
+    "correct_diagnoses_without_recovery": 0,
+    "finalization_counts": {
+      "correction_limit": 1
+    },
+    "total_cache_hits": 0
+  },
+  "records": [
+    {
+      "seed": 5,
+      "fault_type": "traffic_spike",
+      "root_service": "search",
+      "diagnosis": {
+        "status": "insufficient_evidence",
+        "root_cause_service": null,
+        "fault_type": null,
+        "evidence": [],
+        "action": null,
+        "target": null,
+        "remediation": "Investigation stopped after repeated invalid submissions.",
+        "recovery_status": "unavailable",
+        "recovery_reason": "Investigation stopped after repeated invalid submissions."
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": true
+      },
+      "error": null,
+      "steps": 8,
+      "tool_calls": 16,
+      "model_calls": 8,
+      "tool_requests": 16,
+      "cache_hits": 0,
+      "validation_rejections": 3,
+      "output_truncations": 0,
+      "stagnant_steps": 3,
+      "termination_reason": "correction_limit",
+      "billing_uncertain": false,
+      "investigation_limits": {
+        "model_calls": 12,
+        "tool_requests": 32,
+        "stagnant_rounds": 3,
+        "invalid_submissions": 3,
+        "output_truncations": 3
+      },
+      "usage": {
+        "input_tokens": 51729,
+        "output_tokens": 2883,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "latency_s": 32.63057108299108,
+      "cost_usd": 0.066144,
+      "case_id": "original/original/5",
+      "variant": "original"
+    }
+  ],
+  "trace_review": {
+    "finalization_source": "correction_limit",
+    "validation_errors": [
+      "ERROR: Quote for obs-12 is not an exact substring of that observation. Copy a contiguous excerpt verbatim, including timestamps, punctuation and spacing; do not paraphrase, add ellipses or combine lines.",
+      "ERROR: Call check_change(service='inventory', fault_type='bad_deploy') and cite its supported assessment. Current assessment: unknown. A nearby deploy, caller symptoms, or unavailable telemetry do not support this fault. Require release-linked local exceptions for bad_deploy, or a loaded configuration and matching local configuration failure for config_error. If unavailable, use insufficient_evidence.",
+      "ERROR: Quote for obs-5 is not an exact substring of that observation. Copy a contiguous excerpt verbatim, including timestamps, punctuation and spacing; do not paraphrase, add ellipses or combine lines."
+    ],
+    "operational_assessments": [
+      {
+        "observation_id": "obs-11",
+        "tool": "check_change",
+        "service": "inventory",
+        "fault_type": "bad_deploy",
+        "status": "unknown"
+      },
+      {
+        "observation_id": "obs-12",
+        "tool": "check_fault",
+        "service": "search",
+        "fault_type": "traffic_spike",
+        "status": "supported"
+      },
+      {
+        "observation_id": "obs-13",
+        "tool": "check_capacity",
+        "service": "search",
+        "fault_type": null,
+        "status": "blocked"
+      },
+      {
+        "observation_id": "obs-16",
+        "tool": "check_fault",
+        "service": "inventory",
+        "fault_type": "traffic_spike",
+        "status": "unknown"
+      }
+    ],
+    "diagnosis_attempts": [
+      {
+        "status": "diagnosed",
+        "service": "inventory",
+        "fault": "bad_deploy",
+        "action": "rollback",
+        "target": "inventory",
+        "fields": [
+          "status",
+          "root_cause_service",
+          "fault_type",
+          "evidence",
+          "action",
+          "target"
+        ],
+        "evidence_references": 3,
+        "exact_quotes": 1,
+        "utf8_bytes": 490,
+        "output_tokens": 560
+      },
+      {
+        "status": "diagnosed",
+        "service": "inventory",
+        "fault": "bad_deploy",
+        "action": "rollback",
+        "target": "inventory",
+        "fields": [
+          "status",
+          "root_cause_service",
+          "fault_type",
+          "evidence",
+          "action",
+          "target"
+        ],
+        "evidence_references": 3,
+        "exact_quotes": 3,
+        "utf8_bytes": 483,
+        "output_tokens": 327
+      },
+      {
+        "status": "diagnosed",
+        "service": "search",
+        "fault": "traffic_spike",
+        "action": "scale",
+        "target": "search",
+        "fields": [
+          "status",
+          "root_cause_service",
+          "fault_type",
+          "evidence",
+          "action",
+          "target"
+        ],
+        "evidence_references": 3,
+        "exact_quotes": 1,
+        "utf8_bytes": 444,
+        "output_tokens": 445
+      }
+    ],
+    "max_response_output_tokens": 560,
+    "output_limit_responses": 0,
+    "explicit_unavailable_results": 0,
+    "no_action_recommended": true,
+    "same_dataset_as_v6": true,
+    "offline_edited_quote_check": {
+      "replaced_quotes": 2,
+      "status": "diagnosed",
+      "service": "search",
+      "fault": "traffic_spike",
+      "action": null,
+      "recovery_status": "blocked",
+      "note": "Invalid metric excerpts replaced with real observed headers. Offline edited-payload check only; not a model correction or live success."
+    }
+  }
+}

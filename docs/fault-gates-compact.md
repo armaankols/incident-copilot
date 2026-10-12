@@ -134,5 +134,7 @@ Reproduce with:
 .venv/bin/python -m evals.report
 ```
 
-New live Haiku validation remains outstanding and requires a fresh paid-run
-approval. No automatic switch to another model was introduced.
+Subsequent live Haiku validation returned a correct model-submitted redacted
+abstention and a traffic miss caused by citation/support rejections, with zero
+output truncations in either run. See [live-v7-validation.md](live-v7-validation.md).
+Further paid runs require approval. No automatic model switch was introduced.

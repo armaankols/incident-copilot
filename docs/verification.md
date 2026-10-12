@@ -9,7 +9,7 @@ Python 3.12.15 is installed at `/opt/homebrew/bin/python3.12`; `.venv` is ready.
 The user installed dependencies from a terminal outside the restricted shell.
 `requirements.lock` pins 72 runtime packages; `requirements-dev.lock` pins 76
 packages, including the development dependencies. Locks have no wheel hashes.
-Thirteen authorized live smoke investigations completed by 2026-10-12. No deployment
+Fifteen authorized live smoke investigations completed by 2026-10-12. No deployment
 has been performed; further paid runs require approval.
 
 Measured on Python 3.12.15:
@@ -126,3 +126,10 @@ spikes, a six-field compact final schema, and separate output-truncation handlin
 All 130 tests passed in 2.99 seconds. The expanded six-fault matrix accepted 78/78
 supported pairs and rejected 3,450/3,450 unsupported pairs, with zero provider calls.
 See [fault-gates-compact.md](fault-gates-compact.md) for limits and measurements.
+
+V7 live validation returned an expected model-submitted abstention on redacted
+evidence, while the traffic case still ended in a forced abstention after two
+citation rejections and one unsupported-cause rejection. Both had zero output
+truncations and no accepted action recommendation. Combined usage-derived token
+cost: $0.112161, under the new approved $1 cap. See
+[live-v7-validation.md](live-v7-validation.md) for measured limits and remaining work.

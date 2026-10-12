@@ -2,10 +2,10 @@
 
 A Python/FastAPI demo that investigates **synthetic incident telemetry** using
 Claude tool calls, a LangGraph investigation loop, and an in-memory MCP session.
-It compares diagnoses with injected ground truth. Thirteen authorized Haiku smoke
-investigations have completed across several prompt versions. The latest two live
-checks failed: output truncation/citation errors forced a traffic-case abstention,
-and the redacted case guessed an unsupported slow dependency. See [latest validation](docs/live-v6-validation.md).
+It compares diagnoses with injected ground truth. Fifteen authorized Haiku smoke
+investigations have completed across several prompt versions. In the latest pair,
+the redacted case correctly abstained; the traffic case still failed because
+citation errors forced an abstention. Neither hit the output cap. See [latest validation](docs/live-v7-validation.md).
 These small synthetic runs do not establish reliability. No public deployment has
 been completed. Further paid runs require approval.
 
@@ -65,6 +65,8 @@ Measured offline baselines and live-model runs on synthetic telemetry. Transport
 | live-v5-traffic_spike-2026-10-12-2fa0a38e57f9 | live LLM + in-memory MCP | 1 | 0.0% (0.0–79.3) | 0 | model_submission | $0.091092 | 42.657947 / 42.657947 |
 | live-v6-missing_evidence-2026-10-12-ec2fe2431647 | live LLM + in-memory MCP | 1 | 0.0% (0.0–79.3) | 0 | model_submission | $0.072745 | 39.605546 / 39.605546 |
 | live-v6-traffic_spike-2026-10-12-af571910c196 | live LLM + in-memory MCP | 1 | 0.0% (0.0–79.3) | 0 | correction_limit | $0.083196 | 50.171236 / 50.171236 |
+| live-v7-missing_evidence-2026-10-12-b1eb096c5e8a | live LLM + in-memory MCP | 1 | 100.0% (20.7–100.0) | 0 | model_submission | $0.046017 | 23.963900 / 23.963900 |
+| live-v7-traffic_spike-2026-10-12-b13344078fec | live LLM + in-memory MCP | 1 | 0.0% (0.0–79.3) | 0 | correction_limit | $0.066144 | 32.630571 / 32.630571 |
 | python312-latest-deploy-d27b85c6db2d | deploy history | 60 | 5.0% (1.7–13.7) | 0 | not applicable | $0.000000 | 0.000001 / 0.000002 |
 | python312-mcp-rules-challenge-d2808d804229 | in-memory MCP | 24 | 33.3% (18.0–53.3) | 0 | not applicable | $0.000000 | 0.084101 / 0.144860 |
 | python312-mcp-rules-original-349e3b4a5bd7 | in-memory MCP | 60 | 100.0% (94.0–100.0) | 0 | not applicable | $0.000000 | 0.288247 / 0.414055 |
@@ -78,7 +80,7 @@ Measured offline baselines and live-model runs on synthetic telemetry. Transport
 | v7-offline-rules-v1-26568fb2f235 | direct simulator log search | 24 | 33.3% (18.0–53.3) | 0 | not applicable | $0.000000 | 0.000143 / 0.000994 |
 | v7-offline-rules-v2-5607de2ad466 | direct simulator log search | 24 | 33.3% (18.0–53.3) | 0 | not applicable | $0.000000 | 0.000144 / 0.001006 |
 
-Outcome accuracy counts a budget-forced abstention as correct on redacted cases; it does not demonstrate model-selected stopping. Finalization is persisted for new runs or derived from reviewed saved traces; older runs may show not recorded. Latency quantiles describe runs without exceptions; diagnostic misses remain included. Failure elapsed time and observed spend remain in JSON records. API cost is calculated from provider-reported token usage at list prices, not reconciled against an invoice. Structured action compatibility is not a remediation-quality score. These small live smoke runs do not establish reliability; see docs/live-v6-validation.md for the latest failed checks, docs/live-v5-validation.md and docs/live-v4-validation.md for prior live findings, and docs/change-evidence.md for the implementation changes.
+Outcome accuracy counts a budget-forced abstention as correct on redacted cases; it does not demonstrate model-selected stopping. Finalization is persisted for new runs or derived from reviewed saved traces; older runs may show not recorded. Latency quantiles describe runs without exceptions; diagnostic misses remain included. Failure elapsed time and observed spend remain in JSON records. API cost is calculated from provider-reported token usage at list prices, not reconciled against an invoice. Structured action compatibility is not a remediation-quality score. These small live smoke runs do not establish reliability; see docs/live-v7-validation.md for the latest mixed outcomes, docs/live-v6-validation.md for prior failures, and docs/fault-gates-compact.md for the implementation changes.
 
 Retrieval smoke checks (small author-written query set):
 - tfidf: 14 queries, recall@1 100.0%, recall@3 100.0%.
