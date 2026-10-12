@@ -1,0 +1,197 @@
+{
+  "name": "live-v6-missing_evidence-2026-10-12-ec2fe2431647",
+  "config": {
+    "agent": "llm",
+    "suite": "correlated-v2",
+    "model": "claude-haiku-4-5-20251001",
+    "n": 1,
+    "seed": 0,
+    "case_offset": 18,
+    "no_rag": false,
+    "embedder": "tfidf",
+    "max_steps": 12,
+    "concurrency": 1,
+    "save_traces": true,
+    "name": "live-v6-missing_evidence-2026-10-12",
+    "approved_batch_budget_usd": 1.0,
+    "batch_id": "71b2b6d600f1"
+  },
+  "metadata": {
+    "run_id": "ec2fe2431647",
+    "started_at": "2026-10-12T18:43:31.616781+00:00",
+    "source_sha256": "3a6d6c5196d5a37959e5320f639375810452380bb02811bfe9523f0284719ccc",
+    "dataset_sha256": "486ef041807989dec8154bfee744c60bce79aaa36bc67478267c375a8df225a5",
+    "dataset_version": "correlated-v2",
+    "prompt_version": "evidence-v6-change-evidence-availability",
+    "python": "3.12.15",
+    "baseline_transport": null,
+    "git_revision": "787b960bc645a450730af118d435204e2e03d0f8",
+    "live_call_limits": {
+      "model_calls": 12,
+      "max_input_tokens": 24000,
+      "max_output_tokens": 1000,
+      "sdk_retries": 0,
+      "timeout_s": 180
+    },
+    "pricing_verified_on": "2026-10-12",
+    "pricing_source": "https://platform.claude.com/docs/en/about-claude/pricing"
+  },
+  "summary": {
+    "n": 1,
+    "errors": 0,
+    "root_cause_service_acc": 0.0,
+    "fault_type_acc": 0.0,
+    "both_correct_acc": 0.0,
+    "both_correct_ci95": [
+      0.0,
+      79.3
+    ],
+    "action_compatibility_rate": 0.0,
+    "avg_tool_calls": 25,
+    "avg_steps": 9,
+    "avg_input_tokens": 53915,
+    "avg_output_tokens": 3766,
+    "avg_cost_usd": 0.072745,
+    "total_cost_usd": 0.072745,
+    "error_rate": 0.0,
+    "cost_per_correct_diagnosis_usd": null,
+    "billing_uncertain_runs": 0,
+    "latency_scope": "successful runs only",
+    "total_attempted_latency_s": 39.605546,
+    "latency_p50_s": 39.605546,
+    "latency_p95_s": 39.605546,
+    "accuracy_by_fault_type": {
+      "bad_deploy": 0.0,
+      "memory_leak": 0.0,
+      "slow_dependency": 0.0,
+      "config_error": 0.0,
+      "cert_expiry": 0.0,
+      "traffic_spike": 0.0
+    },
+    "total_observed_usage": {
+      "input_tokens": 53915,
+      "output_tokens": 3766,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0
+    },
+    "outcome_accuracy_by_variant": {
+      "redacted": 0.0
+    },
+    "insufficient_evidence_cases": 1,
+    "abstention_accuracy": 0.0,
+    "model_submitted_abstentions": 0,
+    "forced_abstentions": 0,
+    "correct_diagnoses_without_recovery": 0,
+    "finalization_counts": {
+      "model_submission": 1
+    },
+    "total_cache_hits": 0
+  },
+  "records": [
+    {
+      "seed": 18,
+      "fault_type": "insufficient_evidence",
+      "root_service": null,
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "auth",
+        "fault_type": "slow_dependency",
+        "evidence": [
+          {
+            "observation_id": "obs-3",
+            "quote": "gateway.error_rate last 60m: min=0.1 mean=6.4 max=9.7 latest=9.6\nsamples: 13:00=0.1, 13:05=0.2, 13:10=0.2, 13:15=0.3, 13:20=4.9, 13:25=9.5, 13:30=9.6, 13:35=9.5, 13:40=9.5, 13:45=9.5, 13:50=9.5, 13:55=9.6"
+          },
+          {
+            "observation_id": "obs-4",
+            "quote": "gateway.p95_latency_ms last 60m: min=152.5 mean=243.8 max=316.3 latest=298.9\nsamples: 13:00=176.0, 13:05=164.1, 13:10=156.6, 13:15=187.2, 13:20=224.9, 13:25=264.2, 13:30=256.8, 13:35=303.6, 13:40=265.5, 13:45=269.7, 13:50=289.5, 13:55=267.2"
+          },
+          {
+            "observation_id": "obs-11",
+            "quote": "13:59:00 gateway WARN upstream requests failing; dependency telemetry unavailable"
+          },
+          {
+            "observation_id": "obs-1",
+            "quote": "gateway | auth,orders,search | 299 | 9.6 | 38 | 470 | 0 | 559"
+          }
+        ],
+        "action": null,
+        "target": null,
+        "remediation": "Diagnosis recorded. No recovery action has been verified. Consult the service owner and verify the service recovery policy before selecting a change. No change has been executed.",
+        "recovery_status": "unverified",
+        "recovery_reason": "No recovery action was verified."
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "error": null,
+      "steps": 9,
+      "tool_calls": 25,
+      "model_calls": 9,
+      "tool_requests": 25,
+      "cache_hits": 0,
+      "validation_rejections": 1,
+      "stagnant_steps": 2,
+      "termination_reason": "model_submission",
+      "billing_uncertain": false,
+      "investigation_limits": {
+        "model_calls": 12,
+        "tool_requests": 32,
+        "stagnant_rounds": 3,
+        "invalid_submissions": 3
+      },
+      "usage": {
+        "input_tokens": 53915,
+        "output_tokens": 3766,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "latency_s": 39.60554645801312,
+      "cost_usd": 0.072745,
+      "case_id": "correlated-v2/redacted/18",
+      "variant": "redacted"
+    }
+  ],
+  "trace_review": {
+    "finalization_source": "model_submission",
+    "validation_errors": [
+      "ERROR: Diagnosis fields invalid; missing: action, evidence, remediation, target; unexpected: none"
+    ],
+    "operational_assessments": [
+      {
+        "tool": "check_change",
+        "observation_id": "obs-9",
+        "service": "gateway",
+        "fault_type": "bad_deploy",
+        "status": "unknown"
+      },
+      {
+        "tool": "check_change",
+        "observation_id": "obs-10",
+        "service": "gateway",
+        "fault_type": "config_error",
+        "status": "unknown"
+      },
+      {
+        "tool": "check_capacity",
+        "observation_id": "obs-18",
+        "service": "gateway",
+        "fault_type": null,
+        "status": "unknown"
+      }
+    ],
+    "explicit_unavailable_results": 15,
+    "no_action_recommended": true,
+    "output_limit_responses": 1,
+    "output_limit_submission_fields": [
+      [
+        "status",
+        "root_cause_service",
+        "fault_type"
+      ]
+    ]
+  }
+}

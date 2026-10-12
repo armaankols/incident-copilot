@@ -84,8 +84,10 @@ the server ran as UID 10001, and ledger/replay data survived a restart with a
 root-owned mount. Measurements are in `docs/container-verification-v6.json`.
 This verifies a local image; no public deployment has been completed.
 
-All checks above made **zero provider calls**. Live Haiku validation of the new
-prompt/tool requirements remains outstanding and requires another paid-run approval.
+All checks above made **zero provider calls**. The subsequent two-run live validation missed both expected final outcomes:
+output truncation/citation errors forced the traffic result to abstain, and the
+redacted case guessed auth/slow_dependency through the remaining ungated fault.
+See [live-v6-validation.md](live-v6-validation.md). Further paid runs require approval.
 
 Reproduce from the repository's Python 3.12 environment:
 
