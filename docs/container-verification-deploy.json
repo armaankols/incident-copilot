@@ -1,0 +1,18 @@
+{
+  "measured_at": "2026-10-12T23:05:20.847802+00:00",
+  "image": "registry.fly.io/incident-copilot-armaankols:354393a",
+  "image_id": "sha256:6e4002e72521c807d583bfcccda6e82a37c4ca2fcfa7cd90273c27d577ed2c47",
+  "platform": "linux/amd64",
+  "http_statuses": {
+    "/healthz": 200,
+    "/": 200,
+    "/static/demo.js": 200,
+    "/api/config": 200,
+    "/api/replay": 200
+  },
+  "no_key_status": 503,
+  "persistent_test_charge_usd": 0.1,
+  "replay_survived_restart": true,
+  "server_uid": 10001,
+  "root_owned_mount_repaired": true
+}

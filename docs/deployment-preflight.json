@@ -1,0 +1,22 @@
+{
+  "measured_at": "2026-10-12T23:06:40.229472+00:00",
+  "source_revision": "354393a2cb81cf6178a594c94b391b329c2860c5",
+  "fly_cli_version": "0.4.116",
+  "buildx_version": "0.38.0",
+  "organization": "personal",
+  "existing_apps_observed": 0,
+  "proposed_app": "incident-copilot-armaankols",
+  "config_strict_validation": "passed",
+  "container_verification": "container-verification-deploy.json",
+  "budget_check": {
+    "mode": "offline-admission-function-check",
+    "proposed_daily_budget_usd": 0.5,
+    "haiku_reservation_usd": 0.42,
+    "sonnet_rejected_status": 429,
+    "rejection": "Daily budget has insufficient unreserved funds",
+    "provider_calls": 0
+  },
+  "hosting_budget_approved": false,
+  "public_api_budget_approved": false,
+  "resources_provisioned": false
+}

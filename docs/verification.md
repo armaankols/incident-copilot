@@ -175,3 +175,9 @@ no matching assessment record exists in that selected source. Latest local
 container verification passed HTTP/non-root/persistence checks; no deployment
 has occurred. See [live-v8-edge-cases.md](live-v8-edge-cases.md) and
 [container-verification-excerpt.json](container-verification-excerpt.json).
+
+Deployment preflight: Fly login verified for `personal` (zero apps), strict
+`fly.toml` validation passed, and the exact local Linux AMD64 deployment image
+passed HTTP/non-root/persistence checks. App name and $0.50/day public API cap are
+proposed only; hosting/public API budget approval is pending. No Fly resources
+were created. See [deployment-preflight.json](deployment-preflight.json).

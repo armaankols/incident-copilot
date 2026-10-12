@@ -102,3 +102,35 @@ relevance; these narrow synthetic checks do not establish general causality. Dep
 recovery plans still require verified versions and service-policy checks.
 IP-based rate limiting trusts `fly-client-ip` only when explicitly enabled on Fly.
 Do not enable this trust setting on a directly reachable local server.
+
+## Prepared deployment — awaiting budget approval
+
+Fly CLI 0.4.116 login was verified against the personal organization, which had
+zero existing apps. `fly.toml` now proposes `incident-copilot-armaankols` in `sjc`,
+one shared CPU with 1 GB RAM, one 1 GB volume, HTTPS, and idle auto-stop. Strict Fly
+configuration validation passed. A $0.50/day application API budget is proposed;
+it is not yet approved for public usage. Its offline admission check accepted a
+$0.42 Haiku reservation and rejected Sonnet with 429 before any provider call.
+The UI still lists both models; Sonnet cannot fit this proposed daily cap.
+
+Official Fly and Buildx binaries were downloaded into ignored `.bootstrap/` and
+their GitHub release digests were verified. The initial legacy Docker cross-build
+failed; Buildx 0.38.0 built the Linux AMD64 image successfully. The deployment
+image `registry.fly.io/incident-copilot-armaankols:354393a` passed local HTTP, UID
+10001, missing-key rejection and ledger/replay persistence checks. The registry
+tag is local only; no Fly app, volume, machine or public URL has been created.
+See [preflight record](deployment-preflight.json) and
+[deployment-image verification](container-verification-deploy.json).
+
+After hosting and public API budget approval: create the app in `personal`, create
+`copilot_data` at 1 GB in `sjc`, stage the existing server key through secret-import
+stdin, authenticate Docker to Fly, push the verified image, and deploy with
+`--image registry.fly.io/incident-copilot-armaankols:354393a --ha=false`. Verify a
+single machine/volume, HTTPS health/replay, one budgeted Haiku request, admission
+behavior and ledger/replay persistence across restart. No remote builder is needed.
+
+Hosting is usage-billed, including compute/storage and transfer; a monthly target
+is not an enforced Fly bill cap. Current pricing references:
+[resource pricing](https://docs.fly.io/about/pricing),
+[cost management](https://docs.fly.io/about/cost-management). No hosting spend has
+been measured in this preparation.

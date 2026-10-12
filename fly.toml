@@ -1,11 +1,11 @@
-# Set a real app name only after choosing an account/deployment destination.
-app = "incident-copilot-CHANGEME"
+# Prepared for the personal Fly organization; provisioning awaits hosting budget approval.
+app = "incident-copilot-armaankols"
 primary_region = "sjc"
 
 [build]
 
 [env]
-  DAILY_BUDGET_USD = "2.0"
+  DAILY_BUDGET_USD = "0.50"
   RATE_LIMIT_PER_HOUR = "8"
   BUDGET_DB = "/data/demo.sqlite3"
   TRUST_FLY_PROXY = "1"
