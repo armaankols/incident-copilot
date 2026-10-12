@@ -2,14 +2,15 @@
 
 A Python/FastAPI demo that investigates **synthetic incident telemetry** using
 Claude tool calls, a LangGraph investigation loop, and an in-memory MCP session.
-It compares diagnoses with injected ground truth. Twenty-two authorized Haiku smoke
-investigations have completed across several prompt versions. The latest five
-fresh-seed cases correctly identified the service and fault, with zero validation
-rejections or output truncations and $0.175430 total usage-derived cost. See
-[latest validation](docs/live-v8-fresh-faults.md), including an observed log-excerpt
-relevance issue. These small synthetic runs do not establish reliability. No public
-deployment has been completed. Live testing follows the collaborator-approved
-per-test budget.
+It compares diagnoses with injected ground truth. Twenty-nine authorized Haiku smoke
+investigations have completed across several prompt versions. The latest seven
+edge cases met their expected outcomes: six correct service/fault diagnoses and
+one model-submitted abstention on missing telemetry, with zero validation
+rejections or output truncations and $0.287074 total usage-derived cost. See
+[latest validation](docs/live-v8-edge-cases.md), including the limits of the tests
+and supplemental evidence selection. These small synthetic runs do not establish
+reliability. No public deployment has been completed. Live testing follows the
+collaborator-approved per-test budget.
 
 The existing simulator models six fault types across seven services. This is not
 a Docker service fault lab. Runbook retrieval uses sparse TF-IDF vectors and
@@ -70,6 +71,13 @@ Measured offline baselines and live-model runs on synthetic telemetry. Transport
 | live-v6-traffic_spike-2026-10-12-af571910c196 | live LLM + in-memory MCP | 1 | 0.0% (0.0–79.3) | 0 | correction_limit | $0.083196 | 50.171236 / 50.171236 |
 | live-v7-missing_evidence-2026-10-12-b1eb096c5e8a | live LLM + in-memory MCP | 1 | 100.0% (20.7–100.0) | 0 | model_submission | $0.046017 | 23.963900 / 23.963900 |
 | live-v7-traffic_spike-2026-10-12-b13344078fec | live LLM + in-memory MCP | 1 | 0.0% (0.0–79.3) | 0 | correction_limit | $0.066144 | 32.630571 / 32.630571 |
+| live-v8-edge-healthy_decoy_bad_deploy-2026-10-12-6fe371dfa1ba | live LLM + in-memory MCP | 1 | 100.0% (20.7–100.0) | 0 | model_submission | $0.023173 | 10.136017 / 10.136017 |
+| live-v8-edge-healthy_decoy_slow_dependency-2026-10-12-565a7be5c36e | live LLM + in-memory MCP | 1 | 100.0% (20.7–100.0) | 0 | model_submission | $0.069134 | 28.526991 / 28.526991 |
+| live-v8-edge-missing_evidence-2026-10-12-e689ff96783b | live LLM + in-memory MCP | 1 | 100.0% (20.7–100.0) | 0 | model_submission | $0.059857 | 26.653090 / 26.653090 |
+| live-v8-edge-paraphrased_memory-2026-10-12-535a39be1b0d | live LLM + in-memory MCP | 1 | 100.0% (20.7–100.0) | 0 | model_submission | $0.039318 | 20.815908 / 20.815908 |
+| live-v8-edge-paraphrased_traffic-2026-10-12-102febf5812e | live LLM + in-memory MCP | 1 | 100.0% (20.7–100.0) | 0 | model_submission | $0.034189 | 18.473331 / 18.473331 |
+| live-v8-edge-recovered_cert_expiry-2026-10-12-14707fd79e76 | live LLM + in-memory MCP | 1 | 100.0% (20.7–100.0) | 0 | model_submission | $0.033831 | 15.390886 / 15.390886 |
+| live-v8-edge-recovered_config_error-2026-10-12-b05d34b92e6a | live LLM + in-memory MCP | 1 | 100.0% (20.7–100.0) | 0 | model_submission | $0.027572 | 15.454498 / 15.454498 |
 | live-v8-fresh-bad_deploy-2026-10-12-9325ca477558 | live LLM + in-memory MCP | 1 | 100.0% (20.7–100.0) | 0 | model_submission | $0.035465 | 18.609498 / 18.609498 |
 | live-v8-fresh-cert_expiry-2026-10-12-c4ff87345fd9 | live LLM + in-memory MCP | 1 | 100.0% (20.7–100.0) | 0 | model_submission | $0.017638 | 10.099435 / 10.099435 |
 | live-v8-fresh-config_error-2026-10-12-0ae903125704 | live LLM + in-memory MCP | 1 | 100.0% (20.7–100.0) | 0 | model_submission | $0.025144 | 11.766235 / 11.766235 |
@@ -93,7 +101,7 @@ Measured offline baselines and live-model runs on synthetic telemetry. Transport
 | v8-offline-rules-v1-76a7aece1c0a | direct simulator log search | 24 | 33.3% (18.0–53.3) | 0 | not applicable | $0.000000 | 0.000146 / 0.001034 |
 | v8-offline-rules-v2-20c7e2b15ee1 | direct simulator log search | 24 | 33.3% (18.0–53.3) | 0 | not applicable | $0.000000 | 0.000140 / 0.000984 |
 
-Outcome accuracy counts a budget-forced abstention as correct on redacted cases; it does not demonstrate model-selected stopping. Finalization is persisted for new runs or derived from reviewed saved traces; older runs may show not recorded. Latency quantiles describe runs without exceptions; diagnostic misses remain included. Failure elapsed time and observed spend remain in JSON records. API cost is calculated from provider-reported token usage at list prices, not reconciled against an invoice. Structured action compatibility is not a remediation-quality score. These small live smoke runs do not establish reliability; see docs/live-v8-fresh-faults.md for the latest five fresh-seed outcomes and an excerpt relevance limitation, docs/live-v8-validation.md for the prior traffic/redacted pair, docs/live-v7-validation.md for prior mixed results, and docs/observation-id-evidence.md for the interface changes.
+Outcome accuracy counts a budget-forced abstention as correct on redacted cases; it does not demonstrate model-selected stopping. Finalization is persisted for new runs or derived from reviewed saved traces; older runs may show not recorded. Latency quantiles describe runs without exceptions; diagnostic misses remain included. Failure elapsed time and observed spend remain in JSON records. API cost is calculated from provider-reported token usage at list prices, not reconciled against an invoice. Structured action compatibility is not a remediation-quality score. These small live smoke runs do not establish reliability; see docs/live-v8-edge-cases.md for the latest seven challenge outcomes and remaining presentation limitations, docs/live-v8-fresh-faults.md for the prior five fresh-seed outcomes, docs/live-v8-validation.md for the prior traffic/redacted pair, docs/live-v7-validation.md for prior mixed results, and docs/observation-id-evidence.md for the interface changes.
 
 Retrieval smoke checks (small author-written query set):
 - tfidf: 14 queries, recall@1 100.0%, recall@3 100.0%.

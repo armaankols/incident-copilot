@@ -1,0 +1,204 @@
+{
+  "name": "live-v8-edge-paraphrased_traffic-2026-10-12-102febf5812e",
+  "config": {
+    "agent": "llm",
+    "suite": "correlated-v2",
+    "model": "claude-haiku-4-5-20251001",
+    "n": 1,
+    "seed": 2,
+    "case_offset": 5,
+    "no_rag": false,
+    "embedder": "tfidf",
+    "max_steps": 12,
+    "concurrency": 1,
+    "save_traces": true,
+    "name": "live-v8-edge-paraphrased_traffic-2026-10-12",
+    "approved_batch_budget_usd": 3.5,
+    "approved_per_test_budget_usd": 0.5,
+    "standing_per_test_approval": true,
+    "batch_id": "2c68299a49ab"
+  },
+  "metadata": {
+    "run_id": "102febf5812e",
+    "started_at": "2026-10-12T22:48:46.993403+00:00",
+    "source_sha256": "78bbfc376e734321a69670252ba3df29555db41adecafa2b1aa94422b6c3ac58",
+    "dataset_sha256": "8f9965e06fc2514d232a55ac2a653f27af1fe95ae4a3249838bca5b88e00af58",
+    "dataset_version": "correlated-v2",
+    "prompt_version": "evidence-v8-observation-id-submission",
+    "python": "3.12.15",
+    "baseline_transport": null,
+    "git_revision": "3d133695836ea3a514c27036a6d3e8697f2da202",
+    "live_call_limits": {
+      "model_calls": 12,
+      "max_input_tokens": 24000,
+      "max_output_tokens": 1000,
+      "sdk_retries": 0,
+      "timeout_s": 180,
+      "output_truncations": 3
+    },
+    "calculated_per_test_token_bound_usd": 0.42,
+    "pricing_verified_on": "2026-10-12",
+    "pricing_source": "https://platform.claude.com/docs/en/about-claude/pricing"
+  },
+  "summary": {
+    "n": 1,
+    "errors": 0,
+    "root_cause_service_acc": 100.0,
+    "fault_type_acc": 100.0,
+    "both_correct_acc": 100.0,
+    "both_correct_ci95": [
+      20.7,
+      100.0
+    ],
+    "action_compatibility_rate": 0.0,
+    "avg_tool_calls": 13,
+    "avg_steps": 5,
+    "avg_input_tokens": 26089,
+    "avg_output_tokens": 1620,
+    "avg_cost_usd": 0.034189,
+    "total_cost_usd": 0.034189,
+    "error_rate": 0.0,
+    "cost_per_correct_diagnosis_usd": 0.034189,
+    "billing_uncertain_runs": 0,
+    "latency_scope": "successful runs only",
+    "total_attempted_latency_s": 18.473331,
+    "latency_p50_s": 18.473331,
+    "latency_p95_s": 18.473331,
+    "accuracy_by_fault_type": {
+      "bad_deploy": 0.0,
+      "memory_leak": 0.0,
+      "slow_dependency": 0.0,
+      "config_error": 0.0,
+      "cert_expiry": 0.0,
+      "traffic_spike": 100.0
+    },
+    "total_observed_usage": {
+      "input_tokens": 26089,
+      "output_tokens": 1620,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0
+    },
+    "outcome_accuracy_by_variant": {
+      "paraphrase": 100.0
+    },
+    "insufficient_evidence_cases": 0,
+    "abstention_accuracy": 0.0,
+    "model_submitted_abstentions": 0,
+    "forced_abstentions": 0,
+    "total_output_truncations": 0,
+    "correct_diagnoses_without_recovery": 1,
+    "finalization_counts": {
+      "model_submission": 1
+    },
+    "total_cache_hits": 0
+  },
+  "records": [
+    {
+      "seed": 2005,
+      "fault_type": "traffic_spike",
+      "root_service": "search",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "search",
+        "fault_type": "traffic_spike",
+        "evidence": [
+          {
+            "observation_id": "obs-11",
+            "quote": "\"status\": \"supported\""
+          },
+          {
+            "observation_id": "obs-12",
+            "quote": "\"status\": \"blocked\""
+          },
+          {
+            "observation_id": "obs-13",
+            "quote": "13:59:00 search WARN admission controller rejecting excess requests: 429 returned for 29% of requests"
+          }
+        ],
+        "action": null,
+        "target": null,
+        "recovery_status": "unverified",
+        "recovery_reason": "No recovery action was verified.",
+        "remediation": "Diagnosis recorded. No recovery action has been verified. Consult the service owner and verify the service recovery policy before selecting a change. No change has been executed."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "error": null,
+      "steps": 5,
+      "tool_calls": 13,
+      "model_calls": 5,
+      "tool_requests": 13,
+      "cache_hits": 0,
+      "validation_rejections": 0,
+      "output_truncations": 0,
+      "stagnant_steps": 1,
+      "termination_reason": "model_submission",
+      "billing_uncertain": false,
+      "investigation_limits": {
+        "model_calls": 12,
+        "tool_requests": 32,
+        "stagnant_rounds": 3,
+        "invalid_submissions": 3,
+        "output_truncations": 3
+      },
+      "usage": {
+        "input_tokens": 26089,
+        "output_tokens": 1620,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "latency_s": 18.47333125001751,
+      "cost_usd": 0.034189,
+      "case_id": "correlated-v2/paraphrase/2005",
+      "variant": "paraphrase"
+    }
+  ],
+  "trace_review": {
+    "finalization_source": "model_submission",
+    "validation_errors": [],
+    "operational_assessments": [
+      {
+        "observation_id": "obs-11",
+        "tool": "check_fault",
+        "service": "search",
+        "fault_type": "traffic_spike",
+        "status": "supported"
+      },
+      {
+        "observation_id": "obs-12",
+        "tool": "check_capacity",
+        "service": "search",
+        "fault_type": null,
+        "status": "blocked"
+      }
+    ],
+    "model_submissions": [
+      {
+        "status": "diagnosed",
+        "root_cause_service": "search",
+        "fault_type": "traffic_spike",
+        "evidence": [
+          "obs-11",
+          "obs-12",
+          "obs-13"
+        ],
+        "action": null,
+        "target": null
+      }
+    ],
+    "submitted_utf8_bytes": [
+      149
+    ],
+    "max_response_output_tokens": 400,
+    "output_limit_responses": 0,
+    "exact_server_excerpts": 3,
+    "evidence_references": 3,
+    "expected_cause_assessment_cited": true,
+    "provider_usage_reconciled": true
+  }
+}

@@ -1,0 +1,236 @@
+{
+  "name": "live-v8-edge-missing_evidence-2026-10-12-e689ff96783b",
+  "config": {
+    "agent": "llm",
+    "suite": "correlated-v2",
+    "model": "claude-haiku-4-5-20251001",
+    "n": 1,
+    "seed": 2,
+    "case_offset": 18,
+    "no_rag": false,
+    "embedder": "tfidf",
+    "max_steps": 12,
+    "concurrency": 1,
+    "save_traces": true,
+    "name": "live-v8-edge-missing_evidence-2026-10-12",
+    "approved_batch_budget_usd": 3.5,
+    "approved_per_test_budget_usd": 0.5,
+    "standing_per_test_approval": true,
+    "batch_id": "2c68299a49ab"
+  },
+  "metadata": {
+    "run_id": "e689ff96783b",
+    "started_at": "2026-10-12T22:50:15.188257+00:00",
+    "source_sha256": "78bbfc376e734321a69670252ba3df29555db41adecafa2b1aa94422b6c3ac58",
+    "dataset_sha256": "04a28f12467abc32058d07ede117fdbca80dd428fb1431ae8924fe9772e51eb1",
+    "dataset_version": "correlated-v2",
+    "prompt_version": "evidence-v8-observation-id-submission",
+    "python": "3.12.15",
+    "baseline_transport": null,
+    "git_revision": "3d133695836ea3a514c27036a6d3e8697f2da202",
+    "live_call_limits": {
+      "model_calls": 12,
+      "max_input_tokens": 24000,
+      "max_output_tokens": 1000,
+      "sdk_retries": 0,
+      "timeout_s": 180,
+      "output_truncations": 3
+    },
+    "calculated_per_test_token_bound_usd": 0.42,
+    "pricing_verified_on": "2026-10-12",
+    "pricing_source": "https://platform.claude.com/docs/en/about-claude/pricing"
+  },
+  "summary": {
+    "n": 1,
+    "errors": 0,
+    "root_cause_service_acc": 0.0,
+    "fault_type_acc": 0.0,
+    "both_correct_acc": 100.0,
+    "both_correct_ci95": [
+      20.7,
+      100.0
+    ],
+    "action_compatibility_rate": 0.0,
+    "avg_tool_calls": 25,
+    "avg_steps": 8,
+    "avg_input_tokens": 47692,
+    "avg_output_tokens": 2433,
+    "avg_cost_usd": 0.059857,
+    "total_cost_usd": 0.059857,
+    "error_rate": 0.0,
+    "cost_per_correct_diagnosis_usd": 0.059857,
+    "billing_uncertain_runs": 0,
+    "latency_scope": "successful runs only",
+    "total_attempted_latency_s": 26.65309,
+    "latency_p50_s": 26.65309,
+    "latency_p95_s": 26.65309,
+    "accuracy_by_fault_type": {
+      "bad_deploy": 0.0,
+      "memory_leak": 0.0,
+      "slow_dependency": 0.0,
+      "config_error": 0.0,
+      "cert_expiry": 0.0,
+      "traffic_spike": 0.0
+    },
+    "total_observed_usage": {
+      "input_tokens": 47692,
+      "output_tokens": 2433,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0
+    },
+    "outcome_accuracy_by_variant": {
+      "redacted": 100.0
+    },
+    "insufficient_evidence_cases": 1,
+    "abstention_accuracy": 100.0,
+    "model_submitted_abstentions": 1,
+    "forced_abstentions": 0,
+    "total_output_truncations": 0,
+    "correct_diagnoses_without_recovery": 0,
+    "finalization_counts": {
+      "model_submission": 1
+    },
+    "total_cache_hits": 0
+  },
+  "records": [
+    {
+      "seed": 2018,
+      "fault_type": "insufficient_evidence",
+      "root_service": null,
+      "diagnosis": {
+        "status": "insufficient_evidence",
+        "root_cause_service": null,
+        "fault_type": null,
+        "evidence": [],
+        "action": null,
+        "target": null,
+        "recovery_status": "unavailable",
+        "recovery_reason": "Diagnostic evidence is insufficient.",
+        "remediation": "Insufficient evidence to recommend a recovery action. Gather missing telemetry and consult the service owner before selecting a change."
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": true,
+        "remediation_ok": false,
+        "abstained": true
+      },
+      "error": null,
+      "steps": 8,
+      "tool_calls": 25,
+      "model_calls": 8,
+      "tool_requests": 25,
+      "cache_hits": 0,
+      "validation_rejections": 0,
+      "output_truncations": 0,
+      "stagnant_steps": 1,
+      "termination_reason": "model_submission",
+      "billing_uncertain": false,
+      "investigation_limits": {
+        "model_calls": 12,
+        "tool_requests": 32,
+        "stagnant_rounds": 3,
+        "invalid_submissions": 3,
+        "output_truncations": 3
+      },
+      "usage": {
+        "input_tokens": 47692,
+        "output_tokens": 2433,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "latency_s": 26.65309008298209,
+      "cost_usd": 0.059857,
+      "case_id": "correlated-v2/redacted/2018",
+      "variant": "redacted"
+    }
+  ],
+  "trace_review": {
+    "finalization_source": "model_submission",
+    "validation_errors": [],
+    "operational_assessments": [
+      {
+        "observation_id": "obs-9",
+        "tool": "check_fault",
+        "service": "gateway",
+        "fault_type": "slow_dependency",
+        "status": "unknown"
+      },
+      {
+        "observation_id": "obs-13",
+        "tool": "check_fault",
+        "service": "gateway",
+        "fault_type": "traffic_spike",
+        "status": "unknown"
+      },
+      {
+        "observation_id": "obs-14",
+        "tool": "check_fault",
+        "service": "gateway",
+        "fault_type": "memory_leak",
+        "status": "unknown"
+      },
+      {
+        "observation_id": "obs-15",
+        "tool": "check_capacity",
+        "service": "gateway",
+        "fault_type": null,
+        "status": "unknown"
+      },
+      {
+        "observation_id": "obs-17",
+        "tool": "check_change",
+        "service": "gateway",
+        "fault_type": "bad_deploy",
+        "status": "unknown"
+      },
+      {
+        "observation_id": "obs-18",
+        "tool": "check_change",
+        "service": "gateway",
+        "fault_type": "config_error",
+        "status": "unknown"
+      },
+      {
+        "observation_id": "obs-23",
+        "tool": "check_certificate",
+        "service": "gateway",
+        "fault_type": null,
+        "status": "unknown"
+      },
+      {
+        "observation_id": "obs-24",
+        "tool": "check_certificate",
+        "service": "auth",
+        "fault_type": null,
+        "status": "unknown"
+      },
+      {
+        "observation_id": "obs-25",
+        "tool": "check_certificate",
+        "service": "search",
+        "fault_type": null,
+        "status": "unknown"
+      }
+    ],
+    "model_submissions": [
+      {
+        "status": "insufficient_evidence",
+        "root_cause_service": null,
+        "fault_type": null,
+        "evidence": [],
+        "action": null,
+        "target": null
+      }
+    ],
+    "submitted_utf8_bytes": [
+      120
+    ],
+    "max_response_output_tokens": 545,
+    "output_limit_responses": 0,
+    "exact_server_excerpts": 0,
+    "evidence_references": 0,
+    "expected_cause_assessment_cited": false,
+    "provider_usage_reconciled": true
+  }
+}

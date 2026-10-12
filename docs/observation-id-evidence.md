@@ -150,3 +150,8 @@ line, and 15/15 remain exact source substrings. Historical live records are
 unchanged. See [excerpt-verification.json](excerpt-verification.json). No provider
 calls were made in this revalidation. The suite passed 171 tests in 3.25 seconds;
 the six-fault matrix and migrated-reference replay also passed.
+
+The subsequent [seven-case live challenge batch](live-v8-edge-cases.md) met all
+expected outcomes with zero rejections/truncations. It also demonstrates the
+fallback limitation: a supplemental gateway retry log remained generic when no
+assessment-backed record existed in the selected observation.

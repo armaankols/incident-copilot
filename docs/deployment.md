@@ -6,14 +6,19 @@ verification passed HTTP, non-root execution and budget/replay persistence check
 (`container-verification-v8.json`); CI also covers Linux AMD64. Browser checks were
 reported working by the user on 2026-10-06.
 
-Twenty-two authorized Haiku smoke investigations completed across prompt versions.
-The current v8 interface met expected diagnostic outcomes on all seven exercised
-cases: six original fault types and one redacted-evidence case. Five original cases
-used fresh seeds. An observed memory-log excerpt selected an unrelated later
-record; the assessment-backed excerpt fix now selects the OOMKilled line in
-offline revalidation. The user requested misleading/paraphrased telemetry
-challenge tests before public deployment. These smoke cases do not establish
-production reliability or recovery effectiveness. See [latest live validation](live-v8-fresh-faults.md).
+Twenty-nine authorized Haiku smoke investigations completed across prompt versions.
+The seven latest selected edge cases met expected outcomes: six correct diagnoses
+and one model-selected missing-evidence abstention, with zero rejections or
+truncations. The assessment-backed excerpt fix repairs the recorded memory log
+selection. Generic supplemental source selections can still display generic
+excerpts. These small tests do not establish production reliability or recovery
+effectiveness. See [latest live validation](live-v8-edge-cases.md).
+
+The updated local container passed HTTP, non-root execution and persistent
+ledger/replay checks; see `container-verification-excerpt.json`. The user requested
+these edge-case tests before deployment; they are complete. Broader repeated-seed
+challenge and recovery experiments remain follow-up work. Account/destination
+access and hosting budget are still needed before public deployment.
 
 All six fault types now require matching MCP assessments, missing telemetry is
 explicit, and diagnostic cause is separate from recovery recommendations. Standing

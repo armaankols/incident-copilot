@@ -1,0 +1,225 @@
+{
+  "name": "live-v8-edge-healthy_decoy_slow_dependency-2026-10-12-565a7be5c36e",
+  "config": {
+    "agent": "llm",
+    "suite": "correlated-v2",
+    "model": "claude-haiku-4-5-20251001",
+    "n": 1,
+    "seed": 2,
+    "case_offset": 8,
+    "no_rag": false,
+    "embedder": "tfidf",
+    "max_steps": 12,
+    "concurrency": 1,
+    "save_traces": true,
+    "name": "live-v8-edge-healthy_decoy_slow_dependency-2026-10-12",
+    "approved_batch_budget_usd": 3.5,
+    "approved_per_test_budget_usd": 0.5,
+    "standing_per_test_approval": true,
+    "batch_id": "2c68299a49ab"
+  },
+  "metadata": {
+    "run_id": "565a7be5c36e",
+    "started_at": "2026-10-12T22:49:15.698619+00:00",
+    "source_sha256": "78bbfc376e734321a69670252ba3df29555db41adecafa2b1aa94422b6c3ac58",
+    "dataset_sha256": "6db698dd2e2fc36b9cbe799e1d3bd4122f33296723ce59ec60b5dec1dd5dd8ad",
+    "dataset_version": "correlated-v2",
+    "prompt_version": "evidence-v8-observation-id-submission",
+    "python": "3.12.15",
+    "baseline_transport": null,
+    "git_revision": "3d133695836ea3a514c27036a6d3e8697f2da202",
+    "live_call_limits": {
+      "model_calls": 12,
+      "max_input_tokens": 24000,
+      "max_output_tokens": 1000,
+      "sdk_retries": 0,
+      "timeout_s": 180,
+      "output_truncations": 3
+    },
+    "calculated_per_test_token_bound_usd": 0.42,
+    "pricing_verified_on": "2026-10-12",
+    "pricing_source": "https://platform.claude.com/docs/en/about-claude/pricing"
+  },
+  "summary": {
+    "n": 1,
+    "errors": 0,
+    "root_cause_service_acc": 100.0,
+    "fault_type_acc": 100.0,
+    "both_correct_acc": 100.0,
+    "both_correct_ci95": [
+      20.7,
+      100.0
+    ],
+    "action_compatibility_rate": 0.0,
+    "avg_tool_calls": 17,
+    "avg_steps": 9,
+    "avg_input_tokens": 57664,
+    "avg_output_tokens": 2294,
+    "avg_cost_usd": 0.069134,
+    "total_cost_usd": 0.069134,
+    "error_rate": 0.0,
+    "cost_per_correct_diagnosis_usd": 0.069134,
+    "billing_uncertain_runs": 0,
+    "latency_scope": "successful runs only",
+    "total_attempted_latency_s": 28.526991,
+    "latency_p50_s": 28.526991,
+    "latency_p95_s": 28.526991,
+    "accuracy_by_fault_type": {
+      "bad_deploy": 0.0,
+      "memory_leak": 0.0,
+      "slow_dependency": 100.0,
+      "config_error": 0.0,
+      "cert_expiry": 0.0,
+      "traffic_spike": 0.0
+    },
+    "total_observed_usage": {
+      "input_tokens": 57664,
+      "output_tokens": 2294,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0
+    },
+    "outcome_accuracy_by_variant": {
+      "healthy_decoy": 100.0
+    },
+    "insufficient_evidence_cases": 0,
+    "abstention_accuracy": 0.0,
+    "model_submitted_abstentions": 0,
+    "forced_abstentions": 0,
+    "total_output_truncations": 0,
+    "correct_diagnoses_without_recovery": 1,
+    "finalization_counts": {
+      "model_submission": 1
+    },
+    "total_cache_hits": 0
+  },
+  "records": [
+    {
+      "seed": 2008,
+      "fault_type": "slow_dependency",
+      "root_service": "postgres",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "postgres",
+        "fault_type": "slow_dependency",
+        "evidence": [
+          {
+            "observation_id": "obs-16",
+            "quote": "\"status\": \"supported\""
+          },
+          {
+            "observation_id": "obs-9",
+            "quote": "13:59:00 orders ERROR timeout after 1000ms calling postgres"
+          },
+          {
+            "observation_id": "obs-5",
+            "quote": "postgres.p95_latency_ms last 60m: min=11.6 mean=592.9 max=919.2 latest=914.8"
+          }
+        ],
+        "action": null,
+        "target": null,
+        "recovery_status": "unverified",
+        "recovery_reason": "No recovery action was verified.",
+        "remediation": "Diagnosis recorded. No recovery action has been verified. Consult the service owner and verify the service recovery policy before selecting a change. No change has been executed."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "error": null,
+      "steps": 9,
+      "tool_calls": 17,
+      "model_calls": 9,
+      "tool_requests": 17,
+      "cache_hits": 0,
+      "validation_rejections": 0,
+      "output_truncations": 0,
+      "stagnant_steps": 1,
+      "termination_reason": "model_submission",
+      "billing_uncertain": false,
+      "investigation_limits": {
+        "model_calls": 12,
+        "tool_requests": 32,
+        "stagnant_rounds": 3,
+        "invalid_submissions": 3,
+        "output_truncations": 3
+      },
+      "usage": {
+        "input_tokens": 57664,
+        "output_tokens": 2294,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "latency_s": 28.52699099999154,
+      "cost_usd": 0.069134,
+      "case_id": "correlated-v2/healthy_decoy/2008",
+      "variant": "healthy_decoy"
+    }
+  ],
+  "trace_review": {
+    "finalization_source": "model_submission",
+    "validation_errors": [],
+    "operational_assessments": [
+      {
+        "observation_id": "obs-7",
+        "tool": "check_fault",
+        "service": "gateway",
+        "fault_type": "slow_dependency",
+        "status": "unknown"
+      },
+      {
+        "observation_id": "obs-11",
+        "tool": "check_change",
+        "service": "postgres",
+        "fault_type": "config_error",
+        "status": "unknown"
+      },
+      {
+        "observation_id": "obs-14",
+        "tool": "check_change",
+        "service": "gateway",
+        "fault_type": "bad_deploy",
+        "status": "unknown"
+      },
+      {
+        "observation_id": "obs-16",
+        "tool": "check_fault",
+        "service": "postgres",
+        "fault_type": "slow_dependency",
+        "status": "supported"
+      },
+      {
+        "observation_id": "obs-17",
+        "tool": "check_capacity",
+        "service": "postgres",
+        "fault_type": null,
+        "status": "unknown"
+      }
+    ],
+    "model_submissions": [
+      {
+        "status": "diagnosed",
+        "root_cause_service": "postgres",
+        "fault_type": "slow_dependency",
+        "evidence": [
+          "obs-16",
+          "obs-9",
+          "obs-5"
+        ],
+        "action": null,
+        "target": null
+      }
+    ],
+    "submitted_utf8_bytes": [
+      151
+    ],
+    "max_response_output_tokens": 416,
+    "output_limit_responses": 0,
+    "exact_server_excerpts": 3,
+    "evidence_references": 3,
+    "expected_cause_assessment_cited": true,
+    "provider_usage_reconciled": true
+  }
+}

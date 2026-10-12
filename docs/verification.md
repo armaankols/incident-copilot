@@ -9,7 +9,7 @@ Python 3.12.15 is installed at `/opt/homebrew/bin/python3.12`; `.venv` is ready.
 The user installed dependencies from a terminal outside the restricted shell.
 `requirements.lock` pins 72 runtime packages; `requirements-dev.lock` pins 76
 packages, including the development dependencies. Locks have no wheel hashes.
-Twenty-two authorized live smoke investigations completed by 2026-10-12. No deployment
+Twenty-nine authorized live smoke investigations completed by 2026-10-12. No deployment
 has been performed. Standing API-test approval for this collaboration is up to
 $0.50 per test (user instruction, 2026-10-12). Before each test, verify a conservative
 token-cost bound; proceed without another API-budget confirmation within $0.50,
@@ -17,7 +17,7 @@ and ask if the test requires a higher or unverified bound.
 
 Measured on Python 3.12.15:
 
-- `python -m pytest -q tests`: 158 passed (2026-10-12; 3.17 seconds).
+- `python -m pytest -q tests`: 171 passed (2026-10-12; 3.25 seconds).
 - `python -m pip check`: no broken requirements.
 - `python -m evals.retrieval_eval`: TF-IDF recall@1 and recall@3 both 14/14;
   optional FastEmbed skipped because it is not installed.
@@ -166,3 +166,12 @@ record; all five diagnoses/recovery fields stayed unchanged and all 15 excerpts
 match their sources. Evidence matrix and migrated replay passed without provider
 calls. See [excerpt-verification.json](excerpt-verification.json). User requested
 edge-case live tests before deployment after initially considering deferral.
+
+V8 selected edge-case batch: seven expected outcomes met (six diagnoses plus one
+model-submitted abstention), $0.287074 total usage-derived cost, zero rejections,
+truncations, errors or uncertain billing. All 41 response usages and 16 source
+excerpts reconciled. A supplemental gateway retry excerpt remains generic when
+no matching assessment record exists in that selected source. Latest local
+container verification passed HTTP/non-root/persistence checks; no deployment
+has occurred. See [live-v8-edge-cases.md](live-v8-edge-cases.md) and
+[container-verification-excerpt.json](container-verification-excerpt.json).

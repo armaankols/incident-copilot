@@ -1,0 +1,192 @@
+{
+  "name": "live-v8-edge-healthy_decoy_bad_deploy-2026-10-12-6fe371dfa1ba",
+  "config": {
+    "agent": "llm",
+    "suite": "correlated-v2",
+    "model": "claude-haiku-4-5-20251001",
+    "n": 1,
+    "seed": 2,
+    "case_offset": 6,
+    "no_rag": false,
+    "embedder": "tfidf",
+    "max_steps": 12,
+    "concurrency": 1,
+    "save_traces": true,
+    "name": "live-v8-edge-healthy_decoy_bad_deploy-2026-10-12",
+    "approved_batch_budget_usd": 3.5,
+    "approved_per_test_budget_usd": 0.5,
+    "standing_per_test_approval": true,
+    "batch_id": "2c68299a49ab"
+  },
+  "metadata": {
+    "run_id": "6fe371dfa1ba",
+    "started_at": "2026-10-12T22:49:05.532776+00:00",
+    "source_sha256": "78bbfc376e734321a69670252ba3df29555db41adecafa2b1aa94422b6c3ac58",
+    "dataset_sha256": "f053e2e88f9436576d0b09904e2ec2b9ef71f9ccbf2a212054cf7402e0cb9dee",
+    "dataset_version": "correlated-v2",
+    "prompt_version": "evidence-v8-observation-id-submission",
+    "python": "3.12.15",
+    "baseline_transport": null,
+    "git_revision": "3d133695836ea3a514c27036a6d3e8697f2da202",
+    "live_call_limits": {
+      "model_calls": 12,
+      "max_input_tokens": 24000,
+      "max_output_tokens": 1000,
+      "sdk_retries": 0,
+      "timeout_s": 180,
+      "output_truncations": 3
+    },
+    "calculated_per_test_token_bound_usd": 0.42,
+    "pricing_verified_on": "2026-10-12",
+    "pricing_source": "https://platform.claude.com/docs/en/about-claude/pricing"
+  },
+  "summary": {
+    "n": 1,
+    "errors": 0,
+    "root_cause_service_acc": 100.0,
+    "fault_type_acc": 100.0,
+    "both_correct_acc": 100.0,
+    "both_correct_ci95": [
+      20.7,
+      100.0
+    ],
+    "action_compatibility_rate": 100.0,
+    "avg_tool_calls": 7,
+    "avg_steps": 4,
+    "avg_input_tokens": 19283,
+    "avg_output_tokens": 778,
+    "avg_cost_usd": 0.023173,
+    "total_cost_usd": 0.023173,
+    "error_rate": 0.0,
+    "cost_per_correct_diagnosis_usd": 0.023173,
+    "billing_uncertain_runs": 0,
+    "latency_scope": "successful runs only",
+    "total_attempted_latency_s": 10.136017,
+    "latency_p50_s": 10.136017,
+    "latency_p95_s": 10.136017,
+    "accuracy_by_fault_type": {
+      "bad_deploy": 100.0,
+      "memory_leak": 0.0,
+      "slow_dependency": 0.0,
+      "config_error": 0.0,
+      "cert_expiry": 0.0,
+      "traffic_spike": 0.0
+    },
+    "total_observed_usage": {
+      "input_tokens": 19283,
+      "output_tokens": 778,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0
+    },
+    "outcome_accuracy_by_variant": {
+      "healthy_decoy": 100.0
+    },
+    "insufficient_evidence_cases": 0,
+    "abstention_accuracy": 0.0,
+    "model_submitted_abstentions": 0,
+    "forced_abstentions": 0,
+    "total_output_truncations": 0,
+    "correct_diagnoses_without_recovery": 0,
+    "finalization_counts": {
+      "model_submission": 1
+    },
+    "total_cache_hits": 0
+  },
+  "records": [
+    {
+      "seed": 2006,
+      "fault_type": "bad_deploy",
+      "root_service": "search",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "search",
+        "fault_type": "bad_deploy",
+        "evidence": [
+          {
+            "observation_id": "obs-6",
+            "quote": "13:58:00 search ERROR unhandled exception in load_profile: TypeError: 'NoneType' has no attribute 'id' (build v2.0.1)"
+          },
+          {
+            "observation_id": "obs-7",
+            "quote": "\"status\": \"supported\""
+          }
+        ],
+        "action": "rollback",
+        "target": "search",
+        "recovery_status": "recommended",
+        "recovery_reason": "Compatible recommendation; service policy still requires verification.",
+        "remediation": "Recommendation only; no change has been executed. Consider rolling back search only after verifying the previous healthy release in deployment records and checking schema/configuration compatibility. A rollback version has not been verified by this investigation. After any approved change, check service and caller error rates and latency against their configured SLOs."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "error": null,
+      "steps": 4,
+      "tool_calls": 7,
+      "model_calls": 4,
+      "tool_requests": 7,
+      "cache_hits": 0,
+      "validation_rejections": 0,
+      "output_truncations": 0,
+      "stagnant_steps": 1,
+      "termination_reason": "model_submission",
+      "billing_uncertain": false,
+      "investigation_limits": {
+        "model_calls": 12,
+        "tool_requests": 32,
+        "stagnant_rounds": 3,
+        "invalid_submissions": 3,
+        "output_truncations": 3
+      },
+      "usage": {
+        "input_tokens": 19283,
+        "output_tokens": 778,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "latency_s": 10.13601654098602,
+      "cost_usd": 0.023173,
+      "case_id": "correlated-v2/healthy_decoy/2006",
+      "variant": "healthy_decoy"
+    }
+  ],
+  "trace_review": {
+    "finalization_source": "model_submission",
+    "validation_errors": [],
+    "operational_assessments": [
+      {
+        "observation_id": "obs-7",
+        "tool": "check_change",
+        "service": "search",
+        "fault_type": "bad_deploy",
+        "status": "supported"
+      }
+    ],
+    "model_submissions": [
+      {
+        "status": "diagnosed",
+        "root_cause_service": "search",
+        "fault_type": "bad_deploy",
+        "evidence": [
+          "obs-6",
+          "obs-7"
+        ],
+        "action": "rollback",
+        "target": "search"
+      }
+    ],
+    "submitted_utf8_bytes": [
+      145
+    ],
+    "max_response_output_tokens": 278,
+    "output_limit_responses": 0,
+    "exact_server_excerpts": 2,
+    "evidence_references": 2,
+    "expected_cause_assessment_cited": true,
+    "provider_usage_reconciled": true
+  }
+}
