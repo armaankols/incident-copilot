@@ -7,7 +7,7 @@ what makes the eval harness objective: no LLM judge is needed to score a diagnos
 from __future__ import annotations
 
 import random
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 
 SERVICES = ["gateway", "auth", "orders", "payments", "inventory", "search", "postgres"]
@@ -72,6 +72,12 @@ class Scenario:
     deploys: list         # dicts
     alert: str
     now: int = MINUTES - 1
+    telemetry_availability: dict = field(default_factory=dict)
+
+    def availability(self, source, service=None):
+        """Observable collection coverage; independent of injected fault labels."""
+        value = self.telemetry_availability.get(source, {}) if service else self.telemetry_availability.get(source, "available")
+        return value.get(service, "available") if service else value
 
 
 def ts(minute: int, sec: int = 0) -> str:

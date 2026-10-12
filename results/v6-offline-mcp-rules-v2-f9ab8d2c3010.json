@@ -1,0 +1,935 @@
+{
+  "name": "v6-offline-mcp-rules-v2-f9ab8d2c3010",
+  "config": {
+    "agent": "rules-mcp",
+    "suite": "correlated-v2",
+    "model": "claude-haiku-4-5-20251001",
+    "n": 24,
+    "seed": 0,
+    "case_offset": 0,
+    "no_rag": false,
+    "embedder": "tfidf",
+    "max_steps": 12,
+    "concurrency": 4,
+    "save_traces": false,
+    "name": "v6-offline-mcp-rules-v2"
+  },
+  "metadata": {
+    "run_id": "f9ab8d2c3010",
+    "started_at": "2026-10-12T18:26:35.486511+00:00",
+    "source_sha256": "3a6d6c5196d5a37959e5320f639375810452380bb02811bfe9523f0284719ccc",
+    "dataset_sha256": "0d4850f83f89f3c16a8e83390bf71bc742a95124a0f3ada4e8ac35a37eeff212",
+    "dataset_version": "correlated-v2",
+    "prompt_version": "evidence-v6-change-evidence-availability",
+    "python": "3.12.15",
+    "baseline_transport": "in-memory MCP"
+  },
+  "summary": {
+    "n": 24,
+    "errors": 0,
+    "root_cause_service_acc": 8.3,
+    "fault_type_acc": 8.3,
+    "both_correct_acc": 33.3,
+    "both_correct_ci95": [
+      18.0,
+      53.3
+    ],
+    "action_compatibility_rate": 8.3,
+    "avg_tool_calls": 4,
+    "avg_steps": 0,
+    "avg_input_tokens": 0,
+    "avg_output_tokens": 0,
+    "avg_cost_usd": 0.0,
+    "total_cost_usd": 0.0,
+    "error_rate": 0.0,
+    "cost_per_correct_diagnosis_usd": 0.0,
+    "billing_uncertain_runs": 0,
+    "latency_scope": "successful runs only",
+    "total_attempted_latency_s": 3.294039,
+    "latency_p50_s": 0.115053,
+    "latency_p95_s": 0.196369,
+    "accuracy_by_fault_type": {
+      "bad_deploy": 66.7,
+      "memory_leak": 0.0,
+      "slow_dependency": 0.0,
+      "config_error": 0.0,
+      "cert_expiry": 0.0,
+      "traffic_spike": 0.0
+    },
+    "total_observed_usage": {
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0
+    },
+    "outcome_accuracy_by_variant": {
+      "healthy_decoy": 16.7,
+      "paraphrase": 0.0,
+      "recovered_error": 16.7,
+      "redacted": 100.0
+    },
+    "insufficient_evidence_cases": 6,
+    "abstention_accuracy": 100.0,
+    "model_submitted_abstentions": 0,
+    "forced_abstentions": 0,
+    "correct_diagnoses_without_recovery": 0,
+    "finalization_counts": {
+      "not_recorded": 24
+    },
+    "total_cache_hits": 0
+  },
+  "records": [
+    {
+      "seed": 0,
+      "fault_type": "bad_deploy",
+      "root_service": "auth",
+      "diagnosis": {
+        "status": "insufficient_evidence",
+        "root_cause_service": null,
+        "fault_type": null,
+        "evidence": [],
+        "action": null,
+        "target": null,
+        "remediation": "No known log signature matched."
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": true
+      },
+      "steps": 0,
+      "tool_calls": 7,
+      "cost_usd": 0.0,
+      "latency_s": 0.43742808399838395,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "correlated-v2/paraphrase/0",
+      "variant": "paraphrase"
+    },
+    {
+      "seed": 1,
+      "fault_type": "memory_leak",
+      "root_service": "payments",
+      "diagnosis": {
+        "status": "insufficient_evidence",
+        "root_cause_service": null,
+        "fault_type": null,
+        "evidence": [],
+        "action": null,
+        "target": null,
+        "remediation": "No known log signature matched."
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": true
+      },
+      "steps": 0,
+      "tool_calls": 7,
+      "cost_usd": 0.0,
+      "latency_s": 0.19636912501300685,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "correlated-v2/paraphrase/1",
+      "variant": "paraphrase"
+    },
+    {
+      "seed": 2,
+      "fault_type": "slow_dependency",
+      "root_service": "postgres",
+      "diagnosis": {
+        "status": "insufficient_evidence",
+        "root_cause_service": null,
+        "fault_type": null,
+        "evidence": [],
+        "action": null,
+        "target": null,
+        "remediation": "No known log signature matched."
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": true
+      },
+      "steps": 0,
+      "tool_calls": 7,
+      "cost_usd": 0.0,
+      "latency_s": 0.1918136250169482,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "correlated-v2/paraphrase/2",
+      "variant": "paraphrase"
+    },
+    {
+      "seed": 3,
+      "fault_type": "config_error",
+      "root_service": "orders",
+      "diagnosis": {
+        "status": "insufficient_evidence",
+        "root_cause_service": null,
+        "fault_type": null,
+        "evidence": [],
+        "action": null,
+        "target": null,
+        "remediation": "No known log signature matched."
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": true
+      },
+      "steps": 0,
+      "tool_calls": 7,
+      "cost_usd": 0.0,
+      "latency_s": 0.18762970800162293,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "correlated-v2/paraphrase/3",
+      "variant": "paraphrase"
+    },
+    {
+      "seed": 4,
+      "fault_type": "cert_expiry",
+      "root_service": "payments",
+      "diagnosis": {
+        "status": "insufficient_evidence",
+        "root_cause_service": null,
+        "fault_type": null,
+        "evidence": [],
+        "action": null,
+        "target": null,
+        "remediation": "No known log signature matched."
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": true
+      },
+      "steps": 0,
+      "tool_calls": 7,
+      "cost_usd": 0.0,
+      "latency_s": 0.1835732919862494,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "correlated-v2/paraphrase/4",
+      "variant": "paraphrase"
+    },
+    {
+      "seed": 5,
+      "fault_type": "traffic_spike",
+      "root_service": "search",
+      "diagnosis": {
+        "status": "insufficient_evidence",
+        "root_cause_service": null,
+        "fault_type": null,
+        "evidence": [],
+        "action": null,
+        "target": null,
+        "remediation": "No known log signature matched."
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": true
+      },
+      "steps": 0,
+      "tool_calls": 7,
+      "cost_usd": 0.0,
+      "latency_s": 0.1791737920138985,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "correlated-v2/paraphrase/5",
+      "variant": "paraphrase"
+    },
+    {
+      "seed": 6,
+      "fault_type": "bad_deploy",
+      "root_service": "search",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "search",
+        "fault_type": "bad_deploy",
+        "evidence": [
+          {
+            "observation_id": "obs-1",
+            "quote": "13:58:00 search ERROR unhandled exception in validate_request: NullPointerException (build v1.19.3)"
+          }
+        ],
+        "action": "rollback",
+        "target": "search",
+        "remediation": "Recommend rollback on search; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 1,
+      "cost_usd": 0.0,
+      "latency_s": 0.12371104201884009,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "correlated-v2/healthy_decoy/6",
+      "variant": "healthy_decoy"
+    },
+    {
+      "seed": 7,
+      "fault_type": "memory_leak",
+      "root_service": "inventory",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "auth",
+        "fault_type": "bad_deploy",
+        "evidence": [
+          {
+            "observation_id": "obs-1",
+            "quote": "13:58:00 auth INFO diagnostic drill: unhandled exception; recovered immediately, no customer impact"
+          }
+        ],
+        "action": "rollback",
+        "target": "auth",
+        "remediation": "Recommend rollback on auth; approval and verification required."
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 1,
+      "cost_usd": 0.0,
+      "latency_s": 0.11992054199799895,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "correlated-v2/healthy_decoy/7",
+      "variant": "healthy_decoy"
+    },
+    {
+      "seed": 8,
+      "fault_type": "slow_dependency",
+      "root_service": "postgres",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "auth",
+        "fault_type": "bad_deploy",
+        "evidence": [
+          {
+            "observation_id": "obs-1",
+            "quote": "13:58:00 auth INFO diagnostic drill: unhandled exception; recovered immediately, no customer impact"
+          }
+        ],
+        "action": "rollback",
+        "target": "auth",
+        "remediation": "Recommend rollback on auth; approval and verification required."
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 1,
+      "cost_usd": 0.0,
+      "latency_s": 0.11597299997811206,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "correlated-v2/healthy_decoy/8",
+      "variant": "healthy_decoy"
+    },
+    {
+      "seed": 9,
+      "fault_type": "config_error",
+      "root_service": "payments",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "auth",
+        "fault_type": "bad_deploy",
+        "evidence": [
+          {
+            "observation_id": "obs-1",
+            "quote": "13:58:00 auth INFO diagnostic drill: unhandled exception; recovered immediately, no customer impact"
+          }
+        ],
+        "action": "rollback",
+        "target": "auth",
+        "remediation": "Recommend rollback on auth; approval and verification required."
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 1,
+      "cost_usd": 0.0,
+      "latency_s": 0.11174695799127221,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "correlated-v2/healthy_decoy/9",
+      "variant": "healthy_decoy"
+    },
+    {
+      "seed": 10,
+      "fault_type": "cert_expiry",
+      "root_service": "inventory",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "auth",
+        "fault_type": "bad_deploy",
+        "evidence": [
+          {
+            "observation_id": "obs-1",
+            "quote": "13:58:00 auth INFO diagnostic drill: unhandled exception; recovered immediately, no customer impact"
+          }
+        ],
+        "action": "rollback",
+        "target": "auth",
+        "remediation": "Recommend rollback on auth; approval and verification required."
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 1,
+      "cost_usd": 0.0,
+      "latency_s": 0.10769391700159758,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "correlated-v2/healthy_decoy/10",
+      "variant": "healthy_decoy"
+    },
+    {
+      "seed": 11,
+      "fault_type": "traffic_spike",
+      "root_service": "search",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "auth",
+        "fault_type": "bad_deploy",
+        "evidence": [
+          {
+            "observation_id": "obs-1",
+            "quote": "13:58:00 auth INFO diagnostic drill: unhandled exception; recovered immediately, no customer impact"
+          }
+        ],
+        "action": "rollback",
+        "target": "auth",
+        "remediation": "Recommend rollback on auth; approval and verification required."
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 1,
+      "cost_usd": 0.0,
+      "latency_s": 0.10373083301237784,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "correlated-v2/healthy_decoy/11",
+      "variant": "healthy_decoy"
+    },
+    {
+      "seed": 12,
+      "fault_type": "bad_deploy",
+      "root_service": "auth",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "auth",
+        "fault_type": "bad_deploy",
+        "evidence": [
+          {
+            "observation_id": "obs-1",
+            "quote": "13:58:00 auth ERROR unhandled exception in price_lookup: KeyError 'customer_tier' (build v3.0.5)"
+          }
+        ],
+        "action": "rollback",
+        "target": "auth",
+        "remediation": "Recommend rollback on auth; approval and verification required."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 1,
+      "cost_usd": 0.0,
+      "latency_s": 0.0997622919967398,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "correlated-v2/recovered_error/12",
+      "variant": "recovered_error"
+    },
+    {
+      "seed": 13,
+      "fault_type": "memory_leak",
+      "root_service": "inventory",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "auth",
+        "fault_type": "bad_deploy",
+        "evidence": [
+          {
+            "observation_id": "obs-1",
+            "quote": "12:20:00 auth ERROR diagnostic drill: unhandled exception; recovered immediately, no customer impact"
+          }
+        ],
+        "action": "rollback",
+        "target": "auth",
+        "remediation": "Recommend rollback on auth; approval and verification required."
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 1,
+      "cost_usd": 0.0,
+      "latency_s": 0.09563675001845695,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "correlated-v2/recovered_error/13",
+      "variant": "recovered_error"
+    },
+    {
+      "seed": 14,
+      "fault_type": "slow_dependency",
+      "root_service": "postgres",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "auth",
+        "fault_type": "bad_deploy",
+        "evidence": [
+          {
+            "observation_id": "obs-1",
+            "quote": "12:20:00 auth ERROR diagnostic drill: unhandled exception; recovered immediately, no customer impact"
+          }
+        ],
+        "action": "rollback",
+        "target": "auth",
+        "remediation": "Recommend rollback on auth; approval and verification required."
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 1,
+      "cost_usd": 0.0,
+      "latency_s": 0.09165137499803677,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "correlated-v2/recovered_error/14",
+      "variant": "recovered_error"
+    },
+    {
+      "seed": 15,
+      "fault_type": "config_error",
+      "root_service": "orders",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "auth",
+        "fault_type": "bad_deploy",
+        "evidence": [
+          {
+            "observation_id": "obs-1",
+            "quote": "12:20:00 auth ERROR diagnostic drill: unhandled exception; recovered immediately, no customer impact"
+          }
+        ],
+        "action": "rollback",
+        "target": "auth",
+        "remediation": "Recommend rollback on auth; approval and verification required."
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 1,
+      "cost_usd": 0.0,
+      "latency_s": 0.08767558299587108,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "correlated-v2/recovered_error/15",
+      "variant": "recovered_error"
+    },
+    {
+      "seed": 16,
+      "fault_type": "cert_expiry",
+      "root_service": "auth",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "orders",
+        "fault_type": "bad_deploy",
+        "evidence": [
+          {
+            "observation_id": "obs-1",
+            "quote": "12:20:00 orders ERROR diagnostic drill: unhandled exception; recovered immediately, no customer impact"
+          }
+        ],
+        "action": "rollback",
+        "target": "orders",
+        "remediation": "Recommend rollback on orders; approval and verification required."
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 1,
+      "cost_usd": 0.0,
+      "latency_s": 0.08365700001013465,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "correlated-v2/recovered_error/16",
+      "variant": "recovered_error"
+    },
+    {
+      "seed": 17,
+      "fault_type": "traffic_spike",
+      "root_service": "search",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "auth",
+        "fault_type": "bad_deploy",
+        "evidence": [
+          {
+            "observation_id": "obs-1",
+            "quote": "12:20:00 auth ERROR diagnostic drill: unhandled exception; recovered immediately, no customer impact"
+          }
+        ],
+        "action": "rollback",
+        "target": "auth",
+        "remediation": "Recommend rollback on auth; approval and verification required."
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "steps": 0,
+      "tool_calls": 1,
+      "cost_usd": 0.0,
+      "latency_s": 0.07954179198713973,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "correlated-v2/recovered_error/17",
+      "variant": "recovered_error"
+    },
+    {
+      "seed": 18,
+      "fault_type": "insufficient_evidence",
+      "root_service": null,
+      "diagnosis": {
+        "status": "insufficient_evidence",
+        "root_cause_service": null,
+        "fault_type": null,
+        "evidence": [],
+        "action": null,
+        "target": null,
+        "remediation": "No known log signature matched."
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": true,
+        "remediation_ok": false,
+        "abstained": true
+      },
+      "steps": 0,
+      "tool_calls": 7,
+      "cost_usd": 0.0,
+      "latency_s": 0.12630920798983425,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "correlated-v2/redacted/18",
+      "variant": "redacted"
+    },
+    {
+      "seed": 19,
+      "fault_type": "insufficient_evidence",
+      "root_service": null,
+      "diagnosis": {
+        "status": "insufficient_evidence",
+        "root_cause_service": null,
+        "fault_type": null,
+        "evidence": [],
+        "action": null,
+        "target": null,
+        "remediation": "No known log signature matched."
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": true,
+        "remediation_ok": false,
+        "abstained": true
+      },
+      "steps": 0,
+      "tool_calls": 7,
+      "cost_usd": 0.0,
+      "latency_s": 0.1223220000101719,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "correlated-v2/redacted/19",
+      "variant": "redacted"
+    },
+    {
+      "seed": 20,
+      "fault_type": "insufficient_evidence",
+      "root_service": null,
+      "diagnosis": {
+        "status": "insufficient_evidence",
+        "root_cause_service": null,
+        "fault_type": null,
+        "evidence": [],
+        "action": null,
+        "target": null,
+        "remediation": "No known log signature matched."
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": true,
+        "remediation_ok": false,
+        "abstained": true
+      },
+      "steps": 0,
+      "tool_calls": 7,
+      "cost_usd": 0.0,
+      "latency_s": 0.11834408398135565,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "correlated-v2/redacted/20",
+      "variant": "redacted"
+    },
+    {
+      "seed": 21,
+      "fault_type": "insufficient_evidence",
+      "root_service": null,
+      "diagnosis": {
+        "status": "insufficient_evidence",
+        "root_cause_service": null,
+        "fault_type": null,
+        "evidence": [],
+        "action": null,
+        "target": null,
+        "remediation": "No known log signature matched."
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": true,
+        "remediation_ok": false,
+        "abstained": true
+      },
+      "steps": 0,
+      "tool_calls": 7,
+      "cost_usd": 0.0,
+      "latency_s": 0.11413258299580775,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "correlated-v2/redacted/21",
+      "variant": "redacted"
+    },
+    {
+      "seed": 22,
+      "fault_type": "insufficient_evidence",
+      "root_service": null,
+      "diagnosis": {
+        "status": "insufficient_evidence",
+        "root_cause_service": null,
+        "fault_type": null,
+        "evidence": [],
+        "action": null,
+        "target": null,
+        "remediation": "No known log signature matched."
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": true,
+        "remediation_ok": false,
+        "abstained": true
+      },
+      "steps": 0,
+      "tool_calls": 7,
+      "cost_usd": 0.0,
+      "latency_s": 0.1101058749773074,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "correlated-v2/redacted/22",
+      "variant": "redacted"
+    },
+    {
+      "seed": 23,
+      "fault_type": "insufficient_evidence",
+      "root_service": null,
+      "diagnosis": {
+        "status": "insufficient_evidence",
+        "root_cause_service": null,
+        "fault_type": null,
+        "evidence": [],
+        "action": null,
+        "target": null,
+        "remediation": "No known log signature matched."
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": true,
+        "remediation_ok": false,
+        "abstained": true
+      },
+      "steps": 0,
+      "tool_calls": 7,
+      "cost_usd": 0.0,
+      "latency_s": 0.10613612501765601,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "case_id": "correlated-v2/redacted/23",
+      "variant": "redacted"
+    }
+  ]
+}

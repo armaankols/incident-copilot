@@ -3,11 +3,13 @@
 correlated-v1: paraphrased incident signatures, healthy-service warning decoys,
 historical recovered errors, and fully redacted root-cause evidence. All are
 synthetic; this is a small challenge suite, not real incident generalization.
+correlated-v2 preserves those variants but removes fabricated downstream samples
+and explicitly exposes unavailable/partial collection coverage on redacted cases.
 """
 import copy
 from copilot.sim import FAULT_TYPES, SERVICES, generate
 
-VERSION = "correlated-v1"
+VERSION = "correlated-v2"
 PARAPHRASES = {
     "unhandled exception": "request handler crashed",
     "OOMKilled": "memory cgroup limit exceeded",
@@ -20,6 +22,8 @@ PARAPHRASES = {
 
 
 def scenarios(n, seed, suite="original", offset=0):
+    if suite not in ("original", "correlated-v1", VERSION):
+        raise ValueError("Unknown case suite")
     if offset < 0:
         raise ValueError("case offset must be nonnegative")
     out = []
@@ -42,6 +46,14 @@ def scenarios(n, seed, suite="original", offset=0):
             sc.deploys = []
             gateway = sc.metrics["gateway"]
             sc.metrics = {s: {k: ([v[0]]*len(v) if s != "gateway" else list(v)) for k, v in gateway.items()} for s in SERVICES}
+            if suite == VERSION:
+                # v1 remains reproducible; v2 removes fabricated healthy samples.
+                sc.metrics = {"gateway": gateway}
+                sc.telemetry_availability = {
+                    "metrics": {s: "unavailable" for s in SERVICES if s != "gateway"},
+                    "logs": {s: "partial" if s == "gateway" else "unavailable" for s in SERVICES},
+                    "deploys": "unavailable",
+                }
             sc.fault_type = "insufficient_evidence"
             sc.root_service = None
         sc.case_id = f"{suite}/{variant}/{seed*1000+i}"

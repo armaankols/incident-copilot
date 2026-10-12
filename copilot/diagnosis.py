@@ -6,7 +6,7 @@ import json
 
 from .sim import FAULT_TYPES, SERVICES
 
-PROMPT_VERSION = "evidence-v5-diagnosis-recovery-stopping"
+PROMPT_VERSION = "evidence-v6-change-evidence-availability"
 
 ACTIONS = {
     "bad_deploy": {"rollback"}, "memory_leak": {"restart", "rollback"},
@@ -65,7 +65,7 @@ class OperationalCheckError(ValueError):
         self.recovery_status = "blocked" if "blocked" in statuses else "unverified"
 
 
-def _require_check(d, observations, observation_tools, tool, kind, expected):
+def _require_check(d, observations, observation_tools, tool, kind, expected, fault_type=None):
     assessments = []
     for oid, text in observations.items():
         if observation_tools.get(oid) != tool:
@@ -75,15 +75,18 @@ def _require_check(d, observations, observation_tools, tool, kind, expected):
         except (ValueError, TypeError):
             continue
         if (isinstance(assessment, dict) and assessment.get("kind") == kind
-                and assessment.get("service") == d["root_cause_service"]):
+                and assessment.get("service") == d["root_cause_service"]
+                and (fault_type is None or assessment.get("fault_type") == fault_type)):
             assessments.append((oid, assessment.get("status")))
     cited = {ref["observation_id"] for ref in d["evidence"]}
     if not assessments or any(status != expected for _, status in assessments) or not any(oid in cited for oid, _ in assessments):
         values = {str(status) for _, status in assessments}
         statuses = ", ".join(sorted(values)) or "missing"
-        detail = ("The log-emitting caller is not necessarily the certificate owner; normal peer metrics do not establish certificate health. If ownership/expiry is unknown or conflicting, use insufficient_evidence."
+        detail = ("A nearby deploy, caller symptoms, or unavailable telemetry do not support this fault. Require release-linked local exceptions for bad_deploy, or a loaded configuration and matching local configuration failure for config_error. If unavailable, use insufficient_evidence."
+                  if kind == "change" else "The log-emitting caller is not necessarily the certificate owner; normal peer metrics do not establish certificate health. If ownership/expiry is unknown or conflicting, use insufficient_evidence."
                   if kind == "certificate" else "Scaling is not verified at a replica limit or with unknown headroom. Do not infer permission to raise limits. Retain a supported diagnosis with action=null and target=null.")
-        raise OperationalCheckError(f"Call {tool}(service={d['root_cause_service']!r}) and cite its {expected} assessment. Current assessment: {statuses}. {detail}", values)
+        args = f"service={d['root_cause_service']!r}" + (f", fault_type={fault_type!r}" if fault_type else "")
+        raise OperationalCheckError(f"Call {tool}({args}) and cite its {expected} assessment. Current assessment: {statuses}. {detail}", values)
 
 
 def validate_diagnosis(d, observations, observation_tools=None):
@@ -121,6 +124,8 @@ def validate_diagnosis(d, observations, observation_tools=None):
             raise ValueError("Unknown service or fault")
         if not evidence:
             raise ValueError("Diagnosis needs evidence")
+        if d["fault_type"] in ("bad_deploy", "config_error"):
+            _require_check(d, observations, observation_tools or {}, "check_change", "change", "supported", d["fault_type"])
         # Certificate ownership is diagnostic evidence, even when no action is proposed.
         if d["fault_type"] == "cert_expiry":
             _require_check(d, observations, observation_tools or {}, "check_certificate", "certificate", "expiry_supported")

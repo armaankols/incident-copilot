@@ -21,6 +21,10 @@ requested, but cache savings have not been measured.
 - Validated diagnoses contain an explicit outcome, structured action and target,
   and exact quotations referencing successful retrieved observations. Provenance
   validation does not establish that the evidence supports the diagnosis.
+- Deployment and configuration diagnoses additionally require a cited, service/fault-specific
+  `check_change` assessment backed by release-linked local failures. Missing telemetry
+  is explicit in `correlated-v2`; historical `correlated-v1` remains reproducible.
+  These narrow checks cover known synthetic patterns. See [evidence checks](docs/change-evidence.md).
 - Certificate renewal and scaling require cited, target-specific MCP operational
   assessments. Unknown ownership or blocked/unknown replica headroom cannot support
   those recommendations. See [operational checks](docs/operational-checks.md).
@@ -60,6 +64,10 @@ Measured offline baselines and live-model runs on synthetic telemetry. Transport
 | python312-mcp-rules-original-349e3b4a5bd7 | in-memory MCP | 60 | 100.0% (94.0–100.0) | 0 | not applicable | $0.000000 | 0.288247 / 0.414055 |
 | python312-rules-challenge-77334f82ea35 | direct simulator log search | 24 | 33.3% (18.0–53.3) | 0 | not applicable | $0.000000 | 0.000138 / 0.000960 |
 | python312-rules-original-bd66349c44c0 | direct simulator log search | 60 | 100.0% (94.0–100.0) | 0 | not applicable | $0.000000 | 0.001171 / 0.001318 |
+| v6-offline-mcp-rules-v2-f9ab8d2c3010 | in-memory MCP | 24 | 33.3% (18.0–53.3) | 0 | not applicable | $0.000000 | 0.115053 / 0.196369 |
+| v6-offline-rules-original-a1f4beae8114 | direct simulator log search | 60 | 100.0% (94.0–100.0) | 0 | not applicable | $0.000000 | 0.001242 / 0.001364 |
+| v6-offline-rules-v1-85dd41c2f0b1 | direct simulator log search | 24 | 33.3% (18.0–53.3) | 0 | not applicable | $0.000000 | 0.000142 / 0.000983 |
+| v6-offline-rules-v2-dadf8db45d5d | direct simulator log search | 24 | 33.3% (18.0–53.3) | 0 | not applicable | $0.000000 | 0.000141 / 0.000980 |
 
 Outcome accuracy counts a budget-forced abstention as correct on redacted cases; it does not demonstrate model-selected stopping. Finalization is persisted for new runs or derived from reviewed saved traces; older runs may show not recorded. Latency quantiles describe runs without exceptions; diagnostic misses remain included. Failure elapsed time and observed spend remain in JSON records. API cost is calculated from provider-reported token usage at list prices, not reconciled against an invoice. Structured action compatibility is not a remediation-quality score. These small live smoke runs do not establish reliability; see docs/live-v5-validation.md for the latest failed diagnostic checks, docs/live-v4-validation.md for prior live findings and docs/diagnosis-stopping.md for the implementation changes.
 
@@ -77,6 +85,10 @@ Offline replay of the recorded missing-evidence query schedule (not new model be
 - Original live schedule: 12 model calls, 49 tool calls.
 - New policy replay: 7 scripted responses, 32 MCP executions, 0 cache hits, 2 skipped requests; stopped by tool_limit.
 - Zero provider calls in this replay; it does not measure live-model accuracy, cost or stopping behavior.
+
+Offline deployment/configuration evidence gate (template-specific deterministic checks, not LLM accuracy):
+- 1176 service/fault assessments across 84 original and correlated-v2 scenarios: 26/26 expected supports accepted, 1150/1150 unsupported pairs rejected, 0 false supports.
+- Zero provider calls. These checks cover the simulator's known release/exception and DB-pool configuration patterns; they do not prove causality or generalize to arbitrary production faults.
 <!-- RESULTS:END -->
 
 The original fixtures are easy for seven simulator-tailored log rules: 60/60
@@ -120,6 +132,8 @@ python3 -m unittest tests/test_correctness.py -v
 python3 -m evals.run_evals --agent baseline --n 60
 python3 -m evals.run_evals --agent rules --n 60 --save-traces
 python3 -m evals.run_evals --agent rules --suite correlated-v1 --n 24 --save-traces
+python3 -m evals.run_evals --agent rules --suite correlated-v2 --n 24 --save-traces
+python3 -m evals.evidence_eval
 .venv/bin/python -m evals.run_evals --agent rules-mcp --n 60 --save-traces
 python3 -m evals.stopping_eval
 python3 scripts/check_benchmarks.py

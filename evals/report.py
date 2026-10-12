@@ -6,7 +6,7 @@ ROOT = Path(__file__).resolve().parent.parent
 
 
 def main():
-    runs = [json.loads(p.read_text()) for p in sorted((ROOT/"results").glob("*.json")) if p.name not in ("retrieval.json", "recovery.json", "stopping.json")]
+    runs = [json.loads(p.read_text()) for p in sorted((ROOT/"results").glob("*.json")) if p.name not in ("retrieval.json", "recovery.json", "stopping.json", "evidence.json")]
     runs = [r for r in runs if "metadata" in r]
     md = ["Measured offline baselines and live-model runs on synthetic telemetry. Transport is recorded per experiment.", "",
           "| Run | Transport | Cases | Outcome correct (95% CI) | Errors | Finalization | Total observed API cost | p50 / p95 seconds |",
@@ -37,6 +37,12 @@ def main():
                f"- Original live schedule: {s['original_live_model_calls']} model calls, {s['original_live_tool_calls']} tool calls.",
                f"- New policy replay: {s['scripted_responses_consumed']} scripted responses, {s['tool_executions']} MCP executions, {s['cache_hits']} cache hits, {s['skipped_requests']} skipped requests; stopped by {s['termination_reason']}.",
                "- Zero provider calls in this replay; it does not measure live-model accuracy, cost or stopping behavior."]
+    evidence = ROOT/"results/evidence.json"
+    if evidence.exists():
+        s = json.loads(evidence.read_text())["summary"]
+        md += ["", "Offline deployment/configuration evidence gate (template-specific deterministic checks, not LLM accuracy):",
+               f"- {s['assessments']} service/fault assessments across {s['scenarios']} original and correlated-v2 scenarios: {s['supported_positives']}/{s['positive_cases']} expected supports accepted, {s['rejected_negatives']}/{s['negative_cases']} unsupported pairs rejected, {s['false_supports']} false supports.",
+               "- Zero provider calls. These checks cover the simulator's known release/exception and DB-pool configuration patterns; they do not prove causality or generalize to arbitrary production faults."]
     text = "\n".join(md)
     (ROOT/"results"/"RESULTS.md").write_text(text+"\n")
     readme = ROOT/"README.md"

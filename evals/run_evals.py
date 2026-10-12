@@ -125,7 +125,8 @@ async def evaluate(args) -> dict:
 
     await asyncio.gather(*(checkpointed(sc) for sc in cases))
     records.sort(key=lambda r: r["seed"])
-    dataset_hash = hashlib.sha256(json.dumps([{"case_id": sc.case_id, "metrics": sc.metrics, "logs": sc.logs, "deploys": sc.deploys, "truth": [sc.root_service, sc.fault_type]} for sc in cases], sort_keys=True).encode()).hexdigest()
+    dataset_hash = hashlib.sha256(json.dumps([{"case_id": sc.case_id, "metrics": sc.metrics, "logs": sc.logs, "deploys": sc.deploys, "truth": [sc.root_service, sc.fault_type],
+        **({"telemetry_availability": sc.telemetry_availability} if sc.telemetry_availability else {})} for sc in cases], sort_keys=True).encode()).hexdigest()
     source_hash = hashlib.sha256()
     root = RESULTS.parent
     for p in sorted(list((root/"copilot").glob("*.py"))+list((root/"evals").glob("*.py"))+list((root/"runbooks").glob("*.md"))):
@@ -148,7 +149,7 @@ async def evaluate(args) -> dict:
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--agent", choices=["llm", "baseline", "rules", "rules-mcp"], default="llm")
-    ap.add_argument("--suite", choices=["original", VERSION], default="original")
+    ap.add_argument("--suite", choices=["original", "correlated-v1", VERSION], default="original")
     ap.add_argument("--model", default=DEFAULT_MODEL)
     ap.add_argument("--n", type=int, default=30)
     ap.add_argument("--seed", type=int, default=0, help="base seed; scenario i uses seed*1000+i")

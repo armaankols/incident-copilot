@@ -12,8 +12,10 @@ jobs:
       - run: python -m evals.retrieval_eval
       - run: python -m evals.recovery_eval
       - run: python -m evals.stopping_eval
+      - run: python -m evals.evidence_eval
       - run: python -m evals.run_evals --agent rules --n 60 --save-traces
       - run: python -m evals.run_evals --agent rules --suite correlated-v1 --n 24 --save-traces
+      - run: python -m evals.run_evals --agent rules --suite correlated-v2 --n 24 --save-traces
       - run: python scripts/check_benchmarks.py
       - run: docker build -t incident-copilot:ci .
       - run: python scripts/container_smoke.py --image incident-copilot:ci

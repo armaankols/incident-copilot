@@ -2,8 +2,8 @@
 import json
 from pathlib import Path
 
-runs = [json.loads(p.read_text()) for p in Path("results").glob("*.json") if p.name not in ("retrieval.json", "recovery.json", "stopping.json")]
-for suite, n, expected in (("original", 60, 100), ("correlated-v1", 24, 33.3)):
+runs = [json.loads(p.read_text()) for p in Path("results").glob("*.json") if p.name not in ("retrieval.json", "recovery.json", "stopping.json", "evidence.json")]
+for suite, n, expected in (("original", 60, 100), ("correlated-v1", 24, 33.3), ("correlated-v2", 24, 33.3)):
     matched = [r for r in runs if r["config"].get("agent") == "rules" and r["config"].get("suite") == suite and r["summary"]["n"] == n]
     if not matched:
         raise SystemExit(f"Missing {suite} run")
@@ -29,3 +29,11 @@ if (stopping["provider_calls"] != 0 or stopping["outcome"] != "insufficient_evid
         or stopping["tool_executions"] >= stopping["original_live_tool_calls"]):
     raise SystemExit("Unexpected recorded-query stopping replay result")
 print("Recorded-query stopping replay verified; no claim about new model behavior")
+
+evidence = json.loads(Path("results/evidence.json").read_text())["summary"]
+if (evidence["assessments"] != 1176 or evidence["positive_cases"] != 26
+        or evidence["supported_positives"] != 26 or evidence["negative_cases"] != 1150
+        or evidence["rejected_negatives"] != 1150 or evidence["false_supports"] != 0
+        or evidence["provider_calls"] != 0):
+    raise SystemExit("Unexpected template-specific change assessment result")
+print("Change assessment fixtures verified; no claim about live-model accuracy")

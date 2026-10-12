@@ -2,8 +2,8 @@
   "mode": "offline-recorded-query-replay",
   "source_run": "live-v4-missing_evidence-2026-10-11-e2dd981ee93f",
   "fixture_sha256": "7bd127c2b0a0688d1e56d5bc0dfffe4a82a20301c9e680df49cba555bbb361a4",
-  "source_sha256": "664d68b24b400c3c2e6481e94cc61abc0017aaefa1d400b0495a24bb5f4bcd9a",
-  "prompt_version": "evidence-v5-diagnosis-recovery-stopping",
+  "source_sha256": "3a6d6c5196d5a37959e5320f639375810452380bb02811bfe9523f0284719ccc",
+  "prompt_version": "evidence-v6-change-evidence-availability",
   "case_id": "correlated-v1/redacted/18",
   "limits": {
     "model_calls": 12,

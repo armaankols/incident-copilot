@@ -11,10 +11,10 @@ def _oracle_script(sc):
     return [
         [{"type": "tool_use", "id": "a", "name": "list_services", "input": {}}],
         [{"type": "tool_use", "id": "b", "name": "search_logs", "input": {"service": sc.root_service, "level": "ERROR"}},
-         {"type": "tool_use", "id": "c", "name": "get_recent_deploys", "input": {}}],
+         {"type": "tool_use", "id": "c", "name": "check_change", "input": {"service": sc.root_service, "fault_type": sc.fault_type}}],
         [{"type": "tool_use", "id": "d", "name": "submit_diagnosis", "input": {
             "status": "diagnosed", "root_cause_service": sc.root_service, "fault_type": sc.fault_type,
-            "evidence": [{"observation_id": "obs-1", "quote": "Time now:"}],
+            "evidence": [{"observation_id": "obs-3", "quote": '"status": "supported"'}],
             "action": sorted(ACTIONS[sc.fault_type])[0], "target": sc.root_service, "remediation": "recommend action"}}],
     ]
 
@@ -163,7 +163,7 @@ def test_rule_baseline_agrees_over_mcp_transport():
     from copilot.baselines import baseline_rules, baseline_rules_mcp
     from evals.cases import scenarios
     async def check():
-        for sc in scenarios(6, 0) + scenarios(24, 0, "correlated-v1"):
+        for sc in scenarios(6, 0) + scenarios(24, 0, "correlated-v1") + scenarios(24, 0, "correlated-v2"):
             direct, _, direct_calls = baseline_rules(sc)
             transported, _, mcp_calls = await baseline_rules_mcp(sc)
             assert direct == transported
