@@ -9,7 +9,7 @@ Python 3.12.15 is installed at `/opt/homebrew/bin/python3.12`; `.venv` is ready.
 The user installed dependencies from a terminal outside the restricted shell.
 `requirements.lock` pins 72 runtime packages; `requirements-dev.lock` pins 76
 packages, including the development dependencies. Locks have no wheel hashes.
-Seventeen authorized live smoke investigations completed by 2026-10-12. No deployment
+Twenty-two authorized live smoke investigations completed by 2026-10-12. No deployment
 has been performed. Standing API-test approval for this collaboration is up to
 $0.50 per test (user instruction, 2026-10-12). Before each test, verify a conservative
 token-cost bound; proceed without another API-budget confirmation within $0.50,
@@ -151,3 +151,11 @@ with null recovery fields, and model-submitted abstention on redacted evidence.
 Both had zero validation rejections and truncations. Per-test usage-derived costs
 were $0.053230 and $0.042555, within the standing $0.50-per-test authorization.
 See [live-v8-validation.md](live-v8-validation.md) for source evidence and limits.
+
+Fresh-seed v8 follow-up: five original cases at seeds 1000–1004 all returned the
+correct service/fault with model-selected finalization, zero rejections/truncations
+and $0.175430 combined token cost. All 25 response usages and 15 evidence excerpts
+were reconciled. One memory log excerpt displays an unrelated later error despite
+a supported diagnostic assessment; improve excerpt relevance next. See
+[live-v8-fresh-faults.md](live-v8-fresh-faults.md). Local tests in this pass: 158
+passed in 3.48 seconds; fixture thresholds passed. No recovery was executed.

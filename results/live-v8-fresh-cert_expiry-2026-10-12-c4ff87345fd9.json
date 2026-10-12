@@ -1,0 +1,197 @@
+{
+  "name": "live-v8-fresh-cert_expiry-2026-10-12-c4ff87345fd9",
+  "config": {
+    "agent": "llm",
+    "suite": "original",
+    "model": "claude-haiku-4-5-20251001",
+    "n": 1,
+    "seed": 1,
+    "case_offset": 4,
+    "no_rag": false,
+    "embedder": "tfidf",
+    "max_steps": 12,
+    "concurrency": 1,
+    "save_traces": true,
+    "name": "live-v8-fresh-cert_expiry-2026-10-12",
+    "approved_batch_budget_usd": 2.5,
+    "approved_per_test_budget_usd": 0.5,
+    "standing_per_test_approval": true,
+    "batch_id": "1e08230fa5a9"
+  },
+  "metadata": {
+    "run_id": "c4ff87345fd9",
+    "started_at": "2026-10-12T22:31:53.491009+00:00",
+    "source_sha256": "f32e2401f92892c238b781935e80a770517a681451ede577e907c11968df1a98",
+    "dataset_sha256": "77cae7552ec9be5d18fd36006d6554e40e9ffd3aa7d40a79379b302b4ddd11b4",
+    "dataset_version": "original",
+    "prompt_version": "evidence-v8-observation-id-submission",
+    "python": "3.12.15",
+    "baseline_transport": null,
+    "git_revision": "65fcbbcff674df2fc7874906cb2ee82cd1c1ea30",
+    "live_call_limits": {
+      "model_calls": 12,
+      "max_input_tokens": 24000,
+      "max_output_tokens": 1000,
+      "sdk_retries": 0,
+      "timeout_s": 180,
+      "output_truncations": 3
+    },
+    "calculated_per_test_token_bound_usd": 0.42,
+    "pricing_verified_on": "2026-10-12",
+    "pricing_source": "https://platform.claude.com/docs/en/about-claude/pricing"
+  },
+  "summary": {
+    "n": 1,
+    "errors": 0,
+    "root_cause_service_acc": 100.0,
+    "fault_type_acc": 100.0,
+    "both_correct_acc": 100.0,
+    "both_correct_ci95": [
+      20.7,
+      100.0
+    ],
+    "action_compatibility_rate": 100.0,
+    "avg_tool_calls": 6,
+    "avg_steps": 3,
+    "avg_input_tokens": 13333,
+    "avg_output_tokens": 861,
+    "avg_cost_usd": 0.017638,
+    "total_cost_usd": 0.017638,
+    "error_rate": 0.0,
+    "cost_per_correct_diagnosis_usd": 0.017638,
+    "billing_uncertain_runs": 0,
+    "latency_scope": "successful runs only",
+    "total_attempted_latency_s": 10.099435,
+    "latency_p50_s": 10.099435,
+    "latency_p95_s": 10.099435,
+    "accuracy_by_fault_type": {
+      "bad_deploy": 0.0,
+      "memory_leak": 0.0,
+      "slow_dependency": 0.0,
+      "config_error": 0.0,
+      "cert_expiry": 100.0,
+      "traffic_spike": 0.0
+    },
+    "total_observed_usage": {
+      "input_tokens": 13333,
+      "output_tokens": 861,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0
+    },
+    "outcome_accuracy_by_variant": {
+      "original": 100.0
+    },
+    "insufficient_evidence_cases": 0,
+    "abstention_accuracy": 0.0,
+    "model_submitted_abstentions": 0,
+    "forced_abstentions": 0,
+    "total_output_truncations": 0,
+    "correct_diagnoses_without_recovery": 0,
+    "finalization_counts": {
+      "model_submission": 1
+    },
+    "total_cache_hits": 0
+  },
+  "records": [
+    {
+      "seed": 1004,
+      "fault_type": "cert_expiry",
+      "root_service": "auth",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "auth",
+        "fault_type": "cert_expiry",
+        "evidence": [
+          {
+            "observation_id": "obs-4",
+            "quote": "\"status\": \"expiry_supported\""
+          },
+          {
+            "observation_id": "obs-5",
+            "quote": "gateway.error_rate last 60m: min=0.1 mean=21.2 max=31.9 latest=31.9"
+          },
+          {
+            "observation_id": "obs-6",
+            "quote": "gateway.p95_latency_ms last 60m: min=127.5 mean=449.7 max=630.1 latest=599.3"
+          }
+        ],
+        "action": "renew_certificate",
+        "target": "auth",
+        "recovery_status": "recommended",
+        "recovery_reason": "Compatible recommendation; service policy still requires verification.",
+        "remediation": "Recommendation only; no change has been executed. Verify auth's certificate, issuer, expiry and trust-chain requirements. Follow the service certificate-rotation procedure, including any required overlap of trust bundles, before replacing it. After any approved change, check service and caller error rates and latency against their configured SLOs."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "error": null,
+      "steps": 3,
+      "tool_calls": 6,
+      "model_calls": 3,
+      "tool_requests": 6,
+      "cache_hits": 0,
+      "validation_rejections": 0,
+      "output_truncations": 0,
+      "stagnant_steps": 1,
+      "termination_reason": "model_submission",
+      "billing_uncertain": false,
+      "investigation_limits": {
+        "model_calls": 12,
+        "tool_requests": 32,
+        "stagnant_rounds": 3,
+        "invalid_submissions": 3,
+        "output_truncations": 3
+      },
+      "usage": {
+        "input_tokens": 13333,
+        "output_tokens": 861,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "latency_s": 10.09943537498475,
+      "cost_usd": 0.017638,
+      "case_id": "original/original/1004",
+      "variant": "original"
+    }
+  ],
+  "trace_review": {
+    "finalization_source": "model_submission",
+    "validation_errors": [],
+    "operational_assessments": [
+      {
+        "observation_id": "obs-4",
+        "tool": "check_certificate",
+        "service": "auth",
+        "fault_type": null,
+        "status": "expiry_supported"
+      }
+    ],
+    "model_submissions": [
+      {
+        "status": "diagnosed",
+        "root_cause_service": "auth",
+        "fault_type": "cert_expiry",
+        "evidence": [
+          "obs-4",
+          "obs-5",
+          "obs-6"
+        ],
+        "action": "renew_certificate",
+        "target": "auth"
+      }
+    ],
+    "submitted_utf8_bytes": [
+      159
+    ],
+    "max_response_output_tokens": 422,
+    "output_limit_responses": 0,
+    "exact_server_excerpts": 3,
+    "evidence_references": 3,
+    "expected_cause_assessment_cited": true,
+    "provider_usage_reconciled": true
+  }
+}

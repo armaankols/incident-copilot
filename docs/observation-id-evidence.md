@@ -52,7 +52,9 @@ Older clients may still submit the former quoted-reference objects. That
 compatibility path continues validating their exact substring claims and size
 limits. It does not silently repair invented quotes. Mixing the old and new
 reference formats is rejected. The subsequent two-case live validation is recorded in
-[live-v8-validation.md](live-v8-validation.md); larger-suite behavior remains unmeasured.
+[live-v8-validation.md](live-v8-validation.md), followed by
+[five fresh-seed cases](live-v8-fresh-faults.md). The latter observed a log excerpt
+relevance limitation; larger-suite behavior remains unmeasured.
 
 ## Offline recorded-selection replay
 

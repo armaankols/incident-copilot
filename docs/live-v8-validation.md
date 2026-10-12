@@ -108,9 +108,10 @@ nor an early server stopping rule contributed to these results.
 
 These two expected outcomes verify the exercised live paths, including ID-only
 submission and server-attached provenance. They do not establish generalization,
-reliable recovery advice, or performance on other seeds/faults under v8. The other
-five original fault types and larger repeated/held-out suites remain untested live
-with this interface. No recovery action has been executed or its effect measured.
+reliable recovery advice, or performance on other seeds/faults under v8. At completion of this batch, the other
+five original fault types remained untested live with this interface. The subsequent
+[fresh-seed follow-up](live-v8-fresh-faults.md) records those five cases; larger
+repeated/held-out suites remain untested live. No recovery action has been executed or its effect measured.
 
 The runtime code was unchanged during this batch. Its prior offline verification
 was **158 tests passed in 3.17 seconds**, including migrated-response replay and
