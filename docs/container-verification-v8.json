@@ -1,0 +1,18 @@
+{
+  "measured_at": "2026-10-12T20:28:39.176071+00:00",
+  "image": "incident-copilot:v8-offline",
+  "image_id": "sha256:2a320e1e2dbc7578b2c4c5842bbf490ba3ab7c5e67b6faee24cc8b293d5af22a",
+  "platform": "linux/arm64",
+  "http_statuses": {
+    "/healthz": 200,
+    "/": 200,
+    "/static/demo.js": 200,
+    "/api/config": 200,
+    "/api/replay": 200
+  },
+  "no_key_status": 503,
+  "persistent_test_charge_usd": 0.1,
+  "replay_survived_restart": true,
+  "server_uid": 10001,
+  "root_owned_mount_repaired": true
+}

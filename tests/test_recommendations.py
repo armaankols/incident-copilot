@@ -54,7 +54,7 @@ def test_unavailable_observation_feedback_names_available_sources():
 def test_paraphrased_citation_feedback_identifies_source_and_correction():
     d = candidate()
     d["evidence"] = [dict(observation_id="obs-1", quote="out of memory")]
-    with pytest.raises(ValueError, match="Quote for obs-1.*Copy a contiguous excerpt verbatim"):
+    with pytest.raises(ValueError, match="Quote for obs-1.*Submit observation IDs"):
         validate_diagnosis(d, {"obs-1": "OOMKilled"})
 
 
@@ -76,7 +76,7 @@ def test_graph_returns_actionable_feedback_and_sanitizes_corrected_diagnosis():
     assert result["error"] is None and result["diagnosis"]["status"] == "diagnosed"
     assert result["model_calls"] == 3 and result["tool_calls"] == 1
     feedback = llm.last_messages[-1]["content"][0]["content"]
-    assert "Quote for obs-1" in feedback and "Copy a contiguous excerpt verbatim" in feedback
+    assert "Quote for obs-1" in feedback and "Submit observation IDs" in feedback
     assert "v3.1.8" not in result["diagnosis"]["remediation"]
     accepted_event = next(e for e in result["trace"] if e["type"] == "diagnosis")
     assert accepted_event["args"] == result["diagnosis"]

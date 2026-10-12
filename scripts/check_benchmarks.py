@@ -2,7 +2,7 @@
 import json
 from pathlib import Path
 
-runs = [json.loads(p.read_text()) for p in Path("results").glob("*.json") if p.name not in ("retrieval.json", "recovery.json", "stopping.json", "evidence.json")]
+runs = [json.loads(p.read_text()) for p in Path("results").glob("*.json") if p.name not in ("retrieval.json", "recovery.json", "stopping.json", "evidence.json", "references.json")]
 for suite, n, expected in (("original", 60, 100), ("correlated-v1", 24, 33.3), ("correlated-v2", 24, 33.3)):
     matched = [r for r in runs if r["config"].get("agent") == "rules" and r["config"].get("suite") == suite and r["summary"]["n"] == n]
     if not matched:
@@ -40,3 +40,12 @@ if (evidence["assessments"] != 3528 or evidence["positive_cases"] != 78
         or evidence["provider_calls"] != 0):
     raise SystemExit("Unexpected template-specific change assessment result")
 print("Six-fault assessment and compact payload fixtures verified; no claim about live-model accuracy")
+
+refs = json.loads(Path("results/references.json").read_text())["summary"]
+if (refs["provider_calls"] != 0 or not refs["correct_diagnosis"]
+        or refs["root_service"] != "search" or refs["fault_type"] != "traffic_spike"
+        or refs["action"] is not None or refs["recovery_status"] != "blocked"
+        or refs["scripted_responses_consumed"] != 8 or refs["tool_executions"] != 16
+        or refs["validation_rejections"] != 2 or refs["exact_server_excerpts"] != 3):
+    raise SystemExit("Unexpected migrated-reference replay outcome")
+print("Migrated observation-ID replay verified; no claim about new model behavior")

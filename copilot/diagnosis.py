@@ -3,10 +3,11 @@
 Reference validation establishes provenance, not that an inference is correct.
 """
 import json
+import re
 
 from .sim import FAULT_TYPES, SERVICES
 
-PROMPT_VERSION = "evidence-v7-all-faults-compact-submission"
+PROMPT_VERSION = "evidence-v8-observation-id-submission"
 MAX_EVIDENCE = 3
 MAX_QUOTE_CHARS = 240
 
@@ -41,11 +42,9 @@ SCHEMA = {
         "status": {"type": "string", "enum": ["diagnosed", "insufficient_evidence"]},
         "root_cause_service": {"type": ["string", "null"], "enum": SERVICES + [None]},
         "fault_type": {"type": ["string", "null"], "enum": FAULT_TYPES + [None]},
-        "evidence": {"type": "array", "maxItems": MAX_EVIDENCE,
-                     "description": "Use 1-3 short exact excerpts, including the required fault assessment. Do not copy whole metric series or JSON objects.", "items": {
-            "type": "object", "additionalProperties": False,
-            "properties": {"observation_id": {"type": "string"}, "quote": {"type": "string", "maxLength": MAX_QUOTE_CHARS}},
-            "required": ["observation_id", "quote"]}},
+        "evidence": {"type": "array", "maxItems": MAX_EVIDENCE, "uniqueItems": True,
+                     "description": "Select 1-3 successful observation IDs, including the required fault assessment. Example: [\"obs-12\", \"obs-13\"]. The server attaches exact excerpts; do not supply quotes or objects. Use [] for abstention.",
+                     "items": {"type": "string", "minLength": 1, "maxLength": 64}},
         "action": {"type": ["string", "null"], "enum": sorted(set().union(*ACTIONS.values())) + [None],
                    "description": "Proposed recovery action, or null when no action is verified. A supported diagnosis does not require an action."},
         "target": {"type": ["string", "null"], "enum": SERVICES + [None],
@@ -88,7 +87,70 @@ def _require_check(d, observations, observation_tools, tool, kind, expected, fau
                   if kind == "change" else "The log-emitting caller is not necessarily the certificate owner; normal peer metrics do not establish certificate health. If ownership/expiry is unknown or conflicting, use insufficient_evidence."
                   if kind == "certificate" else "Scaling is not verified at a replica limit or with unknown headroom. Do not infer permission to raise limits. Retain a supported diagnosis with action=null and target=null.")
         args = f"service={d['root_cause_service']!r}" + (f", fault_type={fault_type!r}" if fault_type else "")
-        raise OperationalCheckError(f"Call {tool}({args}) and cite its {expected} assessment. Current assessment: {statuses}. {detail}", values)
+        raise OperationalCheckError(f"Call {tool}({args}) and select its observation ID in evidence; it must have status {expected}. Current assessment: {statuses}. {detail}", values)
+
+
+def _excerpt(text, tool, service):
+    """Take a real substring; never reformat or paraphrase an observation."""
+    if not isinstance(text, str) or not text.strip() or text.startswith("ERROR:"):
+        raise ValueError("Observation has no successful, usable evidence excerpt")
+    if tool in ("check_change", "check_fault", "check_certificate", "check_capacity"):
+        try:
+            assessment = json.loads(text)
+        except (ValueError, TypeError):
+            assessment = None
+        if isinstance(assessment, dict) and isinstance(assessment.get("status"), str):
+            # Match the actual JSON spelling/spacing, not a new serialization.
+            value = re.escape(json.dumps(assessment["status"], ensure_ascii=False))
+            match = re.search(r'"status"\s*:\s*'+value, text)
+            if match:
+                return match.group(0)[:MAX_QUOTE_CHARS]
+    lines = [line.strip() for line in text.splitlines() if line.strip()]
+    if tool == "list_services" and service:
+        line = next((line for line in lines if line.startswith(service+" |")), lines[0])
+    elif tool == "search_logs" and not lines[0].startswith("UNAVAILABLE"):
+        records = [line for line in lines if re.match(r"\d\d:\d\d:\d\d ", line)]
+        line = records[-1] if records else lines[0]
+    else:
+        line = lines[0]
+    return line[:MAX_QUOTE_CHARS]
+
+
+def _resolve_evidence(evidence, observations, observation_tools, service):
+    if not isinstance(evidence, list) or len(evidence) > MAX_EVIDENCE:
+        raise ValueError(f"Evidence must be an array of at most {MAX_EVIDENCE} observation IDs")
+    id_mode = all(isinstance(ref, str) for ref in evidence)
+    legacy_mode = all(isinstance(ref, dict) for ref in evidence)
+    if not id_mode and not legacy_mode:
+        raise ValueError("Evidence must contain observation IDs only; mixed reference formats are invalid")
+    if id_mode and len(set(evidence)) != len(evidence):
+        raise ValueError("Evidence observation IDs must be unique")
+    resolved = []
+    for ref in evidence:
+        if id_mode:
+            oid = ref
+            if not oid or len(oid) > 64:
+                raise ValueError("Invalid evidence observation ID")
+        else:
+            # Compatibility path: older clients' quote claims still need checking.
+            if set(ref) != {"observation_id", "quote"}:
+                raise ValueError("Legacy evidence needs observation_id and quote")
+            oid, quote = ref["observation_id"], ref["quote"]
+            if not isinstance(oid, str) or not isinstance(quote, str) or not quote.strip():
+                raise ValueError("Invalid evidence reference")
+            if len(quote) > MAX_QUOTE_CHARS:
+                raise ValueError(f"Quote for {oid} exceeds {MAX_QUOTE_CHARS} characters. Submit observation IDs instead.")
+        if oid not in observations:
+            available = ", ".join(observations) or "none"
+            raise ValueError(f"Unknown observation_id {oid!r}. Successful observation IDs: {available}. Select only a successful observation.")
+        if not isinstance(observations[oid], str) or not observations[oid].strip() or observations[oid].startswith("ERROR:"):
+            raise ValueError(f"Observation {oid!r} has no successful, usable evidence excerpt")
+        if id_mode:
+            quote = _excerpt(observations[oid], observation_tools.get(oid), service)
+        elif quote not in observations[oid]:
+            raise ValueError(f"Quote for {oid} is not an exact substring of that observation. Submit observation IDs so the server can attach exact excerpts; legacy quotes must be copied verbatim.")
+        resolved.append({"observation_id": oid, "quote": quote})
+    return resolved
 
 
 def validate_diagnosis(d, observations, observation_tools=None):
@@ -104,30 +166,19 @@ def validate_diagnosis(d, observations, observation_tools=None):
         raise ValueError("Invalid status")
     if "remediation" in d and (not isinstance(d["remediation"], str) or len(d["remediation"]) > 2000):
         raise ValueError("Invalid remediation")
-    evidence = d["evidence"]
-    if not isinstance(evidence, list) or len(evidence) > MAX_EVIDENCE:
-        raise ValueError(f"Evidence must be an array of at most {MAX_EVIDENCE} short references")
-    for ref in evidence:
-        if not isinstance(ref, dict) or set(ref) != {"observation_id", "quote"}:
-            raise ValueError("Evidence needs observation_id and quote")
-        oid, quote = ref["observation_id"], ref["quote"]
-        if not isinstance(oid, str) or not isinstance(quote, str) or not quote.strip():
-            raise ValueError("Invalid evidence reference")
-        if len(quote) > MAX_QUOTE_CHARS:
-            raise ValueError(f"Quote for {oid} exceeds {MAX_QUOTE_CHARS} characters. Copy a shorter exact excerpt, preferably the assessment status line.")
-        if oid not in observations:
-            available = ", ".join(observations) or "none"
-            raise ValueError(f"Unknown observation_id {oid!r}. Successful observation IDs: {available}. Cite only a successful observation.")
-        if quote not in observations[oid]:
-            raise ValueError(f"Quote for {oid} is not an exact substring of that observation. Copy a contiguous excerpt verbatim, including timestamps, punctuation and spacing; do not paraphrase, add ellipses or combine lines.")
+    # Validate model-controlled enums before service-specific excerpt selection.
+    if d["status"] == "diagnosed":
+        if (not isinstance(d["root_cause_service"], str) or d["root_cause_service"] not in SERVICES
+                or not isinstance(d["fault_type"], str) or d["fault_type"] not in FAULT_TYPES):
+            raise ValueError("Unknown service or fault")
+    elif any(d[k] is not None for k in ("root_cause_service", "fault_type", "action", "target")):
+        raise ValueError("Insufficient evidence must not specify a diagnosis or action")
+    evidence = _resolve_evidence(d["evidence"], observations, observation_tools or {}, d["root_cause_service"])
+    d = {**d, "evidence": evidence}
     if d["status"] == "insufficient_evidence":
-        if any(d[k] is not None for k in ("root_cause_service", "fault_type", "action", "target")):
-            raise ValueError("Insufficient evidence must not specify a diagnosis or action")
         return {**d, "recovery_status": "unavailable", "recovery_reason": "Diagnostic evidence is insufficient.",
                 "remediation": "Insufficient evidence to recommend a recovery action. Gather missing telemetry and consult the service owner before selecting a change."}
     else:
-        if d["root_cause_service"] not in SERVICES or d["fault_type"] not in FAULT_TYPES:
-            raise ValueError("Unknown service or fault")
         if not evidence:
             raise ValueError("Diagnosis needs evidence")
         if d["fault_type"] in ("bad_deploy", "config_error"):

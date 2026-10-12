@@ -128,3 +128,7 @@ Local full payload capture: `results/traces/live-v7-validation-payloads-01293770
 Full local run traces use the result stem plus `.jsonl` in `results/traces/`.
 Credentials and headers are excluded from capture; these full payloads/traces
 are ignored by Git.
+
+The subsequent offline observation-ID implementation and migrated-schedule replay
+are documented in [observation-id-evidence.md](observation-id-evidence.md). The live
+traffic result and its grade remain unchanged; v8 live behavior is unmeasured.

@@ -1,0 +1,56 @@
+{
+  "mode": "offline-migrated-reference-replay",
+  "source_run": "live-v7-traffic_spike-2026-10-12-b13344078fec",
+  "prompt_version": "evidence-v8-observation-id-submission",
+  "source_sha256": "dcb242bc962d5093777f74adc5ccd5a7f2946b480e13c032dbc2ce2b8f64f127",
+  "fixture_sha256": "ff0dbdb03eec7258dc22a7940e636781e3703850161590656b2754a346c71fe2",
+  "case_id": "original/original/5",
+  "summary": {
+    "original_live_model_calls": 8,
+    "original_live_tool_calls": 16,
+    "original_live_validation_rejections": 3,
+    "scripted_responses_consumed": 8,
+    "tool_executions": 16,
+    "tool_requests": 16,
+    "validation_rejections": 2,
+    "output_truncations": 0,
+    "termination_reason": "model_submission",
+    "outcome": "diagnosed",
+    "root_service": "search",
+    "fault_type": "traffic_spike",
+    "action": null,
+    "recovery_status": "blocked",
+    "correct_diagnosis": true,
+    "evidence_references": 3,
+    "exact_server_excerpts": 3,
+    "provider_calls": 0
+  },
+  "diagnosis": {
+    "status": "diagnosed",
+    "root_cause_service": "search",
+    "fault_type": "traffic_spike",
+    "evidence": [
+      {
+        "observation_id": "obs-12",
+        "quote": "\"status\": \"supported\""
+      },
+      {
+        "observation_id": "obs-5",
+        "quote": "search.p95_latency_ms last 60m: min=91.3 mean=686.4 max=1047.2 latest=1004.9"
+      },
+      {
+        "observation_id": "obs-6",
+        "quote": "search.error_rate last 60m: min=0.2 mean=6.7 max=10.5 latest=10.4"
+      }
+    ],
+    "action": null,
+    "target": null,
+    "recovery_status": "blocked",
+    "recovery_reason": "Call check_capacity(service='search') and select its observation ID in evidence; it must have status headroom. Current assessment: blocked. Scaling is not verified at a replica limit or with unknown headroom. Do not infer permission to raise limits. Retain a supported diagnosis with action=null and target=null.",
+    "remediation": "Diagnosis recorded. Scaling has not been verified and is not recommended. Consult the service owner about capacity limits and compatible recovery options. No change has been executed."
+  },
+  "validation_errors": [
+    "ERROR: Call check_change(service='inventory', fault_type='bad_deploy') and select its observation ID in evidence; it must have status supported. Current assessment: unknown. A nearby deploy, caller symptoms, or unavailable telemetry do not support this fault. Require release-linked local exceptions for bad_deploy, or a loaded configuration and matching local configuration failure for config_error. If unavailable, use insufficient_evidence.",
+    "ERROR: Call check_change(service='inventory', fault_type='bad_deploy') and select its observation ID in evidence; it must have status supported. Current assessment: unknown. A nearby deploy, caller symptoms, or unavailable telemetry do not support this fault. Require release-linked local exceptions for bad_deploy, or a loaded configuration and matching local configuration failure for config_error. If unavailable, use insufficient_evidence."
+  ]
+}

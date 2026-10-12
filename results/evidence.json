@@ -1,7 +1,7 @@
 {
   "mode": "offline-template-specific-six-fault-assessment",
-  "prompt_version": "evidence-v7-all-faults-compact-submission",
-  "source_sha256": "7908716382cf3cb4c04b2bc7a7e4628208abd1bead83cf4c6daa11afac63c962",
+  "prompt_version": "evidence-v8-observation-id-submission",
+  "source_sha256": "90ff5cd378e40d7a501f420884f6fa5ebf743d5e6320e6d0780583c709e6dd36",
   "dataset_sha256": "a0970819877c24ecbe3843c824e215479d3ab95da1ec5d9568f288e261b80081",
   "fixture_sha256": "95827a2e58b32c4aa6d4a39c3543c6deb6c0e11c98f19ffc833264f0098e2e0b",
   "suites": [
@@ -17,9 +17,9 @@
     "rejected_negatives": 3450,
     "false_supports": 0,
     "compact_submissions_accepted": 78,
-    "compact_submission_max_utf8_bytes": 193,
+    "compact_submission_max_utf8_bytes": 135,
     "recorded_v6_traffic_submission_utf8_bytes": 1747,
-    "constructed_compact_traffic_submission_utf8_bytes": 185,
+    "constructed_compact_traffic_submission_utf8_bytes": 130,
     "provider_calls": 0
   },
   "records": [

@@ -14,7 +14,7 @@ has been performed; further paid runs require approval.
 
 Measured on Python 3.12.15:
 
-- `python -m pytest -q tests`: 130 passed (2026-10-12; 2.99 seconds).
+- `python -m pytest -q tests`: 158 passed (2026-10-12; 3.17 seconds).
 - `python -m pip check`: no broken requirements.
 - `python -m evals.retrieval_eval`: TF-IDF recall@1 and recall@3 both 14/14;
   optional FastEmbed skipped because it is not installed.
@@ -70,8 +70,8 @@ unknown versions. This is an offline structured-reader ablation over small,
 author-written synthetic fixtures; it is not a live-model comparison.
 
 Live-model smoke results, token usage, citation retries and qualitative limitations
-are recorded in [live-smoke.md](live-smoke.md). Latest offline test run: 130 passed
-in 2.99 seconds on 2026-10-12. Recommendation/citation checks are recorded in
+are recorded in [live-smoke.md](live-smoke.md). Latest offline test run: 158 passed
+in 3.17 seconds on 2026-10-12. Recommendation/citation checks are recorded in
 [recommendation-grounding.md](recommendation-grounding.md).
 
 The updated prompt/validator was exercised on one live configuration-error case:
@@ -133,3 +133,12 @@ citation rejections and one unsupported-cause rejection. Both had zero output
 truncations and no accepted action recommendation. Combined usage-derived token
 cost: $0.112161, under the new approved $1 cap. See
 [live-v7-validation.md](live-v7-validation.md) for measured limits and remaining work.
+
+V8 replaces model quote copying with observation-ID selection and server-attached
+exact excerpts. The migrated v7 traffic schedule accepts search/traffic_spike with
+blocked scaling in eight scripted responses/16 MCP executions; both unsupported
+inventory rollback proposals remain rejected. No provider calls were made. See
+[observation-id-evidence.md](observation-id-evidence.md) for measurements and limits.
+
+Latest observation-ID verification: 158 tests passed in 3.17 seconds, including
+malformed-service input handling. No paid provider calls were made in this pass.

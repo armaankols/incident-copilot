@@ -1,0 +1,260 @@
+{
+  "source_run": "live-v7-traffic_spike-2026-10-12-b13344078fec",
+  "suite": "original",
+  "seed": 0,
+  "case_offset": 5,
+  "original_model_calls": 8,
+  "original_tool_calls": 16,
+  "original_validation_rejections": 3,
+  "script": [
+    [
+      {
+        "type": "tool_use",
+        "id": "toolu_015vm1mWpnJHY3h26UnSMt9P",
+        "name": "list_services",
+        "input": {}
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01HnSgZ86ZJPpAviarsYHTEs",
+        "name": "get_recent_deploys",
+        "input": {
+          "hours": 2
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01KgaU1uHz5QY91tMgghrVtx",
+        "name": "query_metrics",
+        "input": {
+          "service": "gateway",
+          "metric": "p95_latency_ms",
+          "minutes": 60
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01Wc8iXGLyYk9w2ehX28xLpu",
+        "name": "query_metrics",
+        "input": {
+          "service": "gateway",
+          "metric": "error_rate",
+          "minutes": 60
+        }
+      }
+    ],
+    [
+      {
+        "type": "tool_use",
+        "id": "toolu_01RYv3sbQW6kvG57sD4N7U1w",
+        "name": "query_metrics",
+        "input": {
+          "service": "search",
+          "metric": "p95_latency_ms",
+          "minutes": 60
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01DnG81GjFntrCvg28qJUSwt",
+        "name": "query_metrics",
+        "input": {
+          "service": "search",
+          "metric": "error_rate",
+          "minutes": 60
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01WMDEkzBVXFBnbbggH6GpFp",
+        "name": "search_logs",
+        "input": {
+          "service": "gateway",
+          "level": "ERROR",
+          "minutes": 60,
+          "limit": 15
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_017rhhrpm5tUC5aG17xaCwxx",
+        "name": "search_logs",
+        "input": {
+          "service": "search",
+          "level": "ERROR",
+          "minutes": 60,
+          "limit": 15
+        }
+      }
+    ],
+    [
+      {
+        "type": "tool_use",
+        "id": "toolu_01DN38EuejK9rNmKmre48mVZ",
+        "name": "search_logs",
+        "input": {
+          "service": "inventory",
+          "level": "ERROR",
+          "minutes": 60,
+          "limit": 15
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01GsbsZZZFgKcaCWkWjjCAu2",
+        "name": "search_logs",
+        "input": {
+          "service": "",
+          "query": "search",
+          "level": "ERROR",
+          "minutes": 60,
+          "limit": 15
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_016jiv65hwxuq9sBNWg3gUmk",
+        "name": "check_change",
+        "input": {
+          "service": "inventory",
+          "fault_type": "bad_deploy"
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01WrKtzPo9NsmZCGfykJhQcJ",
+        "name": "check_fault",
+        "input": {
+          "service": "search",
+          "fault_type": "traffic_spike"
+        }
+      }
+    ],
+    [
+      {
+        "type": "tool_use",
+        "id": "toolu_015Ma4kBNdCP9AMhUtsihWvf",
+        "name": "check_capacity",
+        "input": {
+          "service": "search"
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01726HpvFbMYvNifGfsvXPxK",
+        "name": "search_logs",
+        "input": {
+          "service": "inventory",
+          "minutes": 60,
+          "limit": 15
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01EkL1J8Py2vYx1x6w1YxgEp",
+        "name": "query_metrics",
+        "input": {
+          "service": "inventory",
+          "metric": "rps",
+          "minutes": 60
+        }
+      }
+    ],
+    [
+      {
+        "type": "tool_use",
+        "id": "toolu_01Re1gF2hA9mRyPkhjs5Eet3",
+        "name": "check_fault",
+        "input": {
+          "service": "inventory",
+          "fault_type": "traffic_spike"
+        }
+      }
+    ],
+    [
+      {
+        "type": "tool_use",
+        "id": "toolu_019FjiTP1PU9V4HeYnnYKtP1",
+        "name": "submit_diagnosis",
+        "input": {
+          "status": "diagnosed",
+          "root_cause_service": "inventory",
+          "fault_type": "bad_deploy",
+          "evidence": [
+            {
+              "observation_id": "obs-2",
+              "quote": "13:15:00 (44 min ago) inventory v3.11.6 by yuki: Migrate metrics client"
+            },
+            {
+              "observation_id": "obs-12",
+              "quote": "rps baseline 189.44 recent 908.56; rate limiter shedding load: 429 returned for 22% of requests"
+            },
+            {
+              "observation_id": "obs-3",
+              "quote": "gateway.p95_latency_ms 13:15=164.4, 13:20=231.2, 13:25=484.5, latest=473.4"
+            }
+          ],
+          "action": "rollback",
+          "target": "inventory"
+        }
+      }
+    ],
+    [
+      {
+        "type": "tool_use",
+        "id": "toolu_01JmHknRADLdYxj3AwDkrvDb",
+        "name": "submit_diagnosis",
+        "input": {
+          "status": "diagnosed",
+          "root_cause_service": "inventory",
+          "fault_type": "bad_deploy",
+          "evidence": [
+            {
+              "observation_id": "obs-2",
+              "quote": "13:15:00 (44 min ago) inventory v3.11.6 by yuki: Migrate metrics client"
+            },
+            {
+              "observation_id": "obs-12",
+              "quote": "rate limiter shedding load: 429 returned for 22% of requests"
+            },
+            {
+              "observation_id": "obs-3",
+              "quote": "13:20=231.2, 13:25=484.5, 13:30=464.7, 13:35=476.5, 13:40=482.4, 13:45=485.2, 13:50=457.5, 13:55=489.3"
+            }
+          ],
+          "action": "rollback",
+          "target": "inventory"
+        }
+      }
+    ],
+    [
+      {
+        "type": "tool_use",
+        "id": "toolu_01EuajLyuZiGRP8MSVKbz94Z",
+        "name": "submit_diagnosis",
+        "input": {
+          "status": "diagnosed",
+          "root_cause_service": "search",
+          "fault_type": "traffic_spike",
+          "evidence": [
+            {
+              "observation_id": "obs-12",
+              "quote": "rate limiter shedding load: 429 returned for 22% of requests"
+            },
+            {
+              "observation_id": "obs-5",
+              "quote": "search.p95_latency_ms 13:20=291.9, 13:25=1003.0, 13:30=1022.2, latest=1004.9"
+            },
+            {
+              "observation_id": "obs-6",
+              "quote": "search.error_rate 13:20=2.4, 13:25=10.5, 13:30=10.5, latest=10.4"
+            }
+          ],
+          "action": "scale",
+          "target": "search"
+        }
+      }
+    ]
+  ],
+  "description": "Original tool-use schedule only. The offline evaluator replaces quoted evidence with the same observation IDs; no model text, prompts, credentials or headers."
+}

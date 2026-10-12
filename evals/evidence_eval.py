@@ -24,9 +24,9 @@ def assessment(sc, service, fault):
     return fault_check(sc.logs, sc.metrics, sc.now, service, fault, available=available), 'check_fault', 'supported'
 
 
-def submission(service, fault, expected):
+def submission(service, fault):
     return dict(status='diagnosed', root_cause_service=service, fault_type=fault,
-                evidence=[dict(observation_id='obs-1', quote=f'"status": "{expected}"')], action=None, target=None)
+                evidence=['obs-1'], action=None, target=None)
 
 
 def size(d):
@@ -46,7 +46,7 @@ def evaluate():
                 records.append(dict(case_id=sc.case_id, service=service, fault_type=fault,
                                     expected_supported=expected, status=check['status'], supported=check['status']==supported))
                 if expected:
-                    d = submission(service, fault, supported)
+                    d = submission(service, fault)
                     accepted = validate_diagnosis(d, {'obs-1':json.dumps(check)}, {'obs-1':tool})
                     accepted_compact += accepted['status'] == 'diagnosed'
                     payload_sizes.append(size(d))
@@ -67,7 +67,7 @@ def evaluate():
                              rejected_negatives=sum(not r['supported'] for r in negatives), false_supports=sum(r['supported'] for r in negatives),
                              compact_submissions_accepted=accepted_compact, compact_submission_max_utf8_bytes=max(payload_sizes),
                              recorded_v6_traffic_submission_utf8_bytes=size(fixture['submission']),
-                             constructed_compact_traffic_submission_utf8_bytes=size(submission('search','traffic_spike','supported')),
+                             constructed_compact_traffic_submission_utf8_bytes=size(submission('search','traffic_spike')),
                              provider_calls=0), records=records)
 
 

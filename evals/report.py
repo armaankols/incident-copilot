@@ -6,7 +6,7 @@ ROOT = Path(__file__).resolve().parent.parent
 
 
 def main():
-    runs = [json.loads(p.read_text()) for p in sorted((ROOT/"results").glob("*.json")) if p.name not in ("retrieval.json", "recovery.json", "stopping.json", "evidence.json")]
+    runs = [json.loads(p.read_text()) for p in sorted((ROOT/"results").glob("*.json")) if p.name not in ("retrieval.json", "recovery.json", "stopping.json", "evidence.json", "references.json")]
     runs = [r for r in runs if "metadata" in r]
     md = ["Measured offline baselines and live-model runs on synthetic telemetry. Transport is recorded per experiment.", "",
           "| Run | Transport | Cases | Outcome correct (95% CI) | Errors | Finalization | Total observed API cost | p50 / p95 seconds |",
@@ -44,6 +44,12 @@ def main():
                f"- {s['assessments']} service/fault assessments across {s['scenarios']} original and correlated-v2 scenarios: {s['supported_positives']}/{s['positive_cases']} expected supports accepted, {s['rejected_negatives']}/{s['negative_cases']} unsupported pairs rejected, {s['false_supports']} false supports.",
                f"- {s['compact_submissions_accepted']} constructed compact submissions accepted; largest {s['compact_submission_max_utf8_bytes']} UTF-8 bytes. Recorded v6 traffic submission: {s['recorded_v6_traffic_submission_utf8_bytes']} bytes; constructed compact traffic submission: {s['constructed_compact_traffic_submission_utf8_bytes']} bytes. These are payload byte sizes, not measured model token usage.",
                "- Zero provider calls. These checks cover known synthetic fault patterns; they do not prove causality or generalize to arbitrary production faults. Compact submissions are constructed fixtures, not new model responses."]
+    references = ROOT/"results/references.json"
+    if references.exists():
+        s = json.loads(references.read_text())["summary"]
+        md += ["", "Offline replay through the observation-ID interface (recorded selections with quote fields removed, not new model behavior):",
+               f"- {s['scripted_responses_consumed']} scripted responses, {s['tool_executions']} MCP executions, {s['validation_rejections']} rejected unsupported submissions; final {s['root_service']}/{s['fault_type']} diagnosis with recovery {s['recovery_status']} and no action.",
+               f"- {s['exact_server_excerpts']}/{s['evidence_references']} server-attached excerpts are exact source substrings; zero provider calls. The original live run remains a recorded diagnostic miss."]
     text = "\n".join(md)
     (ROOT/"results"/"RESULTS.md").write_text(text+"\n")
     readme = ROOT/"README.md"
