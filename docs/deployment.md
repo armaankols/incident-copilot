@@ -4,15 +4,16 @@ The application is not deployed. Python 3.12.15 is configured; 68 offline tests
 and the required TF-IDF retrieval checks passed. Runtime/development version
 locks are generated. The Linux/ARM64 Docker image built successfully and passed HTTP, non-root
 server, and budget/replay persistence checks. Browser active-run/error/dropdown
-checks were reported working by the user on 2026-10-06. Nine authorized live smoke
-investigations completed on 2026-10-11; further paid runs require approval.
+checks were reported working by the user on 2026-10-06. Eleven authorized live smoke
+investigations completed by 2026-10-12; further paid runs require approval.
 No deployment has been performed; account/destination access is still needed.
 The observed certificate-ownership and capacity-limit failures now have offline-verified
 MCP assessment gates. A live rerun correctly diagnosed certificate ownership and
 rejected blocked scaling, but traffic diagnosis and stopping needed further work.
 Offline-verified diagnosis/recovery separation and stopping rules are now implemented;
-new live-model effects remain unmeasured. See [diagnosis/stopping changes](diagnosis-stopping.md) and
-[latest validation](live-v4-validation.md), [operational checks](operational-checks.md)
+The v5 live checks then accepted two unsupported causes; fault-specific diagnostic
+evidence requirements remain the next correctness priority before deployment. See [diagnosis/stopping changes](diagnosis-stopping.md) and
+[latest validation](live-v5-validation.md), [operational checks](operational-checks.md)
 and [original findings](live-remaining-smoke.md).
 
 ## Local setup

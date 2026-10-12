@@ -1,0 +1,150 @@
+{
+  "name": "live-v5-traffic_spike-2026-10-12-2fa0a38e57f9",
+  "config": {
+    "agent": "llm",
+    "suite": "original",
+    "model": "claude-haiku-4-5-20251001",
+    "n": 1,
+    "seed": 0,
+    "case_offset": 5,
+    "no_rag": false,
+    "embedder": "tfidf",
+    "max_steps": 12,
+    "concurrency": 1,
+    "save_traces": true,
+    "name": "live-v5-traffic_spike-2026-10-12"
+  },
+  "metadata": {
+    "run_id": "2fa0a38e57f9",
+    "started_at": "2026-10-12T08:22:51.434747+00:00",
+    "source_sha256": "664d68b24b400c3c2e6481e94cc61abc0017aaefa1d400b0495a24bb5f4bcd9a",
+    "dataset_sha256": "5d6b41e3138b784d21949f667cf5efc0eec971e9c5f0930918885a40462feb4b",
+    "dataset_version": "original",
+    "prompt_version": "evidence-v5-diagnosis-recovery-stopping",
+    "python": "3.12.15",
+    "baseline_transport": null
+  },
+  "summary": {
+    "n": 1,
+    "errors": 0,
+    "root_cause_service_acc": 0.0,
+    "fault_type_acc": 0.0,
+    "both_correct_acc": 0.0,
+    "both_correct_ci95": [
+      0.0,
+      79.3
+    ],
+    "action_compatibility_rate": 0.0,
+    "avg_tool_calls": 21,
+    "avg_steps": 10,
+    "avg_input_tokens": 69177,
+    "avg_output_tokens": 4383,
+    "avg_cost_usd": 0.091092,
+    "total_cost_usd": 0.091092,
+    "error_rate": 0.0,
+    "cost_per_correct_diagnosis_usd": null,
+    "billing_uncertain_runs": 0,
+    "latency_scope": "successful runs only",
+    "total_attempted_latency_s": 42.657947,
+    "latency_p50_s": 42.657947,
+    "latency_p95_s": 42.657947,
+    "accuracy_by_fault_type": {
+      "bad_deploy": 0.0,
+      "memory_leak": 0.0,
+      "slow_dependency": 0.0,
+      "config_error": 0.0,
+      "cert_expiry": 0.0,
+      "traffic_spike": 0.0
+    },
+    "total_observed_usage": {
+      "input_tokens": 69177,
+      "output_tokens": 4383,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0
+    },
+    "outcome_accuracy_by_variant": {
+      "original": 0.0
+    },
+    "insufficient_evidence_cases": 0,
+    "abstention_accuracy": 0.0,
+    "model_submitted_abstentions": 0,
+    "forced_abstentions": 0,
+    "correct_diagnoses_without_recovery": 0,
+    "finalization_counts": {
+      "model_submission": 1
+    },
+    "total_cache_hits": 0
+  },
+  "records": [
+    {
+      "seed": 5,
+      "fault_type": "traffic_spike",
+      "root_service": "search",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "inventory",
+        "fault_type": "bad_deploy",
+        "evidence": [
+          {
+            "observation_id": "obs-2",
+            "quote": "13:15:00 (44 min ago) inventory v3.11.6 by yuki: Migrate metrics client"
+          },
+          {
+            "observation_id": "obs-20",
+            "quote": "search.rps last 60m: min=153.6 mean=650.5 max=1010.9 latest=991.0\nsamples: 13:00=190.1, 13:05=182.0, 13:10=193.3, 13:15=193.1, 13:20=325.2, 13:25=893.8"
+          },
+          {
+            "observation_id": "obs-9",
+            "quote": "search.cpu_pct last 60m: min=29.9 mean=72.6 max=98.2 latest=95.5\nsamples: 13:00=38.1, 13:05=29.9, 13:10=36.7, 13:15=32.1, 13:20=45.9, 13:25=95.9"
+          },
+          {
+            "observation_id": "obs-7",
+            "quote": "13:35:00 search WARN autoscaler at max replicas (12/12), cannot add capacity\n13:35:00 search WARN rate limiter shedding load: 429 returned for 29% of requests"
+          },
+          {
+            "observation_id": "obs-13",
+            "quote": "\"status\": \"blocked\""
+          }
+        ],
+        "action": "rollback",
+        "target": "inventory",
+        "remediation": "Recommendation only; no change has been executed. Consider rolling back inventory only after verifying the previous healthy release in deployment records and checking schema/configuration compatibility. A rollback version has not been verified by this investigation. After any approved change, check service and caller error rates and latency against their configured SLOs.",
+        "recovery_status": "recommended",
+        "recovery_reason": "Compatible recommendation; service policy still requires verification."
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "error": null,
+      "steps": 10,
+      "tool_calls": 21,
+      "model_calls": 10,
+      "tool_requests": 21,
+      "cache_hits": 0,
+      "validation_rejections": 1,
+      "stagnant_steps": 3,
+      "termination_reason": "model_submission",
+      "billing_uncertain": false,
+      "investigation_limits": {
+        "model_calls": 12,
+        "tool_requests": 32,
+        "stagnant_rounds": 3,
+        "invalid_submissions": 3
+      },
+      "usage": {
+        "input_tokens": 69177,
+        "output_tokens": 4383,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "latency_s": 42.65794733399525,
+      "cost_usd": 0.091092,
+      "case_id": "original/original/5",
+      "variant": "original"
+    }
+  ]
+}

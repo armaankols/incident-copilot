@@ -17,7 +17,7 @@ def main():
         reasons = sorted({record['termination_reason'] for record in r.get('records', []) if record.get('termination_reason')})
         finalization = (', '.join(reasons) or r.get('trace_review', {}).get('finalization_source', 'not recorded')) if r['config']['agent'] == 'llm' else 'not applicable'
         md.append(f"| {r['name']} | {transport} | {s['n']} | {s['both_correct_acc']}% ({s['both_correct_ci95'][0]}–{s['both_correct_ci95'][1]}) | {s['errors']} | {finalization} | ${s['total_cost_usd']:.6f} | {s['latency_p50_s']:.6f} / {s['latency_p95_s']:.6f} |")
-    md += ["", "Outcome accuracy counts a budget-forced abstention as correct on redacted cases; it does not demonstrate model-selected stopping. Finalization is persisted for new runs or derived from reviewed saved traces; older runs may show not recorded. Latency quantiles describe runs without exceptions; diagnostic misses remain included. Failure elapsed time and observed spend remain in JSON records. API cost is calculated from provider-reported token usage at list prices, not reconciled against an invoice. Structured action compatibility is not a remediation-quality score. These small live smoke runs do not establish reliability; see docs/live-v4-validation.md for live findings and docs/diagnosis-stopping.md for subsequent offline changes."]
+    md += ["", "Outcome accuracy counts a budget-forced abstention as correct on redacted cases; it does not demonstrate model-selected stopping. Finalization is persisted for new runs or derived from reviewed saved traces; older runs may show not recorded. Latency quantiles describe runs without exceptions; diagnostic misses remain included. Failure elapsed time and observed spend remain in JSON records. API cost is calculated from provider-reported token usage at list prices, not reconciled against an invoice. Structured action compatibility is not a remediation-quality score. These small live smoke runs do not establish reliability; see docs/live-v5-validation.md for the latest failed diagnostic checks, docs/live-v4-validation.md for prior live findings and docs/diagnosis-stopping.md for the implementation changes."]
     retrieval = ROOT/"results"/"retrieval.json"
     if retrieval.exists():
         md += ["", "Retrieval smoke checks (small author-written query set):"]
@@ -36,7 +36,7 @@ def main():
         md += ["", "Offline replay of the recorded missing-evidence query schedule (not new model behavior):",
                f"- Original live schedule: {s['original_live_model_calls']} model calls, {s['original_live_tool_calls']} tool calls.",
                f"- New policy replay: {s['scripted_responses_consumed']} scripted responses, {s['tool_executions']} MCP executions, {s['cache_hits']} cache hits, {s['skipped_requests']} skipped requests; stopped by {s['termination_reason']}.",
-               "- Zero provider calls; effects on live accuracy, cost and stopping remain unmeasured."]
+               "- Zero provider calls in this replay; it does not measure live-model accuracy, cost or stopping behavior."]
     text = "\n".join(md)
     (ROOT/"results"/"RESULTS.md").write_text(text+"\n")
     readme = ROOT/"README.md"

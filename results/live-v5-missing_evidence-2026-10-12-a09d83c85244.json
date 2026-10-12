@@ -1,0 +1,146 @@
+{
+  "name": "live-v5-missing_evidence-2026-10-12-a09d83c85244",
+  "config": {
+    "agent": "llm",
+    "suite": "correlated-v1",
+    "model": "claude-haiku-4-5-20251001",
+    "n": 1,
+    "seed": 0,
+    "case_offset": 18,
+    "no_rag": false,
+    "embedder": "tfidf",
+    "max_steps": 12,
+    "concurrency": 1,
+    "save_traces": true,
+    "name": "live-v5-missing_evidence-2026-10-12"
+  },
+  "metadata": {
+    "run_id": "a09d83c85244",
+    "started_at": "2026-10-12T08:23:35.282789+00:00",
+    "source_sha256": "664d68b24b400c3c2e6481e94cc61abc0017aaefa1d400b0495a24bb5f4bcd9a",
+    "dataset_sha256": "7070259ce8ad994921cf214e3449c181300c977454f8d1a246be7654b1d76bf7",
+    "dataset_version": "correlated-v1",
+    "prompt_version": "evidence-v5-diagnosis-recovery-stopping",
+    "python": "3.12.15",
+    "baseline_transport": null
+  },
+  "summary": {
+    "n": 1,
+    "errors": 0,
+    "root_cause_service_acc": 0.0,
+    "fault_type_acc": 0.0,
+    "both_correct_acc": 0.0,
+    "both_correct_ci95": [
+      0.0,
+      79.3
+    ],
+    "action_compatibility_rate": 0.0,
+    "avg_tool_calls": 24,
+    "avg_steps": 8,
+    "avg_input_tokens": 46189,
+    "avg_output_tokens": 3176,
+    "avg_cost_usd": 0.062069,
+    "total_cost_usd": 0.062069,
+    "error_rate": 0.0,
+    "cost_per_correct_diagnosis_usd": null,
+    "billing_uncertain_runs": 0,
+    "latency_scope": "successful runs only",
+    "total_attempted_latency_s": 34.690091,
+    "latency_p50_s": 34.690091,
+    "latency_p95_s": 34.690091,
+    "accuracy_by_fault_type": {
+      "bad_deploy": 0.0,
+      "memory_leak": 0.0,
+      "slow_dependency": 0.0,
+      "config_error": 0.0,
+      "cert_expiry": 0.0,
+      "traffic_spike": 0.0
+    },
+    "total_observed_usage": {
+      "input_tokens": 46189,
+      "output_tokens": 3176,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0
+    },
+    "outcome_accuracy_by_variant": {
+      "redacted": 0.0
+    },
+    "insufficient_evidence_cases": 1,
+    "abstention_accuracy": 0.0,
+    "model_submitted_abstentions": 0,
+    "forced_abstentions": 0,
+    "correct_diagnoses_without_recovery": 0,
+    "finalization_counts": {
+      "model_submission": 1
+    },
+    "total_cache_hits": 0
+  },
+  "records": [
+    {
+      "seed": 18,
+      "fault_type": "insufficient_evidence",
+      "root_service": null,
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "gateway",
+        "fault_type": "config_error",
+        "evidence": [
+          {
+            "observation_id": "obs-3",
+            "quote": "gateway.error_rate last 60m: min=0.1 mean=6.4 max=9.7 latest=9.6\nsamples: 13:00=0.1, 13:05=0.2, 13:10=0.2, 13:15=0.3, 13:20=4.9, 13:25=9.5, 13:30=9.6"
+          },
+          {
+            "observation_id": "obs-2",
+            "quote": "gateway.p95_latency_ms last 60m: min=152.5 mean=243.8 max=316.3 latest=298.9\nsamples: 13:00=176.0, 13:05=164.1, 13:10=156.6, 13:15=187.2, 13:20=224.9, 13:25=264.2"
+          },
+          {
+            "observation_id": "obs-5",
+            "quote": "auth.error_rate last 60m: min=0.2 mean=0.2 max=0.2 latest=0.2\nsamples: 13:00=0.2, 13:05=0.2, 13:10=0.2, 13:15=0.2, 13:20=0.2, 13:25=0.2"
+          },
+          {
+            "observation_id": "obs-9",
+            "quote": "13:59:00 gateway WARN upstream requests failing; dependency telemetry unavailable"
+          }
+        ],
+        "action": "restore_config",
+        "target": "gateway",
+        "remediation": "Recommendation only; no change has been executed. Compare gateway's active configuration with a verified healthy configuration. Confirm compatibility and the service rollback procedure before restoring it; no specific configuration revision has been verified. After any approved change, check service and caller error rates and latency against their configured SLOs.",
+        "recovery_status": "recommended",
+        "recovery_reason": "Compatible recommendation; service policy still requires verification."
+      },
+      "grade": {
+        "service_ok": false,
+        "type_ok": false,
+        "both_ok": false,
+        "remediation_ok": false,
+        "abstained": false
+      },
+      "error": null,
+      "steps": 8,
+      "tool_calls": 24,
+      "model_calls": 8,
+      "tool_requests": 24,
+      "cache_hits": 0,
+      "validation_rejections": 0,
+      "stagnant_steps": 2,
+      "termination_reason": "model_submission",
+      "billing_uncertain": false,
+      "investigation_limits": {
+        "model_calls": 12,
+        "tool_requests": 32,
+        "stagnant_rounds": 3,
+        "invalid_submissions": 3
+      },
+      "usage": {
+        "input_tokens": 46189,
+        "output_tokens": 3176,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "latency_s": 34.690090625023004,
+      "cost_usd": 0.062069,
+      "case_id": "correlated-v1/redacted/18",
+      "variant": "redacted"
+    }
+  ]
+}

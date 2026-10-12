@@ -9,12 +9,12 @@ Python 3.12.15 is installed at `/opt/homebrew/bin/python3.12`; `.venv` is ready.
 The user installed dependencies from a terminal outside the restricted shell.
 `requirements.lock` pins 72 runtime packages; `requirements-dev.lock` pins 76
 packages, including the development dependencies. Locks have no wheel hashes.
-Nine authorized live smoke investigations completed on 2026-10-11. No deployment
+Eleven authorized live smoke investigations completed by 2026-10-12. No deployment
 has been performed; further paid runs require approval.
 
 Measured on Python 3.12.15:
 
-- `python -m pytest -q tests`: 68 passed (2026-10-12; 2.29 seconds).
+- `python -m pytest -q tests`: 68 passed (2026-10-12; 2.09 seconds).
 - `python -m pip check`: no broken requirements.
 - `python -m evals.retrieval_eval`: TF-IDF recall@1 and recall@3 both 14/14;
   optional FastEmbed skipped because it is not installed.
@@ -71,7 +71,7 @@ author-written synthetic fixtures; it is not a live-model comparison.
 
 Live-model smoke results, token usage, citation retries and qualitative limitations
 are recorded in [live-smoke.md](live-smoke.md). Latest offline test run: 68 passed
-in 2.29 seconds on 2026-10-12. Recommendation/citation checks are recorded in
+in 2.09 seconds on 2026-10-12. Recommendation/citation checks are recorded in
 [recommendation-grounding.md](recommendation-grounding.md).
 
 The updated prompt/validator was exercised on one live configuration-error case:
@@ -103,3 +103,9 @@ Diagnosis/recovery separation and bounded investigation were checked offline on
 executions instead of completing the original 12-response / 49-query schedule.
 This is not a new model result; no paid calls were made. See
 [diagnosis-stopping.md](diagnosis-stopping.md).
+
+The v5 traffic and redacted live checks both failed their expected outcomes:
+wrong inventory/bad_deploy and unsupported gateway/config_error diagnoses were
+accepted with genuine quotes. Both ended via model submission; no stopping rule
+triggered. Combined token-cost estimate: $0.153161. See
+[live-v5-validation.md](live-v5-validation.md) for evidence-validation limitations.

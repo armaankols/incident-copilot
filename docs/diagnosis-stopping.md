@@ -32,3 +32,8 @@ Replay artifact: [stopping.json](../results/stopping.json). Reproduce offline wi
 ## Limits
 
 Exact references establish provenance, not semantic correctness of every inferred cause. These stopping limits trade completeness for bounded investigation: a legitimate case needing more queries or corrections may abstain earlier. Caching assumes the fixed simulator snapshot and would require a freshness policy for changing live telemetry. No recovery is executed, and live model effects on diagnosis, latency, tokens, cost or spontaneous stopping remain unmeasured.
+
+Subsequent authorized live checks are recorded in [live-v5-validation.md](live-v5-validation.md).
+Both accepted unsupported causes before any stopping bound fired; the implementation
+checks and recorded-query replay did not establish live correctness. Historical
+measurements above remain unchanged.

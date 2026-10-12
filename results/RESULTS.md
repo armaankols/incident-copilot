@@ -10,13 +10,15 @@ Measured offline baselines and live-model runs on synthetic telemetry. Transport
 | live-v4-cert_expiry-2026-10-11-d25c89d17f9b | live LLM + in-memory MCP | 1 | 100.0% (20.7–100.0) | 0 | model_submission | $0.032570 | 22.802807 / 22.802807 |
 | live-v4-missing_evidence-2026-10-11-e2dd981ee93f | live LLM + in-memory MCP | 1 | 100.0% (20.7–100.0) | 0 | step_budget | $0.110672 | 39.235019 / 39.235019 |
 | live-v4-traffic_spike-2026-10-11-efcbd431f4ec | live LLM + in-memory MCP | 1 | 0.0% (0.0–79.3) | 0 | model_submission | $0.131559 | 56.094510 / 56.094510 |
+| live-v5-missing_evidence-2026-10-12-a09d83c85244 | live LLM + in-memory MCP | 1 | 0.0% (0.0–79.3) | 0 | model_submission | $0.062069 | 34.690091 / 34.690091 |
+| live-v5-traffic_spike-2026-10-12-2fa0a38e57f9 | live LLM + in-memory MCP | 1 | 0.0% (0.0–79.3) | 0 | model_submission | $0.091092 | 42.657947 / 42.657947 |
 | python312-latest-deploy-d27b85c6db2d | deploy history | 60 | 5.0% (1.7–13.7) | 0 | not applicable | $0.000000 | 0.000001 / 0.000002 |
 | python312-mcp-rules-challenge-d2808d804229 | in-memory MCP | 24 | 33.3% (18.0–53.3) | 0 | not applicable | $0.000000 | 0.084101 / 0.144860 |
 | python312-mcp-rules-original-349e3b4a5bd7 | in-memory MCP | 60 | 100.0% (94.0–100.0) | 0 | not applicable | $0.000000 | 0.288247 / 0.414055 |
 | python312-rules-challenge-77334f82ea35 | direct simulator log search | 24 | 33.3% (18.0–53.3) | 0 | not applicable | $0.000000 | 0.000138 / 0.000960 |
 | python312-rules-original-bd66349c44c0 | direct simulator log search | 60 | 100.0% (94.0–100.0) | 0 | not applicable | $0.000000 | 0.001171 / 0.001318 |
 
-Outcome accuracy counts a budget-forced abstention as correct on redacted cases; it does not demonstrate model-selected stopping. Finalization is persisted for new runs or derived from reviewed saved traces; older runs may show not recorded. Latency quantiles describe runs without exceptions; diagnostic misses remain included. Failure elapsed time and observed spend remain in JSON records. API cost is calculated from provider-reported token usage at list prices, not reconciled against an invoice. Structured action compatibility is not a remediation-quality score. These small live smoke runs do not establish reliability; see docs/live-v4-validation.md for live findings and docs/diagnosis-stopping.md for subsequent offline changes.
+Outcome accuracy counts a budget-forced abstention as correct on redacted cases; it does not demonstrate model-selected stopping. Finalization is persisted for new runs or derived from reviewed saved traces; older runs may show not recorded. Latency quantiles describe runs without exceptions; diagnostic misses remain included. Failure elapsed time and observed spend remain in JSON records. API cost is calculated from provider-reported token usage at list prices, not reconciled against an invoice. Structured action compatibility is not a remediation-quality score. These small live smoke runs do not establish reliability; see docs/live-v5-validation.md for the latest failed diagnostic checks, docs/live-v4-validation.md for prior live findings and docs/diagnosis-stopping.md for the implementation changes.
 
 Retrieval smoke checks (small author-written query set):
 - tfidf: 14 queries, recall@1 100.0%, recall@3 100.0%.
@@ -31,4 +33,4 @@ Version-specific recovery policy lookup (offline structured reader, not an LLM a
 Offline replay of the recorded missing-evidence query schedule (not new model behavior):
 - Original live schedule: 12 model calls, 49 tool calls.
 - New policy replay: 7 scripted responses, 32 MCP executions, 0 cache hits, 2 skipped requests; stopped by tool_limit.
-- Zero provider calls; effects on live accuracy, cost and stopping remain unmeasured.
+- Zero provider calls in this replay; it does not measure live-model accuracy, cost or stopping behavior.
