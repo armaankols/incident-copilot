@@ -1,0 +1,34 @@
+{
+  "source_run": "live-v6-traffic_spike-2026-10-12-af571910c196",
+  "stop_reason": "tool_use",
+  "output_tokens": 859,
+  "submission": {
+    "status": "diagnosed",
+    "root_cause_service": "search",
+    "fault_type": "traffic_spike",
+    "evidence": [
+      {
+        "observation_id": "obs-3",
+        "quote": "search.error_rate last 60m: min=0.2 mean=6.7 max=10.5 latest=10.4\nsamples: 13:00=0.2, 13:05=0.3, 13:10=0.3, 13:15=0.2, 13:20=2.4, 13:25=10.5, 13:30=10.5, 13:35=10.5, 13:40=10.4, 13:45=10.5, 13:50=10.4, 13:55=10.5"
+      },
+      {
+        "observation_id": "obs-18",
+        "quote": "search.rps last 60m: min=153.6 mean=650.5 max=1010.9 latest=991.0\nsamples: 13:00=190.1, 13:05=182.0, 13:10=193.3, 13:15=193.1, 13:20=325.2, 13:25=893.8, 13:30=902.9, 13:35=936.7, 13:40=896.5, 13:45=963.1, 13:50=916.7, 13:55=908.6"
+      },
+      {
+        "observation_id": "obs-8",
+        "quote": "search.cpu_pct last 60m: min=29.9 mean=72.6 max=98.2 latest=95.5\nsamples: 13:00=38.1, 13:05=29.9, 13:10=36.7, 13:15=32.1, 13:20=45.9, 13:25=95.9, 13:30=95.3, 13:35=96.3, 13:40=96.0, 13:45=91.9, 13:50=96.0, 13:55=97.9"
+      },
+      {
+        "observation_id": "obs-7",
+        "quote": "13:41:00 search WARN autoscaler at max replicas (12/12), cannot add capacity\n13:44:00 search WARN rate limiter shedding load: 429 returned for 23% of requests"
+      }
+    ],
+    "action": null,
+    "target": null,
+    "remediation": "Search service is saturated at maximum replica capacity (12/12) with sustained elevated traffic (900+ RPS vs. baseline ~190 RPS). CPU at 95%+, error rate at 10.4%, and rate limiter actively shedding 22-27% of requests. Scaling is currently blocked by infrastructure limits. Investigate the traffic source increase at 13:20:00 to determine if this is legitimate user demand or anomalous traffic. Consider consulting service owner on raising replica limits if infrastructure permits, or implementing client-side load shedding, request prioritization, or per-tenant rate limits for non-critical routes while scaling capacity review occurs."
+  },
+  "observations": {
+    "obs-7": "(43 matches, showing most recent 20; narrow with service/level/query)\n13:38:00 search WARN rate limiter shedding load: 429 returned for 13% of requests\n13:40:00 search INFO GET /v1/profile 200 129ms\n13:41:00 search WARN autoscaler at max replicas (12/12), cannot add capacity\n13:41:00 search WARN rate limiter shedding load: 429 returned for 22% of requests\n13:42:00 search INFO cache hit ratio 0.91\n13:44:00 search WARN autoscaler at max replicas (12/12), cannot add capacity\n13:44:00 search WARN rate limiter shedding load: 429 returned for 23% of requests\n13:47:00 search WARN autoscaler at max replicas (12/12), cannot add capacity\n13:47:00 search WARN rate limiter shedding load: 429 returned for 27% of requests\n13:48:00 search WARN deprecated header X-Legacy-Id used by client\n13:50:00 search WARN autoscaler at max replicas (12/12), cannot add capacity\n13:50:00 search WARN rate limiter shedding load: 429 returned for 27% of requests\n13:53:00 search WARN autoscaler at max replicas (12/12), cannot add capacity\n13:53:00 search WARN rate limiter shedding load: 429 returned for 27% of requests\n13:56:00 search WARN autoscaler at max replicas (12/12), cannot add capacity\n13:56:00 search WARN rate limiter shedding load: 429 returned for 22% of requests\n13:57:00 search INFO GET /v1/checkout 200 84ms\n13:59:00 search INFO GET /v1/status 200 91ms\n13:59:00 search WARN autoscaler at max replicas (12/12), cannot add capacity\n13:59:00 search WARN rate limiter shedding load: 429 returned for 14% of requests"
+  }
+}

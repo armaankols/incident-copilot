@@ -23,6 +23,9 @@ Measured offline baselines and live-model runs on synthetic telemetry. Transport
 | v6-offline-rules-original-a1f4beae8114 | direct simulator log search | 60 | 100.0% (94.0–100.0) | 0 | not applicable | $0.000000 | 0.001242 / 0.001364 |
 | v6-offline-rules-v1-85dd41c2f0b1 | direct simulator log search | 24 | 33.3% (18.0–53.3) | 0 | not applicable | $0.000000 | 0.000142 / 0.000983 |
 | v6-offline-rules-v2-dadf8db45d5d | direct simulator log search | 24 | 33.3% (18.0–53.3) | 0 | not applicable | $0.000000 | 0.000141 / 0.000980 |
+| v7-offline-rules-original-6c983d4b3bfc | direct simulator log search | 60 | 100.0% (94.0–100.0) | 0 | not applicable | $0.000000 | 0.001215 / 0.001420 |
+| v7-offline-rules-v1-26568fb2f235 | direct simulator log search | 24 | 33.3% (18.0–53.3) | 0 | not applicable | $0.000000 | 0.000143 / 0.000994 |
+| v7-offline-rules-v2-5607de2ad466 | direct simulator log search | 24 | 33.3% (18.0–53.3) | 0 | not applicable | $0.000000 | 0.000144 / 0.001006 |
 
 Outcome accuracy counts a budget-forced abstention as correct on redacted cases; it does not demonstrate model-selected stopping. Finalization is persisted for new runs or derived from reviewed saved traces; older runs may show not recorded. Latency quantiles describe runs without exceptions; diagnostic misses remain included. Failure elapsed time and observed spend remain in JSON records. API cost is calculated from provider-reported token usage at list prices, not reconciled against an invoice. Structured action compatibility is not a remediation-quality score. These small live smoke runs do not establish reliability; see docs/live-v6-validation.md for the latest failed checks, docs/live-v5-validation.md and docs/live-v4-validation.md for prior live findings, and docs/change-evidence.md for the implementation changes.
 
@@ -41,6 +44,7 @@ Offline replay of the recorded missing-evidence query schedule (not new model be
 - New policy replay: 7 scripted responses, 32 MCP executions, 0 cache hits, 2 skipped requests; stopped by tool_limit.
 - Zero provider calls in this replay; it does not measure live-model accuracy, cost or stopping behavior.
 
-Offline deployment/configuration evidence gate (template-specific deterministic checks, not LLM accuracy):
-- 1176 service/fault assessments across 84 original and correlated-v2 scenarios: 26/26 expected supports accepted, 1150/1150 unsupported pairs rejected, 0 false supports.
-- Zero provider calls. These checks cover the simulator's known release/exception and DB-pool configuration patterns; they do not prove causality or generalize to arbitrary production faults.
+Offline six-fault evidence gates (template-specific deterministic checks, not LLM accuracy):
+- 3528 service/fault assessments across 84 original and correlated-v2 scenarios: 78/78 expected supports accepted, 3450/3450 unsupported pairs rejected, 0 false supports.
+- 78 constructed compact submissions accepted; largest 193 UTF-8 bytes. Recorded v6 traffic submission: 1747 bytes; constructed compact traffic submission: 185 bytes. These are payload byte sizes, not measured model token usage.
+- Zero provider calls. These checks cover known synthetic fault patterns; they do not prove causality or generalize to arbitrary production faults. Compact submissions are constructed fixtures, not new model responses.

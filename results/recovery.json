@@ -1,7 +1,7 @@
 {
   "dataset_version": "recovery-v1",
   "corpus": "runbooks/recovery",
-  "measured_at": "2026-10-12T18:26:37.778089+00:00",
+  "measured_at": "2026-10-12T19:43:38.776610+00:00",
   "reader": "structured policy extraction with exact service/version matching",
   "limitations": "Author-written synthetic fixtures; no model calls, no recovery execution, no dense-retrieval comparison.",
   "dataset_sha256": "a7ab522512273a0a86edb8a398dd9d0ac2e8cfad602f1f5237e73afff471950c",

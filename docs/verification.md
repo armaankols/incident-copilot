@@ -14,7 +14,7 @@ has been performed; further paid runs require approval.
 
 Measured on Python 3.12.15:
 
-- `python -m pytest -q tests`: 91 passed (2026-10-12; 2.80 seconds).
+- `python -m pytest -q tests`: 130 passed (2026-10-12; 2.99 seconds).
 - `python -m pip check`: no broken requirements.
 - `python -m evals.retrieval_eval`: TF-IDF recall@1 and recall@3 both 14/14;
   optional FastEmbed skipped because it is not installed.
@@ -70,8 +70,8 @@ unknown versions. This is an offline structured-reader ablation over small,
 author-written synthetic fixtures; it is not a live-model comparison.
 
 Live-model smoke results, token usage, citation retries and qualitative limitations
-are recorded in [live-smoke.md](live-smoke.md). Latest offline test run: 91 passed
-in 2.80 seconds on 2026-10-12. Recommendation/citation checks are recorded in
+are recorded in [live-smoke.md](live-smoke.md). Latest offline test run: 130 passed
+in 2.99 seconds on 2026-10-12. Recommendation/citation checks are recorded in
 [recommendation-grounding.md](recommendation-grounding.md).
 
 The updated prompt/validator was exercised on one live configuration-error case:
@@ -120,3 +120,9 @@ search/traffic_spike but hit output truncation and a citation error, forcing an
 abstention; the redacted case guessed auth/slow_dependency using gateway evidence.
 Combined usage-derived token cost: $0.155941, under the approved $1 cap. No action
 was recommended. See [live-v6-validation.md](live-v6-validation.md).
+
+V7 adds diagnostic assessments for memory leaks, slow dependencies and traffic
+spikes, a six-field compact final schema, and separate output-truncation handling.
+All 130 tests passed in 2.99 seconds. The expanded six-fault matrix accepted 78/78
+supported pairs and rejected 3,450/3,450 unsupported pairs, with zero provider calls.
+See [fault-gates-compact.md](fault-gates-compact.md) for limits and measurements.

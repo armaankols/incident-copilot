@@ -8,6 +8,7 @@ from copilot.diagnosis import insufficient, validate_diagnosis
 from copilot.llm import ScriptedLLM
 from copilot.runner import run_scenario
 from copilot.sim import generate
+from tests.evidence import fault_observation
 
 
 def candidate():
@@ -20,7 +21,7 @@ def candidate():
 def test_unsupported_recovery_specifics_cannot_reach_accepted_recommendation():
     proposed = candidate()
     original = copy.deepcopy(proposed)
-    accepted = validate_diagnosis(proposed, {"obs-1": "payments ERROR OOMKilled"})
+    accepted = validate_diagnosis(proposed, {"obs-1": fault_observation("payments", "memory_leak", text="OOMKilled")}, {"obs-1": "check_fault"})
     assert proposed == original  # The recorded provider response stays unchanged.
     assert accepted["evidence"] == proposed["evidence"]
     assert accepted["action"] == "rollback" and accepted["target"] == "payments"
@@ -61,13 +62,13 @@ def test_graph_returns_actionable_feedback_and_sanitizes_corrected_diagnosis():
     sc = generate(1, "memory_leak")
     d = {**candidate(), "root_cause_service": sc.root_service, "target": sc.root_service,
          "evidence": [dict(observation_id="obs-1", quote="invented health") ]}
-    corrected = {**d, "evidence": [dict(observation_id="obs-1", quote="Time now:")]}
+    corrected = {**d, "evidence": [dict(observation_id="obs-1", quote='"status": "supported"')]}
     class CapturingLLM(ScriptedLLM):
         async def complete(self, system, messages, tools, tool_choice=None):
             self.last_messages = copy.deepcopy(messages)
             return await super().complete(system, messages, tools, tool_choice)
     llm = CapturingLLM([
-        [dict(type="tool_use", id="health", name="list_services", input={})],
+        [dict(type="tool_use", id="health", name="check_fault", input=dict(service=sc.root_service, fault_type="memory_leak"))],
         [dict(type="tool_use", id="bad", name="submit_diagnosis", input=d)],
         [dict(type="tool_use", id="fixed", name="submit_diagnosis", input=corrected)],
     ])

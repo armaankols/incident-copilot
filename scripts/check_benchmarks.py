@@ -31,9 +31,12 @@ if (stopping["provider_calls"] != 0 or stopping["outcome"] != "insufficient_evid
 print("Recorded-query stopping replay verified; no claim about new model behavior")
 
 evidence = json.loads(Path("results/evidence.json").read_text())["summary"]
-if (evidence["assessments"] != 1176 or evidence["positive_cases"] != 26
-        or evidence["supported_positives"] != 26 or evidence["negative_cases"] != 1150
-        or evidence["rejected_negatives"] != 1150 or evidence["false_supports"] != 0
+if (evidence["assessments"] != 3528 or evidence["positive_cases"] != 78
+        or evidence["supported_positives"] != 78 or evidence["negative_cases"] != 3450
+        or evidence["rejected_negatives"] != 3450 or evidence["false_supports"] != 0
+        or evidence["compact_submissions_accepted"] != 78
+        or evidence["compact_submission_max_utf8_bytes"] > 300
+        or evidence["constructed_compact_traffic_submission_utf8_bytes"] >= evidence["recorded_v6_traffic_submission_utf8_bytes"]
         or evidence["provider_calls"] != 0):
     raise SystemExit("Unexpected template-specific change assessment result")
-print("Change assessment fixtures verified; no claim about live-model accuracy")
+print("Six-fault assessment and compact payload fixtures verified; no claim about live-model accuracy")

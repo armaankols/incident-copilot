@@ -40,9 +40,10 @@ def main():
     evidence = ROOT/"results/evidence.json"
     if evidence.exists():
         s = json.loads(evidence.read_text())["summary"]
-        md += ["", "Offline deployment/configuration evidence gate (template-specific deterministic checks, not LLM accuracy):",
+        md += ["", "Offline six-fault evidence gates (template-specific deterministic checks, not LLM accuracy):",
                f"- {s['assessments']} service/fault assessments across {s['scenarios']} original and correlated-v2 scenarios: {s['supported_positives']}/{s['positive_cases']} expected supports accepted, {s['rejected_negatives']}/{s['negative_cases']} unsupported pairs rejected, {s['false_supports']} false supports.",
-               "- Zero provider calls. These checks cover the simulator's known release/exception and DB-pool configuration patterns; they do not prove causality or generalize to arbitrary production faults."]
+               f"- {s['compact_submissions_accepted']} constructed compact submissions accepted; largest {s['compact_submission_max_utf8_bytes']} UTF-8 bytes. Recorded v6 traffic submission: {s['recorded_v6_traffic_submission_utf8_bytes']} bytes; constructed compact traffic submission: {s['constructed_compact_traffic_submission_utf8_bytes']} bytes. These are payload byte sizes, not measured model token usage.",
+               "- Zero provider calls. These checks cover known synthetic fault patterns; they do not prove causality or generalize to arbitrary production faults. Compact submissions are constructed fixtures, not new model responses."]
     text = "\n".join(md)
     (ROOT/"results"/"RESULTS.md").write_text(text+"\n")
     readme = ROOT/"README.md"

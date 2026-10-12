@@ -108,6 +108,8 @@ def test_recorded_unsupported_diagnosis_is_rejected_with_real_quotes(filename):
                          available=sc.availability("deploys") == "available")
     assert check["status"] == "unknown"
     observations["obs-check"] = json.dumps(check)
+    # Preserve genuine source excerpts while fitting the new compact interface.
+    d["evidence"] = [{**ref, "quote": ref["quote"][:240]} for ref in d["evidence"][:3]]
     for action in (True, False):
         proposed = d if action else {**d, "action": None, "target": None}
         with pytest.raises(ValueError, match="check_change.*unknown"):
@@ -163,11 +165,11 @@ def test_graph_rejects_decoy_release_and_retains_traffic_diagnosis_with_blocked_
     sc = generate(5, "traffic_spike")
     wrong = candidate("inventory", "bad_deploy", '"status": "unknown"')
     right = dict(status="diagnosed", root_cause_service="search", fault_type="traffic_spike",
-                 evidence=[dict(observation_id="obs-2", quote="rate limiter shedding load"),
+                 evidence=[dict(observation_id="obs-2", quote='"status": "supported"'),
                            dict(observation_id="obs-3", quote='"status": "blocked"')],
                  action="scale", target="search", remediation="Scale")
     script = [[dict(type="tool_use", id="change", name="check_change", input=dict(service="inventory", fault_type="bad_deploy")),
-               dict(type="tool_use", id="traffic", name="search_logs", input=dict(service="search", query="rate limiter")),
+               dict(type="tool_use", id="traffic", name="check_fault", input=dict(service="search", fault_type="traffic_spike")),
                dict(type="tool_use", id="capacity", name="check_capacity", input=dict(service="search"))],
               [dict(type="tool_use", id="wrong", name="submit_diagnosis", input=wrong)],
               [dict(type="tool_use", id="right", name="submit_diagnosis", input=right)]]

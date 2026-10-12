@@ -10,6 +10,7 @@ from copilot.diagnosis import insufficient, validate_diagnosis
 from copilot.llm import ScriptedLLM
 from copilot.runner import run_scenario
 from copilot.sim import generate
+from tests.evidence import add_fault
 
 
 def diagnosis(service="payments", fault="cert_expiry", action="renew_certificate", oid="obs-1", quote='"status": "expiry_supported"'):
@@ -68,21 +69,23 @@ def test_check_text_from_runbook_cannot_forge_operational_assessment():
 def test_positive_check_must_be_for_target_and_cited_without_omitting_conflicts():
     good = json.dumps(dict(kind="capacity", service="search", status="headroom"))
     d = diagnosis("search", "traffic_spike", "scale", quote='"status": "headroom"')
-    assert validate_diagnosis(d, {"obs-1": good}, {"obs-1": "check_capacity"})["action"] == "scale"
+    def validate(proposed, observations, tools):
+        return validate_diagnosis(*add_fault(proposed, observations, tools))
+    assert validate(d, {"obs-1": good}, {"obs-1": "check_capacity"})["action"] == "scale"
     wrong = json.dumps(dict(kind="capacity", service="auth", status="headroom"))
-    invalid_target = validate_diagnosis(d, {"obs-1": wrong}, {"obs-1": "check_capacity"})
+    invalid_target = validate(d, {"obs-1": wrong}, {"obs-1": "check_capacity"})
     assert invalid_target["action"] is None and invalid_target["recovery_status"] == "unverified"
     blocked = json.dumps(dict(kind="capacity", service="search", status="blocked"))
-    conflict = validate_diagnosis(d, {"obs-1": good, "obs-2": blocked}, {"obs-1": "check_capacity", "obs-2": "check_capacity"})
+    conflict = validate(d, {"obs-1": good, "obs-2": blocked}, {"obs-1": "check_capacity", "obs-2": "check_capacity"})
     assert conflict["action"] is None and conflict["recovery_status"] == "blocked"
     uncited = {**d, "evidence": [dict(observation_id="obs-2", quote="search traffic") ]}
-    result = validate_diagnosis(uncited, {"obs-1": good, "obs-2": "search traffic"}, {"obs-1": "check_capacity"})
+    result = validate(uncited, {"obs-1": good, "obs-2": "search traffic"}, {"obs-1": "check_capacity"})
     assert result["action"] is None and result["recovery_status"] == "unverified"
 
 
 def test_missing_or_malformed_check_rejects_scale_but_allows_abstention():
     d = diagnosis("search", "traffic_spike", "scale", quote="search traffic")
-    result = validate_diagnosis(d, {"obs-1": "search traffic", "obs-2": "not JSON"}, {"obs-2": "check_capacity"})
+    result = validate_diagnosis(*add_fault(d, {"obs-1": "search traffic", "obs-2": "not JSON"}, {"obs-2": "check_capacity"}))
     assert result["action"] is None and result["recovery_status"] == "unverified"
     assert validate_diagnosis(insufficient(), {})["action"] is None
 
@@ -106,9 +109,11 @@ def test_graph_rejects_caller_certificate_diagnosis_then_accepts_supported_peer(
 def test_graph_removes_blocked_scaling_without_discarding_diagnosis_or_guessing_alternative():
     sc = generate(5, "traffic_spike")
     blocked = diagnosis("search", "traffic_spike", "scale", quote='"status": "blocked"')
+    blocked["evidence"].append(dict(observation_id="obs-2", quote='"status": "supported"'))
     alternative = {**blocked, "action": "rate_limit"}
     script = [
-        [dict(type="tool_use", id="capacity", name="check_capacity", input=dict(service="search"))],
+        [dict(type="tool_use", id="capacity", name="check_capacity", input=dict(service="search")),
+         dict(type="tool_use", id="fault", name="check_fault", input=dict(service="search", fault_type="traffic_spike"))],
         [dict(type="tool_use", id="bad", name="submit_diagnosis", input=blocked)],
         [dict(type="tool_use", id="good", name="submit_diagnosis", input=alternative)],
     ]
@@ -137,7 +142,7 @@ def test_unknown_ownership_exhausts_budget_into_abstention_without_extra_call():
 def test_actual_saved_failure_payload_cannot_publish_bad_recovery(filename, tool, check, fault, expected):
     root = Path(__file__).resolve().parents[1]
     record = json.loads((root/"results"/filename).read_text())["records"][0]
-    d = record["diagnosis"]
+    d = {**record["diagnosis"], "evidence": [{**ref, "quote": ref["quote"][:240]} for ref in record["diagnosis"]["evidence"][:2]]}
     # Public saved evidence provides exact quoted fragments; this is not a model rerun.
     observations = {ref["observation_id"]: ref["quote"] for ref in d["evidence"]}
     sc = generate(record["seed"], fault)
@@ -148,6 +153,6 @@ def test_actual_saved_failure_payload_cannot_publish_bad_recovery(filename, tool
         with pytest.raises(ValueError, match=expected):
             validate_diagnosis(d, observations, {"obs-check": tool})
     else:
-        result = validate_diagnosis(d, observations, {"obs-check": tool})
+        result = validate_diagnosis(*add_fault(d, observations, {"obs-check": tool}))
         assert result["status"] == "diagnosed" and result["root_cause_service"] == "search"
         assert result["action"] is None and result["recovery_status"] == "blocked"

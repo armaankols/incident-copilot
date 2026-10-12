@@ -24,11 +24,12 @@ Use insufficient_evidence if evidence is missing or ambiguous. A deploy near an 
 Unavailable or partial telemetry is unknown, not healthy, empty, or evidence of a configuration error. Do not infer routing/configuration changes from caller symptoms or missing dependency telemetry.
 Before diagnosing bad_deploy or config_error, call check_change(service, fault_type) and cite a supported assessment for that exact service and fault, even when action is null. Deployment timing alone is insufficient: bad_deploy needs repeated current local exceptions tied to the latest recorded build; config_error needs loaded configuration and matching local failures. An unknown assessment requires more affirmative evidence or insufficient_evidence, not a different unsupported guess. This narrow check supports synthetic record patterns; it does not establish a specific code defect or prove causality.
 If proposing recovery, choose a structured action compatible with the fault and target the root-cause service. Remediation is a recommendation only, not an executed change. The server generates conservative action-specific advice and requires service-policy verification before acting; do not supply concrete commands, unverified versions or invented thresholds.
+Before diagnosing memory_leak, slow_dependency or traffic_spike, call check_fault(service, fault_type) and cite its supported assessment for that exact service/fault, even with no action. Local fault records must be corroborated by metrics; slow dependencies also need caller timeouts naming that service. An unknown assessment cannot support a diagnosis. All six fault types require a cited diagnostic assessment.
 For certificate expiry, distinguish the caller reporting TLS failure from the peer whose certificate it verifies. The peer can have normal application metrics because rejected handshakes never reach the application. Use check_certificate on the suspected owner and cite an expiry_supported assessment before submitting a certificate diagnosis, even with no recovery action; if ownership or expiry remains unknown/conflicting, abstain.
 Before proposing scale, use check_capacity on the target and cite a headroom assessment. At max replicas, or with unknown/conflicting capacity, do not assume permission or resources to raise limits. Keep a supported diagnosis with null action/target rather than guessing another recovery option. Neither operational check executes an action.
 Diagnosis and recovery are separate. If the cause is supported but recovery is not verified, submit status=diagnosed with the root service, fault and evidence, and action=null, target=null. Do not discard a supported cause because scaling is blocked. The server will remove an unverified scaling proposal while retaining a valid diagnosis. Certificate ownership evidence is still required even with no action.
 Do not repeat identical queries against this fixed incident snapshot. Cached observations keep their original IDs. When further telemetry is unavailable, submit insufficient_evidence rather than repeatedly querying it. Follow the remaining budgets in the user context; repeated results and invalid submissions terminate investigation early.
-When you are confident, call submit_diagnosis. Only one validated final diagnosis is accepted. Do not write long prose answers."""
+When ready, call submit_diagnosis directly with no preceding prose. Provide exactly six fields: status, root_cause_service, fault_type, evidence, action, target. Do not write remediation; the server generates it. Use 1-3 exact evidence excerpts of at most 240 characters each; citing the required assessment's status line is sufficient. Do not copy full metric series or JSON. Abstention uses null cause/action fields and evidence=[]. Only one validated final diagnosis is accepted. Keep investigation updates to one short sentence."""
 
 from .diagnosis import SCHEMA, insufficient, validate_diagnosis
 
@@ -52,6 +53,7 @@ class AgentState(TypedDict):
     validation_rejections: int
     stagnant_steps: int
     stop_reason: str | None
+    output_truncations: int
 
 
 def _add_usage(usage: dict, resp) -> dict:
@@ -70,8 +72,9 @@ def _append_user(messages: list[dict], blocks: list[dict]) -> list[dict]:
 
 
 def build_graph(llm, session, tool_specs: list[dict], max_steps: int = 12, progress: dict | None = None,
-                max_tool_requests: int = 32, max_stagnant_steps: int = 3, max_rejections: int = 3):
-    if min(max_steps, max_tool_requests, max_stagnant_steps, max_rejections) < 1:
+                max_tool_requests: int = 32, max_stagnant_steps: int = 3, max_rejections: int = 3,
+                max_output_truncations: int = 3):
+    if min(max_steps, max_tool_requests, max_stagnant_steps, max_rejections, max_output_truncations) < 1:
         raise ValueError("Investigation limits must be positive")
     progress = progress if progress is not None else {}
 
@@ -85,6 +88,7 @@ def build_graph(llm, session, tool_specs: list[dict], max_steps: int = 12, progr
         budget = (f"Remaining model calls including this call: {max_steps-state['steps']}; "
                   f"tool requests: {max(0, max_tool_requests-state.get('tool_requests', 0))}; "
                   f"invalid submissions allowed before stopping: {max_rejections-state.get('validation_rejections', 0)}. "
+                  f"output truncations allowed before stopping: {max_output_truncations-state.get('output_truncations', 0)}. "
                   f"Consecutive rounds without new tool output: {state.get('stagnant_steps', 0)}/{max_stagnant_steps}. "
                   "Submit a supported diagnosis with null recovery fields if no action is verified, or abstain when diagnostic evidence is insufficient.")
         call_messages = _append_user(state["messages"], [{"type": "text", "text": budget}])
@@ -98,13 +102,29 @@ def build_graph(llm, session, tool_specs: list[dict], max_steps: int = 12, progr
             record(event)
         pending = [b for b in resp.content if b["type"] == "tool_use"]
         messages = call_messages + [{"role": "assistant", "content": resp.content or [{"type": "text", "text": "..."}]}]
+        truncations = state.get("output_truncations", 0)
+        if resp.stop_reason == "max_tokens":
+            truncations += 1
+            event = {"type": "output_truncated", "output_tokens": resp.output_tokens,
+                     "skipped_tools": [b["name"] for b in pending],
+                     "output": "Response reached its output limit. No tools or diagnosis from this response were executed."}
+            trace.append(event); record(event)
+            feedback = ("Output was truncated. No tools were executed. Submit a compact complete response without preceding prose: "
+                        "six fields (status, root_cause_service, fault_type, evidence, action, target), "
+                        "1-3 short exact quotes, no remediation. Abstain if required diagnostic evidence is unavailable.")
+            closures = [{"type": "tool_result", "tool_use_id": b["id"], "content": feedback, "is_error": True} for b in pending]
+            messages = _append_user(messages, closures or [{"type": "text", "text": feedback}])
+            progress["output_truncations"] = truncations
+            return {"messages": messages, "pending": [], "steps": state["steps"]+1,
+                    "output_truncations": truncations, "stop_reason": "output_limit" if truncations >= max_output_truncations else None,
+                    "usage": _add_usage(state["usage"], resp), "trace": trace}
         if not pending:
             messages = _append_user(messages, [{"type": "text", "text": "Continue investigating with tools, or call submit_diagnosis."}])
         stagnant = state.get("stagnant_steps", 0) + (0 if pending else 1)
         progress["stagnant_steps"] = stagnant
         return {"messages": messages, "pending": pending, "steps": state["steps"] + 1,
                 "stagnant_steps": stagnant, "stop_reason": "stagnation" if not pending and stagnant >= max_stagnant_steps else None,
-                "usage": _add_usage(state["usage"], resp), "trace": trace}
+                "usage": _add_usage(state["usage"], resp), "trace": trace, "output_truncations": truncations}
 
     async def act_node(state: AgentState) -> dict[str, Any]:
         results, trace, diagnosis, n_calls = [], list(state["trace"]), state["diagnosis"], 0
@@ -201,6 +221,7 @@ def build_graph(llm, session, tool_specs: list[dict], max_steps: int = 12, progr
         explanations = {"step_budget": "Investigation model-call budget exhausted.",
                         "stagnation": "Investigation stopped after repeated rounds without new tool output.",
                         "correction_limit": "Investigation stopped after repeated invalid submissions.",
+                        "output_limit": "Investigation stopped after repeated output truncation.",
                         "tool_limit": "Investigation tool-request limit reached."}
         diagnosis = {**insufficient(explanations[reason]), "recovery_status": "unavailable", "recovery_reason": explanations[reason]}
         progress["termination_reason"] = reason

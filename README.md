@@ -20,17 +20,21 @@ requested, but cache savings have not been measured.
   release history, and runbooks. The server also supports standalone stdio.
 - Validated diagnoses contain an explicit outcome, structured action and target,
   and exact quotations referencing successful retrieved observations. Provenance
-  validation does not establish that the evidence supports the diagnosis.
-- Deployment and configuration diagnoses additionally require a cited, service/fault-specific
-  `check_change` assessment backed by release-linked local failures. Missing telemetry
-  is explicit in `correlated-v2`; historical `correlated-v1` remains reproducible.
-  These narrow checks cover known synthetic patterns. See [evidence checks](docs/change-evidence.md).
+  validation alone does not establish that the evidence supports the diagnosis.
+- All six fault types require cited MCP diagnostic assessments. Deployment/configuration
+  checks use release-linked failures; memory, slow-dependency and traffic checks use
+  local fault records plus metrics; certificates require ownership/expiry corroboration.
+  Missing telemetry is explicit in `correlated-v2`. These checks cover narrow synthetic
+  patterns. See [fault evidence and compact submissions](docs/fault-gates-compact.md).
 - Certificate renewal and scaling require cited, target-specific MCP operational
   assessments. Unknown ownership or blocked/unknown replica headroom cannot support
   those recommendations. See [operational checks](docs/operational-checks.md).
 - A supported diagnosis can retain its service/fault while recovery is blocked or
   unverified. Repeated queries are cached, and bounded query/correction/stagnation
   rules stop the graph without another model call. See [diagnosis and stopping](docs/diagnosis-stopping.md).
+- Final submissions use six fields and at most three short exact quotes; the server
+  generates remediation prose. Truncated responses execute no tools and have a separate
+  stopping limit; the 1,000-output-token API allowance remains unchanged.
 - Budget exhaustion returns `insufficient_evidence` without a forced model guess.
   Model calls, graph steps, tool calls, usage and partial failure traces are distinct.
 - Web admission uses atomic SQLite reservations, durable rate limits and bounded
@@ -70,6 +74,9 @@ Measured offline baselines and live-model runs on synthetic telemetry. Transport
 | v6-offline-rules-original-a1f4beae8114 | direct simulator log search | 60 | 100.0% (94.0–100.0) | 0 | not applicable | $0.000000 | 0.001242 / 0.001364 |
 | v6-offline-rules-v1-85dd41c2f0b1 | direct simulator log search | 24 | 33.3% (18.0–53.3) | 0 | not applicable | $0.000000 | 0.000142 / 0.000983 |
 | v6-offline-rules-v2-dadf8db45d5d | direct simulator log search | 24 | 33.3% (18.0–53.3) | 0 | not applicable | $0.000000 | 0.000141 / 0.000980 |
+| v7-offline-rules-original-6c983d4b3bfc | direct simulator log search | 60 | 100.0% (94.0–100.0) | 0 | not applicable | $0.000000 | 0.001215 / 0.001420 |
+| v7-offline-rules-v1-26568fb2f235 | direct simulator log search | 24 | 33.3% (18.0–53.3) | 0 | not applicable | $0.000000 | 0.000143 / 0.000994 |
+| v7-offline-rules-v2-5607de2ad466 | direct simulator log search | 24 | 33.3% (18.0–53.3) | 0 | not applicable | $0.000000 | 0.000144 / 0.001006 |
 
 Outcome accuracy counts a budget-forced abstention as correct on redacted cases; it does not demonstrate model-selected stopping. Finalization is persisted for new runs or derived from reviewed saved traces; older runs may show not recorded. Latency quantiles describe runs without exceptions; diagnostic misses remain included. Failure elapsed time and observed spend remain in JSON records. API cost is calculated from provider-reported token usage at list prices, not reconciled against an invoice. Structured action compatibility is not a remediation-quality score. These small live smoke runs do not establish reliability; see docs/live-v6-validation.md for the latest failed checks, docs/live-v5-validation.md and docs/live-v4-validation.md for prior live findings, and docs/change-evidence.md for the implementation changes.
 
@@ -88,9 +95,10 @@ Offline replay of the recorded missing-evidence query schedule (not new model be
 - New policy replay: 7 scripted responses, 32 MCP executions, 0 cache hits, 2 skipped requests; stopped by tool_limit.
 - Zero provider calls in this replay; it does not measure live-model accuracy, cost or stopping behavior.
 
-Offline deployment/configuration evidence gate (template-specific deterministic checks, not LLM accuracy):
-- 1176 service/fault assessments across 84 original and correlated-v2 scenarios: 26/26 expected supports accepted, 1150/1150 unsupported pairs rejected, 0 false supports.
-- Zero provider calls. These checks cover the simulator's known release/exception and DB-pool configuration patterns; they do not prove causality or generalize to arbitrary production faults.
+Offline six-fault evidence gates (template-specific deterministic checks, not LLM accuracy):
+- 3528 service/fault assessments across 84 original and correlated-v2 scenarios: 78/78 expected supports accepted, 3450/3450 unsupported pairs rejected, 0 false supports.
+- 78 constructed compact submissions accepted; largest 193 UTF-8 bytes. Recorded v6 traffic submission: 1747 bytes; constructed compact traffic submission: 185 bytes. These are payload byte sizes, not measured model token usage.
+- Zero provider calls. These checks cover known synthetic fault patterns; they do not prove causality or generalize to arbitrary production faults. Compact submissions are constructed fixtures, not new model responses.
 <!-- RESULTS:END -->
 
 The original fixtures are easy for seven simulator-tailored log rules: 60/60

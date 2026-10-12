@@ -18,13 +18,15 @@ from .grading import grade, baseline_latest_deploy
 
 
 async def run_scenario(sc: Scenario, llm, use_rag: bool = True, max_steps: int = 12, embedder: str = "tfidf", progress: dict | None = None, timeout_s: float = 180,
-                       max_tool_requests: int = 32, max_stagnant_steps: int = 3, max_rejections: int = 3) -> dict:
+                       max_tool_requests: int = 32, max_stagnant_steps: int = 3, max_rejections: int = 3,
+                       max_output_truncations: int = 3) -> dict:
     t0 = time.perf_counter()
     progress = progress if progress is not None else {}
     progress.update(steps=0, tool_calls=0, model_calls=0, tool_requests=0, cache_hits=0,
-                    validation_rejections=0, stagnant_steps=0, termination_reason=None, trace=[], billing_uncertain=False,
+                    validation_rejections=0, output_truncations=0, stagnant_steps=0, termination_reason=None, trace=[], billing_uncertain=False,
                     investigation_limits={"model_calls": max_steps, "tool_requests": max_tool_requests,
-                                          "stagnant_rounds": max_stagnant_steps, "invalid_submissions": max_rejections},
+                                          "stagnant_rounds": max_stagnant_steps, "invalid_submissions": max_rejections,
+                                          "output_truncations": max_output_truncations},
                     usage={"input_tokens": 0, "output_tokens": 0, "cache_read_tokens": 0, "cache_write_tokens": 0})
     metered = MeteredLLM(llm, progress, max_steps)
     diagnosis = None
@@ -36,12 +38,13 @@ async def run_scenario(sc: Scenario, llm, use_rag: bool = True, max_steps: int =
             listed = await session.list_tools()
             specs = [{"name": t.name, "description": t.description or "", "input_schema": t.inputSchema} for t in listed.tools]
             graph = build_graph(metered, session, specs, max_steps=max_steps, progress=progress,
-                                max_tool_requests=max_tool_requests, max_stagnant_steps=max_stagnant_steps, max_rejections=max_rejections)
+                                max_tool_requests=max_tool_requests, max_stagnant_steps=max_stagnant_steps, max_rejections=max_rejections,
+                                max_output_truncations=max_output_truncations)
             return await graph.ainvoke(
                 {"messages": [{"role": "user", "content": [{"type": "text", "text": sc.alert}]}], "steps": 0, "pending": [],
                  "diagnosis": None, "usage": dict(progress["usage"]), "tool_calls": 0, "trace": [], "observations": {}, "observation_tools": {},
                  "query_cache": {}, "seen_outputs": [], "tool_requests": 0, "cache_hits": 0, "validation_rejections": 0,
-                 "stagnant_steps": 0, "stop_reason": None},
+                 "stagnant_steps": 0, "stop_reason": None, "output_truncations": 0},
                 config={"recursion_limit": 4 * max_steps + 10})
     try:
         state = await asyncio.wait_for(investigate(), timeout=timeout_s)

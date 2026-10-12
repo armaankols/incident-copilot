@@ -11,6 +11,7 @@ from copilot.pricing import cost_usd
 from copilot.sim import generate
 from evals.run_evals import summarize
 from evals.cases import scenarios
+from tests.evidence import fault_observation
 
 
 class CorrectnessTests(unittest.TestCase):
@@ -85,7 +86,8 @@ class CorrectnessTests(unittest.TestCase):
 
     def test_forged_evidence_and_malformed_diagnoses_rejected(self):
         d = self.diagnosis()
-        validated = validate_diagnosis(d, {"obs-1": "x509 certificate expired"})
+        observations = {"obs-1": fault_observation("auth", "memory_leak", text="x509 certificate expired")}
+        validated = validate_diagnosis(d, observations, {"obs-1": "check_fault"})
         self.assertEqual(validated["evidence"], d["evidence"])
         self.assertEqual(validated["action"], d["action"])
         for bad in ({}, {**d, "action": []}, {**d, "unknown": "x"},
@@ -93,7 +95,7 @@ class CorrectnessTests(unittest.TestCase):
                     {**d, "evidence": [{"observation_id": "obs-1", "quote": "invented"}]},
                     {**d, "evidence": []}):
             with self.assertRaises(ValueError):
-                validate_diagnosis(bad, {"obs-1": "x509 certificate expired"})
+                validate_diagnosis(bad, observations, {"obs-1": "check_fault"})
 
     def test_abstention_has_no_action_or_guess(self):
         validate_diagnosis(insufficient(), {})

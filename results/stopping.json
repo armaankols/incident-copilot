@@ -2,14 +2,15 @@
   "mode": "offline-recorded-query-replay",
   "source_run": "live-v4-missing_evidence-2026-10-11-e2dd981ee93f",
   "fixture_sha256": "7bd127c2b0a0688d1e56d5bc0dfffe4a82a20301c9e680df49cba555bbb361a4",
-  "source_sha256": "3a6d6c5196d5a37959e5320f639375810452380bb02811bfe9523f0284719ccc",
-  "prompt_version": "evidence-v6-change-evidence-availability",
+  "source_sha256": "3234d087f156839fa05cc2645e1702d268bacecce8b102f24b0de748ed007287",
+  "prompt_version": "evidence-v7-all-faults-compact-submission",
   "case_id": "correlated-v1/redacted/18",
   "limits": {
     "model_calls": 12,
     "tool_requests": 32,
     "stagnant_rounds": 3,
-    "invalid_submissions": 3
+    "invalid_submissions": 3,
+    "output_truncations": 3
   },
   "summary": {
     "original_live_model_calls": 12,

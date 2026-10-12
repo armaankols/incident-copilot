@@ -1,7 +1,7 @@
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const recoveryLabels = {recommended:"Recommendation available", unverified:"No verified action", blocked:"Scaling blocked", unavailable:"Unavailable"};
-const stopLabels = {model_submission:"Final result submitted", step_budget:"Model call limit reached", stagnation:"Repeated results", correction_limit:"Repeated invalid submissions", tool_limit:"Query limit reached", timeout:"Timed out", error:"Investigation failed"};
+const stopLabels = {model_submission:"Final result submitted", step_budget:"Model call limit reached", stagnation:"Repeated results", correction_limit:"Repeated invalid submissions", output_limit:"Repeated output truncation", tool_limit:"Query limit reached", timeout:"Timed out", error:"Investigation failed"};
 let busy = false;
 let liveEnabled = false;
 
@@ -39,6 +39,7 @@ function traceHTML(trace = []) {
     if (event.type === "tool_cache_hit") return `<li class="update">Reused ${esc(event.tool)} evidence ${esc(event.observation_id)}</li>`;
     if (event.type === "tool_skipped") return `<li class="err">${esc(event.tool)}: ${esc(event.output)}</li>`;
     if (event.type === "validation_error") return `<li class="err">${esc(event.output)}</li>`;
+    if (event.type === "output_truncated") return `<li class="err">${esc(event.output)}</li>`;
     if (event.type === "diagnosis") return `<li class="diag"><span class="call">Diagnosis</span><pre>${esc(JSON.stringify(event.args, null, 2))}</pre></li>`;
     return "";
   }).join("");

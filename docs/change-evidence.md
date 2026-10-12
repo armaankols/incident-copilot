@@ -47,9 +47,9 @@ An unrelated deployment, generic caller error, old recovered error or missing
 source cannot meet these requirements. This is a narrow synthetic assessment;
 it does not prove release causality, identify a code defect, establish that a pool
 setting is intrinsically wrong, or cover arbitrary production configuration errors.
-Certificate ownership retains its existing diagnostic gate. Memory leak, slow
-dependency and traffic spike still use the existing citation validation without
-an equivalent fault-specific assessment. Replica headroom remains a separate
+Certificate ownership retains its existing diagnostic gate. At v6, memory leak, slow
+dependency and traffic spike used citation validation without equivalent diagnostic
+assessments. These now have additional gates; see [v7 follow-up](fault-gates-compact.md). Replica headroom remains a separate
 recovery check: a supported traffic diagnosis can retain its cause while scaling
 is blocked.
 

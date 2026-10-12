@@ -119,3 +119,7 @@ Local full payload capture, without credentials or headers:
 `results/traces/live-v6-validation-payloads-71b2b6d600f1.jsonl`.
 Full local run traces use each result filename's stem plus `.jsonl` in
 `results/traces/`. These payloads and traces are ignored by Git.
+
+The subsequent offline implementation covers the remaining fault types and compact
+submission/truncation handling. See [v7 follow-up](fault-gates-compact.md); its live
+effects remain unmeasured.

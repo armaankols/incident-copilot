@@ -13,7 +13,7 @@ import json
 from mcp.server.fastmcp import FastMCP
 
 from .retrieval import get_index
-from .checks import capacity_check, certificate_check, change_check
+from .checks import capacity_check, certificate_check, change_check, fault_check
 from .sim import METRICS, MINUTES, SERVICES, TOPOLOGY, Scenario, callers_of, generate, ts
 
 
@@ -94,6 +94,14 @@ def build_server(sc: Scenario, use_rag: bool = True, embedder: str = "tfidf") ->
         """Assess bad_deploy or config_error using service-local, release-linked fault evidence. Mere deployment timing, generic errors and missing telemetry are insufficient. Returns supported or unknown; cite a supported assessment before diagnosing either fault. Uses synthetic records, not a causal experiment."""
         available = sc.availability("logs", service) == "available" and sc.availability("deploys") == "available"
         return json.dumps(change_check(sc.logs, sc.deploys, now, service, fault_type, available=available), indent=2)
+
+    @mcp.tool()
+    def check_fault(service: str, fault_type: str) -> str:
+        """Corroborate memory_leak, slow_dependency or traffic_spike using local fault records and metric trends. Slow dependencies also require recent caller timeouts naming the service. Missing telemetry or generic caller symptoms return unknown. Cite a supported assessment for the exact service/fault before diagnosing; uses narrow synthetic patterns, not causal proof."""
+        log_sources = [service] + (callers_of(service) if fault_type == "slow_dependency" else [])
+        available = (sc.availability("metrics", service) == "available"
+                     and all(sc.availability("logs", s) == "available" for s in log_sources))
+        return json.dumps(fault_check(sc.logs, sc.metrics, now, service, fault_type, available=available), indent=2)
 
     @mcp.tool()
     def get_recent_deploys(hours: float = 2.0) -> str:

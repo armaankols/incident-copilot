@@ -8,6 +8,7 @@ from copilot.llm import ScriptedLLM
 from copilot.runner import run_scenario
 from copilot.sim import generate
 from evals.run_evals import summarize
+from tests.evidence import fault_observation
 
 
 def candidate():
@@ -22,7 +23,7 @@ def tool(name="list_services", args=None, id="t"):
 
 def test_supported_diagnosis_without_action_is_retained_and_scored_separately():
     d = candidate()
-    result = validate_diagnosis(d, {"obs-1": "search traffic"})
+    result = validate_diagnosis(d, {"obs-1": fault_observation()}, {"obs-1": "check_fault"})
     assert d["remediation"] == "Invented instructions"
     assert result["status"] == "diagnosed" and result["root_cause_service"] == "search"
     assert result["action"] is None and result["recovery_status"] == "unverified"
@@ -55,21 +56,23 @@ def test_repeated_queries_reuse_original_observation_then_stop_without_extra_cal
 
 
 def test_equivalent_defaults_hit_cache_and_cached_evidence_remains_citable():
-    d = {**candidate(), "evidence": [dict(observation_id="obs-1", quote="search.rps")]}
+    d = {**candidate(), "evidence": [dict(observation_id="obs-1", quote="search.rps"),
+         dict(observation_id="obs-2", quote='"status": "supported"')]}
     llm = ScriptedLLM([
-        [tool("query_metrics", dict(service="search", metric="rps"), "a")],
+        [tool("query_metrics", dict(service="search", metric="rps"), "a"),
+         tool("check_fault", dict(service="search", fault_type="traffic_spike"), "fault")],
         [tool("query_metrics", dict(service="search", metric="rps", minutes=60), "b")],
         [tool("submit_diagnosis", d, "d")],
     ])
     r = asyncio.run(run_scenario(generate(5, "traffic_spike"), llm))
-    assert r["grade"]["both_ok"] and r["tool_calls"] == 1 and r["cache_hits"] == 1
+    assert r["grade"]["both_ok"] and r["tool_calls"] == 2 and r["cache_hits"] == 1
     assert r["termination_reason"] == "model_submission"
 
 
 def test_new_output_resets_stagnation_and_allows_diagnosis():
-    d = {**candidate(), "evidence": [dict(observation_id="obs-2", quote="search.rps")]}
+    d = {**candidate(), "evidence": [dict(observation_id="obs-2", quote='"status": "supported"')]}
     llm = ScriptedLLM([[tool()], [tool()], [tool()],
-                       [tool("query_metrics", dict(service="search", metric="rps"))],
+                       [tool("check_fault", dict(service="search", fault_type="traffic_spike"))],
                        [tool("submit_diagnosis", d)]])
     r = asyncio.run(run_scenario(generate(5, "traffic_spike"), llm))
     assert r["grade"]["both_ok"] and r["model_calls"] == 5 and r["tool_calls"] == 2

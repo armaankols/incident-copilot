@@ -112,3 +112,77 @@ def change_check(logs, deploys, now, service, fault_type, *, available=True):
     result.update(status="supported", reason="Latest known release has repeated, current, service-local fault evidence.",
                   release=release, evidence=[_record(r) for r in corroboration + [failures[0], failures[-1]]])
     return result
+
+
+def fault_check(logs, metrics, now, service, fault_type, *, available=True):
+    """Corroborate the remaining synthetic patterns with local metrics and logs.
+
+    Fixed thresholds/window sizes describe this simulator, not production SLOs or
+    causal proof. Missing, malformed, stale or uncorroborated data stays unknown.
+    """
+    import math
+    from statistics import median
+    from .sim import callers_of
+
+    if service not in SERVICES or fault_type not in ("memory_leak", "slow_dependency", "traffic_spike"):
+        raise ValueError("Expected a known service and memory_leak, slow_dependency or traffic_spike")
+    result = dict(kind="fault", service=service, fault_type=fault_type, checked_at=ts(now),
+                  status="unknown", coverage="available" if available else "unavailable",
+                  source="simulated local metrics and fault records; no causal experiment",
+                  reason="Required local fault evidence and metric corroboration are missing.", evidence=[])
+    if not available:
+        return result
+    keys = {"memory_leak": ("memory_mb", "restarts"), "slow_dependency": ("p95_latency_ms",),
+            "traffic_spike": ("rps", "cpu_pct", "error_rate", "p95_latency_ms")}[fault_type]
+    try:
+        series = {k: [float(v) for v in metrics[service][k][:now+1]] for k in keys}
+        if now < 59 or any(len(v) != now+1 or any(not math.isfinite(x) or x < 0 for x in v) for v in series.values()):
+            return result
+    except (KeyError, TypeError, ValueError, OverflowError):
+        return result
+    baseline_start = max(0, now-119)
+    stats = {k: dict(baseline=round(median(v[baseline_start:baseline_start+30]), 2),
+                     recent=round(median(v[now-4:now+1]), 2)) for k, v in series.items()}
+    rows = [r for r in logs if now-120 < r[0] <= now]
+    local = [r for r in rows if r[1] == service]
+    recent = [r for r in local if now-10 < r[0] <= now and r[2] in ("WARN", "ERROR")]
+    evidence = []
+    if fault_type == "slow_dependency":
+        pattern = re.compile(r"^(?:(?:slow query|database statement exceeded deadline) \(\d+ms\):|(?:thread pool saturated|worker executor has no free slots), queue depth \d+; request exceeded \d+ms budget$)")
+        failures = [r for r in recent if pattern.search(r[3])]
+        peers = [r for r in rows if now-5 < r[0] <= now and r[1] in callers_of(service) and r[2] == "ERROR"
+                 and re.fullmatch(rf"timeout after \d+ms calling {re.escape(service)}", r[3])]
+        latency = stats["p95_latency_ms"]
+        supported = (len({r[0] for r in failures}) >= 2 and any(r[0] > now-5 for r in failures)
+                     and bool(peers) and latency["recent"] >= max(latency["baseline"]*3, latency["baseline"]+250))
+        evidence = failures[-2:] + peers[-1:]
+    elif fault_type == "traffic_spike":
+        pattern = re.compile(r"^(?:rate limiter shedding load|admission controller rejecting excess requests): 429 returned for \d+% of requests$")
+        failures = [r for r in recent if pattern.search(r[3])]
+        rps, latency, errors = stats["rps"], stats["p95_latency_ms"], stats["error_rate"]
+        supported = (len({r[0] for r in failures}) >= 2 and any(r[0] > now-5 for r in failures)
+                     and rps["baseline"] > 0 and rps["recent"] >= 3*rps["baseline"]
+                     and stats["cpu_pct"]["recent"] >= 70 and errors["recent"] >= errors["baseline"]+1
+                     and latency["recent"] >= 2*latency["baseline"])
+        evidence = failures[-2:]
+    else:
+        ooms = [r for r in local if r[2] == "ERROR" and re.fullmatch(
+            r"container terminated: (?:OOMKilled|memory cgroup limit exceeded) \(exit code 137\)", r[3])]
+        pressure = [r for r in recent if re.fullmatch(r"GC pause \d+ms, heap (?:[7-9]\d|100)% of \d+MB", r[3])]
+        memory, restarts = series["memory_mb"], series["restarts"]
+        def growing(end):
+            start = end-20
+            return (start >= baseline_start and memory[end]-memory[start] >= 150
+                    and sum(memory[i] > memory[i-1] for i in range(start+1, end+1)) >= 16)
+        ooms = [r for r in ooms if baseline_start+21 <= r[0] <= now-21
+                and restarts[r[0]] > restarts[r[0]-1] and growing(r[0]-1)]
+        # Recent pressure can remain high after regrowth reaches the memory cap.
+        regrowing = any(growing(end) for end in range(max(baseline_start+20, now-10), now+1))
+        supported = bool(ooms and pressure and regrowing
+                         and stats["memory_mb"]["recent"] >= 1.5*stats["memory_mb"]["baseline"])
+        evidence = ooms[-1:] + pressure[-2:]
+    result["metric_summary"] = stats
+    if supported:
+        result.update(status="supported", reason="Service-local fault records are corroborated by observed metric changes.",
+                      evidence=[_record(r) for r in evidence])
+    return result

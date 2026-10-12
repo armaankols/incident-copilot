@@ -6,7 +6,9 @@ import json
 
 from .sim import FAULT_TYPES, SERVICES
 
-PROMPT_VERSION = "evidence-v6-change-evidence-availability"
+PROMPT_VERSION = "evidence-v7-all-faults-compact-submission"
+MAX_EVIDENCE = 3
+MAX_QUOTE_CHARS = 240
 
 ACTIONS = {
     "bad_deploy": {"rollback"}, "memory_leak": {"restart", "rollback"},
@@ -39,18 +41,17 @@ SCHEMA = {
         "status": {"type": "string", "enum": ["diagnosed", "insufficient_evidence"]},
         "root_cause_service": {"type": ["string", "null"], "enum": SERVICES + [None]},
         "fault_type": {"type": ["string", "null"], "enum": FAULT_TYPES + [None]},
-        "evidence": {"type": "array", "maxItems": 5, "items": {
+        "evidence": {"type": "array", "maxItems": MAX_EVIDENCE,
+                     "description": "Use 1-3 short exact excerpts, including the required fault assessment. Do not copy whole metric series or JSON objects.", "items": {
             "type": "object", "additionalProperties": False,
-            "properties": {"observation_id": {"type": "string"}, "quote": {"type": "string"}},
+            "properties": {"observation_id": {"type": "string"}, "quote": {"type": "string", "maxLength": MAX_QUOTE_CHARS}},
             "required": ["observation_id", "quote"]}},
         "action": {"type": ["string", "null"], "enum": sorted(set().union(*ACTIONS.values())) + [None],
                    "description": "Proposed recovery action, or null when no action is verified. A supported diagnosis does not require an action."},
         "target": {"type": ["string", "null"], "enum": SERVICES + [None],
                    "description": "Recovery target; null when action is null. Keep the diagnosed root_cause_service even when recovery is unavailable."},
-        "remediation": {"type": "string", "maxLength": 2000,
-                        "description": "Brief recommendation only. Do not invent release versions, implementation mechanisms or numeric thresholds. The server replaces this prose with a conservative action-specific recommendation."},
     },
-    "required": ["status", "root_cause_service", "fault_type", "evidence", "action", "target", "remediation"],
+    "required": ["status", "root_cause_service", "fault_type", "evidence", "action", "target"],
 }
 
 
@@ -82,7 +83,8 @@ def _require_check(d, observations, observation_tools, tool, kind, expected, fau
     if not assessments or any(status != expected for _, status in assessments) or not any(oid in cited for oid, _ in assessments):
         values = {str(status) for _, status in assessments}
         statuses = ", ".join(sorted(values)) or "missing"
-        detail = ("A nearby deploy, caller symptoms, or unavailable telemetry do not support this fault. Require release-linked local exceptions for bad_deploy, or a loaded configuration and matching local configuration failure for config_error. If unavailable, use insufficient_evidence."
+        detail = ("Require affirmative fault evidence local to this service, corroborated by metrics. Generic caller symptoms or unavailable dependency telemetry do not establish its fault. If unknown, use insufficient_evidence."
+                  if kind == "fault" else "A nearby deploy, caller symptoms, or unavailable telemetry do not support this fault. Require release-linked local exceptions for bad_deploy, or a loaded configuration and matching local configuration failure for config_error. If unavailable, use insufficient_evidence."
                   if kind == "change" else "The log-emitting caller is not necessarily the certificate owner; normal peer metrics do not establish certificate health. If ownership/expiry is unknown or conflicting, use insufficient_evidence."
                   if kind == "certificate" else "Scaling is not verified at a replica limit or with unknown headroom. Do not infer permission to raise limits. Retain a supported diagnosis with action=null and target=null.")
         args = f"service={d['root_cause_service']!r}" + (f", fault_type={fault_type!r}" if fault_type else "")
@@ -92,23 +94,27 @@ def _require_check(d, observations, observation_tools, tool, kind, expected, fau
 def validate_diagnosis(d, observations, observation_tools=None):
     if not isinstance(d, dict):
         raise ValueError("Diagnosis must be an object")
-    if set(d) != set(SCHEMA["required"]):
+    # Older offline clients can still send remediation, but it is never used.
+    required = set(SCHEMA["required"])
+    if not required <= set(d) or set(d) - required - {"remediation"}:
         missing = ", ".join(sorted(set(SCHEMA["required"])-set(d))) or "none"
-        extra = ", ".join(sorted(set(d)-set(SCHEMA["required"]))) or "none"
+        extra = ", ".join(sorted(set(d)-required-{"remediation"})) or "none"
         raise ValueError(f"Diagnosis fields invalid; missing: {missing}; unexpected: {extra}")
     if d["status"] not in ("diagnosed", "insufficient_evidence"):
         raise ValueError("Invalid status")
-    if not isinstance(d["remediation"], str) or len(d["remediation"]) > 2000:
+    if "remediation" in d and (not isinstance(d["remediation"], str) or len(d["remediation"]) > 2000):
         raise ValueError("Invalid remediation")
     evidence = d["evidence"]
-    if not isinstance(evidence, list) or len(evidence) > 5:
-        raise ValueError("Evidence must be an array of at most five references")
+    if not isinstance(evidence, list) or len(evidence) > MAX_EVIDENCE:
+        raise ValueError(f"Evidence must be an array of at most {MAX_EVIDENCE} short references")
     for ref in evidence:
         if not isinstance(ref, dict) or set(ref) != {"observation_id", "quote"}:
             raise ValueError("Evidence needs observation_id and quote")
         oid, quote = ref["observation_id"], ref["quote"]
         if not isinstance(oid, str) or not isinstance(quote, str) or not quote.strip():
             raise ValueError("Invalid evidence reference")
+        if len(quote) > MAX_QUOTE_CHARS:
+            raise ValueError(f"Quote for {oid} exceeds {MAX_QUOTE_CHARS} characters. Copy a shorter exact excerpt, preferably the assessment status line.")
         if oid not in observations:
             available = ", ".join(observations) or "none"
             raise ValueError(f"Unknown observation_id {oid!r}. Successful observation IDs: {available}. Cite only a successful observation.")
@@ -126,6 +132,8 @@ def validate_diagnosis(d, observations, observation_tools=None):
             raise ValueError("Diagnosis needs evidence")
         if d["fault_type"] in ("bad_deploy", "config_error"):
             _require_check(d, observations, observation_tools or {}, "check_change", "change", "supported", d["fault_type"])
+        if d["fault_type"] in ("memory_leak", "slow_dependency", "traffic_spike"):
+            _require_check(d, observations, observation_tools or {}, "check_fault", "fault", "supported", d["fault_type"])
         # Certificate ownership is diagnostic evidence, even when no action is proposed.
         if d["fault_type"] == "cert_expiry":
             _require_check(d, observations, observation_tools or {}, "check_certificate", "certificate", "expiry_supported")
