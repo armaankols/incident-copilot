@@ -1,4 +1,4 @@
-# Local verification — updated 2026-10-11
+# Local verification — updated 2026-10-12
 
 Working directory: `/Users/armaankolsawala/IdeaProjects/incident-copilot`.
 The initial inspection found no Git repository or applicable AGENTS.md. Git is
@@ -14,7 +14,7 @@ has been performed; further paid runs require approval.
 
 Measured on Python 3.12.15:
 
-- `python -m pytest -q tests`: 53 passed (2026-10-11; 3.33 seconds).
+- `python -m pytest -q tests`: 68 passed (2026-10-12; 2.29 seconds).
 - `python -m pip check`: no broken requirements.
 - `python -m evals.retrieval_eval`: TF-IDF recall@1 and recall@3 both 14/14;
   optional FastEmbed skipped because it is not installed.
@@ -70,8 +70,8 @@ unknown versions. This is an offline structured-reader ablation over small,
 author-written synthetic fixtures; it is not a live-model comparison.
 
 Live-model smoke results, token usage, citation retries and qualitative limitations
-are recorded in [live-smoke.md](live-smoke.md). Latest offline test run: 53 passed
-in 3.33 seconds on 2026-10-11. Recommendation/citation checks are recorded in
+are recorded in [live-smoke.md](live-smoke.md). Latest offline test run: 68 passed
+in 2.29 seconds on 2026-10-12. Recommendation/citation checks are recorded in
 [recommendation-grounding.md](recommendation-grounding.md).
 
 The updated prompt/validator was exercised on one live configuration-error case:
@@ -97,3 +97,9 @@ model-submitted traffic abstention after blocked scaling proposals, and a
 budget-forced abstention on missing evidence. Token-cost estimate: $0.274801.
 See [live-v4-validation.md](live-v4-validation.md) for the distinction between
 model and system outcomes and the remaining diagnosis/stopping issues.
+
+Diagnosis/recovery separation and bounded investigation were checked offline on
+2026-10-12. Recorded-query replay consumed seven scripted responses and 32 tool
+executions instead of completing the original 12-response / 49-query schedule.
+This is not a new model result; no paid calls were made. See
+[diagnosis-stopping.md](diagnosis-stopping.md).

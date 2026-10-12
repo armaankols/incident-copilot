@@ -1,0 +1,519 @@
+{
+  "description": "Recorded tool-use schedule only; provider text and credentials excluded. Offline replay does not generate new model behavior.",
+  "source_run": "live-v4-missing_evidence-2026-10-11-e2dd981ee93f",
+  "suite": "correlated-v1",
+  "seed": 0,
+  "case_offset": 18,
+  "original_model_calls": 12,
+  "original_tool_calls": 49,
+  "script": [
+    [
+      {
+        "type": "tool_use",
+        "id": "toolu_01N5KKsx5uT4FRs4rxaaaMRK",
+        "name": "list_services",
+        "input": {}
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01WtXJ8GYemXRPSTZezPRHa1",
+        "name": "query_metrics",
+        "input": {
+          "service": "gateway",
+          "metric": "p95_latency_ms",
+          "minutes": 60
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01SQpmAKeLpAFum6WWkhQQSZ",
+        "name": "query_metrics",
+        "input": {
+          "service": "gateway",
+          "metric": "error_rate",
+          "minutes": 60
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01Xskw14S9weqm9det9JLdpz",
+        "name": "query_metrics",
+        "input": {
+          "service": "gateway",
+          "metric": "rps",
+          "minutes": 60
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_019h8SdoJPp4qEMEpN9oFQ5o",
+        "name": "get_recent_deploys",
+        "input": {
+          "hours": 2
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01SLRMQq7m4U5JHugqBDEdAW",
+        "name": "search_logs",
+        "input": {
+          "service": "gateway",
+          "level": "ERROR",
+          "minutes": 60,
+          "limit": 20
+        }
+      }
+    ],
+    [
+      {
+        "type": "tool_use",
+        "id": "toolu_01F4wJbpdEr9PodKhAueBc5s",
+        "name": "search_logs",
+        "input": {
+          "service": "gateway",
+          "minutes": 60,
+          "limit": 30
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01JqkhYC6aZWbj8Da5mTNM5S",
+        "name": "search_logs",
+        "input": {
+          "service": "auth",
+          "level": "ERROR",
+          "minutes": 60,
+          "limit": 20
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01FGRnRCpVVztLeAqRqfh3Uc",
+        "name": "search_logs",
+        "input": {
+          "service": "orders",
+          "level": "ERROR",
+          "minutes": 60,
+          "limit": 20
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01EZWf6Y2MUzkPmb3NbtDdA5",
+        "name": "search_logs",
+        "input": {
+          "service": "search",
+          "level": "ERROR",
+          "minutes": 60,
+          "limit": 20
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01VpsQNGsfkamFW9d4RnNxq3",
+        "name": "query_metrics",
+        "input": {
+          "service": "auth",
+          "metric": "error_rate",
+          "minutes": 60
+        }
+      }
+    ],
+    [
+      {
+        "type": "tool_use",
+        "id": "toolu_01GwSQPRdgfjvzQV7viotY3n",
+        "name": "query_metrics",
+        "input": {
+          "service": "orders",
+          "metric": "error_rate",
+          "minutes": 60
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01LLXVptwKCJr4Y3Z95AxEKo",
+        "name": "query_metrics",
+        "input": {
+          "service": "search",
+          "metric": "error_rate",
+          "minutes": 60
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01NT6WYVUktAETe2aSyMZDfi",
+        "name": "search_logs",
+        "input": {
+          "service": "gateway",
+          "level": "WARN",
+          "minutes": 60,
+          "limit": 30
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01QhUw48Fw18ZjE6WVT1kGAy",
+        "name": "search_logs",
+        "input": {
+          "service": "orders",
+          "level": "WARN",
+          "minutes": 60,
+          "limit": 20
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_016UmubfY9sp8sgmEnDHndM5",
+        "name": "search_logs",
+        "input": {
+          "service": "search",
+          "level": "WARN",
+          "minutes": 60,
+          "limit": 20
+        }
+      }
+    ],
+    [
+      {
+        "type": "tool_use",
+        "id": "toolu_01QsHXE4FtT9uMg5pSy1CtVS",
+        "name": "query_metrics",
+        "input": {
+          "service": "gateway",
+          "metric": "cpu_pct",
+          "minutes": 60
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01PNsvBKkkXfRmmctjkdTnhB",
+        "name": "query_metrics",
+        "input": {
+          "service": "gateway",
+          "metric": "memory_mb",
+          "minutes": 60
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01N8yjJve16aV3zcaQpBYd7q",
+        "name": "check_certificate",
+        "input": {
+          "service": "gateway"
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_0146bkecPCb8qvQhVEPKGSaY",
+        "name": "check_certificate",
+        "input": {
+          "service": "auth"
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01BXwdEpCVVVtn98Lp3Pws3q",
+        "name": "check_certificate",
+        "input": {
+          "service": "orders"
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01UTjM1hyH2en4ueGEUqmRBh",
+        "name": "check_certificate",
+        "input": {
+          "service": "search"
+        }
+      }
+    ],
+    [
+      {
+        "type": "tool_use",
+        "id": "toolu_01Gk7ZwHoNnpUSqJXb9Wxpe1",
+        "name": "search_logs",
+        "input": {
+          "service": "gateway",
+          "query": "13:20 dependency connection timeout",
+          "minutes": 60,
+          "limit": 20
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01PZ8pMV4sWWf45kQaDyHwHr",
+        "name": "search_logs",
+        "input": {
+          "query": "timeout connection",
+          "minutes": 60,
+          "limit": 30
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01WbA4uSZfR3nNwWyzx2sJzU",
+        "name": "search_logs",
+        "input": {
+          "query": "tls handshake certificate",
+          "minutes": 60,
+          "limit": 30
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01BBAzHLEKbxKny9DgnsZ6p9",
+        "name": "search_runbooks",
+        "input": {
+          "query": "gateway high latency 5xx errors upstream dependency timeout",
+          "k": 5
+        }
+      }
+    ],
+    [
+      {
+        "type": "tool_use",
+        "id": "toolu_01FsaCUkhCWbwguy9Zb3sQAo",
+        "name": "query_metrics",
+        "input": {
+          "service": "auth",
+          "metric": "p95_latency_ms",
+          "minutes": 60
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01CCq7LQL4mPALfd3gzSu8R8",
+        "name": "query_metrics",
+        "input": {
+          "service": "orders",
+          "metric": "p95_latency_ms",
+          "minutes": 60
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01PJfCcjB8vFbqBHTpCiudtC",
+        "name": "query_metrics",
+        "input": {
+          "service": "search",
+          "metric": "p95_latency_ms",
+          "minutes": 60
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01AWVimdmQV2GksDmauQyV2e",
+        "name": "query_metrics",
+        "input": {
+          "service": "postgres",
+          "metric": "error_rate",
+          "minutes": 60
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_017AnhqerYyQfG2cjgzCGrnQ",
+        "name": "query_metrics",
+        "input": {
+          "service": "postgres",
+          "metric": "p95_latency_ms",
+          "minutes": 60
+        }
+      }
+    ],
+    [
+      {
+        "type": "tool_use",
+        "id": "toolu_016Aj3vhMY4FdfWddUG3aRPc",
+        "name": "query_metrics",
+        "input": {
+          "service": "gateway",
+          "metric": "restarts",
+          "minutes": 60
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_015SzTAWye8GQJ6qN8fDFawe",
+        "name": "search_logs",
+        "input": {
+          "service": "gateway",
+          "query": "5xx upstream",
+          "minutes": 60,
+          "limit": 30
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01V5MEywHpEiYNsZWE6Pueev",
+        "name": "search_logs",
+        "input": {
+          "query": "gateway",
+          "minutes": 60,
+          "limit": 40
+        }
+      }
+    ],
+    [
+      {
+        "type": "tool_use",
+        "id": "toolu_01KP6TNWQUBAGH9HUg29Mhay",
+        "name": "check_capacity",
+        "input": {
+          "service": "gateway"
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01PVryYzfA5qLsirAmqPzgaQ",
+        "name": "search_logs",
+        "input": {
+          "service": "gateway",
+          "level": "INFO",
+          "minutes": 60,
+          "limit": 30
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01AuQfvCUgT2pkitFuJgkVzc",
+        "name": "search_logs",
+        "input": {
+          "query": "failed unavailable circuit breaker",
+          "minutes": 60,
+          "limit": 30
+        }
+      }
+    ],
+    [
+      {
+        "type": "tool_use",
+        "id": "toolu_011PAiNkuZ11jSBKmjdL5rjh",
+        "name": "search_logs",
+        "input": {
+          "query": "13:20",
+          "minutes": 60,
+          "limit": 40
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_015ivTmgJPPdY72Y69iHEmhr",
+        "name": "search_logs",
+        "input": {
+          "query": "pool queue thread buffer",
+          "minutes": 60,
+          "limit": 30
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01Nw6Pi17CpEc55bFERukqDr",
+        "name": "search_logs",
+        "input": {
+          "query": "config reload configuration",
+          "minutes": 60,
+          "limit": 30
+        }
+      }
+    ],
+    [
+      {
+        "type": "tool_use",
+        "id": "toolu_0192RB9HEA9ZNKxXDmqvatJ1",
+        "name": "query_metrics",
+        "input": {
+          "service": "auth",
+          "metric": "cpu_pct",
+          "minutes": 60
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_011DZLr6fePTYkBJf1Gdifyr",
+        "name": "query_metrics",
+        "input": {
+          "service": "orders",
+          "metric": "cpu_pct",
+          "minutes": 60
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01DeKEfSgb6QLqvEHMfq7Nht",
+        "name": "query_metrics",
+        "input": {
+          "service": "search",
+          "metric": "cpu_pct",
+          "minutes": 60
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01AkHMeRMrSng4M4Y6MgKswf",
+        "name": "query_metrics",
+        "input": {
+          "service": "postgres",
+          "metric": "cpu_pct",
+          "minutes": 60
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01QwHueuM1aEh4iwioJJJmsx",
+        "name": "search_logs",
+        "input": {
+          "query": "gateway auth orders search telemetry metric",
+          "minutes": 60,
+          "limit": 40
+        }
+      }
+    ],
+    [
+      {
+        "type": "tool_use",
+        "id": "toolu_01FgEu5W35s1xCfqVpyfoKSe",
+        "name": "search_logs",
+        "input": {
+          "query": "dependency telemetry",
+          "minutes": 60,
+          "limit": 40
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01LPDFvDPc6AsNwu9PEMrNag",
+        "name": "search_logs",
+        "input": {
+          "service": "gateway",
+          "query": "failing requests",
+          "minutes": 60,
+          "limit": 40
+        }
+      }
+    ],
+    [
+      {
+        "type": "tool_use",
+        "id": "toolu_01ChHbBdLHRq2APLf8gNqtGU",
+        "name": "search_logs",
+        "input": {
+          "query": "ERROR",
+          "minutes": 60,
+          "limit": 50
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01QpDYE5F3DFmQHWTXa6Niwk",
+        "name": "search_logs",
+        "input": {
+          "query": "CRITICAL",
+          "minutes": 60,
+          "limit": 30
+        }
+      }
+    ]
+  ]
+}

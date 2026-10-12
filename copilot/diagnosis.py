@@ -6,7 +6,7 @@ import json
 
 from .sim import FAULT_TYPES, SERVICES
 
-PROMPT_VERSION = "evidence-v4-operational-checks"
+PROMPT_VERSION = "evidence-v5-diagnosis-recovery-stopping"
 
 ACTIONS = {
     "bad_deploy": {"rollback"}, "memory_leak": {"restart", "rollback"},
@@ -43,8 +43,10 @@ SCHEMA = {
             "type": "object", "additionalProperties": False,
             "properties": {"observation_id": {"type": "string"}, "quote": {"type": "string"}},
             "required": ["observation_id", "quote"]}},
-        "action": {"type": ["string", "null"], "enum": sorted(set().union(*ACTIONS.values())) + [None]},
-        "target": {"type": ["string", "null"], "enum": SERVICES + [None]},
+        "action": {"type": ["string", "null"], "enum": sorted(set().union(*ACTIONS.values())) + [None],
+                   "description": "Proposed recovery action, or null when no action is verified. A supported diagnosis does not require an action."},
+        "target": {"type": ["string", "null"], "enum": SERVICES + [None],
+                   "description": "Recovery target; null when action is null. Keep the diagnosed root_cause_service even when recovery is unavailable."},
         "remediation": {"type": "string", "maxLength": 2000,
                         "description": "Brief recommendation only. Do not invent release versions, implementation mechanisms or numeric thresholds. The server replaces this prose with a conservative action-specific recommendation."},
     },
@@ -57,6 +59,12 @@ def insufficient(reason="Investigation budget exhausted."):
                 evidence=[], action=None, target=None, remediation=reason)
 
 
+class OperationalCheckError(ValueError):
+    def __init__(self, message, statuses):
+        super().__init__(message)
+        self.recovery_status = "blocked" if "blocked" in statuses else "unverified"
+
+
 def _require_check(d, observations, observation_tools, tool, kind, expected):
     assessments = []
     for oid, text in observations.items():
@@ -67,14 +75,15 @@ def _require_check(d, observations, observation_tools, tool, kind, expected):
         except (ValueError, TypeError):
             continue
         if (isinstance(assessment, dict) and assessment.get("kind") == kind
-                and assessment.get("service") == d["target"]):
+                and assessment.get("service") == d["root_cause_service"]):
             assessments.append((oid, assessment.get("status")))
     cited = {ref["observation_id"] for ref in d["evidence"]}
     if not assessments or any(status != expected for _, status in assessments) or not any(oid in cited for oid, _ in assessments):
-        statuses = ", ".join(sorted({str(status) for _, status in assessments})) or "missing"
+        values = {str(status) for _, status in assessments}
+        statuses = ", ".join(sorted(values)) or "missing"
         detail = ("The log-emitting caller is not necessarily the certificate owner; normal peer metrics do not establish certificate health. If ownership/expiry is unknown or conflicting, use insufficient_evidence."
-                  if kind == "certificate" else "Scaling is not verified at a replica limit or with unknown headroom. Do not infer permission to raise limits; consider another compatible action with service-policy verification, or insufficient_evidence.")
-        raise ValueError(f"Call {tool}(service={d['target']!r}) and cite its {expected} assessment. Current assessment: {statuses}. {detail}")
+                  if kind == "certificate" else "Scaling is not verified at a replica limit or with unknown headroom. Do not infer permission to raise limits. Retain a supported diagnosis with action=null and target=null.")
+        raise OperationalCheckError(f"Call {tool}(service={d['root_cause_service']!r}) and cite its {expected} assessment. Current assessment: {statuses}. {detail}", values)
 
 
 def validate_diagnosis(d, observations, observation_tools=None):
@@ -105,19 +114,34 @@ def validate_diagnosis(d, observations, observation_tools=None):
     if d["status"] == "insufficient_evidence":
         if any(d[k] is not None for k in ("root_cause_service", "fault_type", "action", "target")):
             raise ValueError("Insufficient evidence must not specify a diagnosis or action")
-        return {**d, "remediation": "Insufficient evidence to recommend a recovery action. Gather missing telemetry and consult the service owner before selecting a change."}
+        return {**d, "recovery_status": "unavailable", "recovery_reason": "Diagnostic evidence is insufficient.",
+                "remediation": "Insufficient evidence to recommend a recovery action. Gather missing telemetry and consult the service owner before selecting a change."}
     else:
         if d["root_cause_service"] not in SERVICES or d["fault_type"] not in FAULT_TYPES:
             raise ValueError("Unknown service or fault")
-        if not evidence or not isinstance(d["action"], str) or d["action"] not in set().union(*ACTIONS.values()) or d["target"] not in SERVICES:
-            raise ValueError("Diagnosis needs evidence and a structured action/target")
+        if not evidence:
+            raise ValueError("Diagnosis needs evidence")
+        # Certificate ownership is diagnostic evidence, even when no action is proposed.
+        if d["fault_type"] == "cert_expiry":
+            _require_check(d, observations, observation_tools or {}, "check_certificate", "certificate", "expiry_supported")
+        if (d["action"] is None) != (d["target"] is None):
+            raise ValueError("Action and target must both be null or both specified")
+        if d["action"] is None:
+            return {**d, "recovery_status": "unverified", "recovery_reason": "No recovery action was verified.",
+                    "remediation": "Diagnosis recorded. No recovery action has been verified. Consult the service owner and verify the service recovery policy before selecting a change. No change has been executed."}
+        if not isinstance(d["action"], str) or d["action"] not in set().union(*ACTIONS.values()) or d["target"] not in SERVICES:
+            raise ValueError("Invalid action/target")
         if d["action"] not in ACTIONS[d["fault_type"]]:
             raise ValueError(f"Action is incompatible with {d['fault_type']}; allowed: {', '.join(sorted(ACTIONS[d['fault_type']]))}")
         if d["target"] != d["root_cause_service"]:
             raise ValueError("Action target must match the diagnosed root-cause service")
-        if d["fault_type"] == "cert_expiry":
-            _require_check(d, observations, observation_tools or {}, "check_certificate", "certificate", "expiry_supported")
         if d["action"] == "scale":
-            _require_check(d, observations, observation_tools or {}, "check_capacity", "capacity", "headroom")
-        return {**d, "remediation": recommend(d["action"], d["target"])}
+            try:
+                _require_check(d, observations, observation_tools or {}, "check_capacity", "capacity", "headroom")
+            except OperationalCheckError as e:
+                return {**d, "action": None, "target": None, "recovery_status": e.recovery_status,
+                        "recovery_reason": str(e),
+                        "remediation": "Diagnosis recorded. Scaling has not been verified and is not recommended. Consult the service owner about capacity limits and compatible recovery options. No change has been executed."}
+        return {**d, "recovery_status": "recommended", "recovery_reason": "Compatible recommendation; service policy still requires verification.",
+                "remediation": recommend(d["action"], d["target"])}
     return d

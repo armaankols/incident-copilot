@@ -70,20 +70,20 @@ def test_positive_check_must_be_for_target_and_cited_without_omitting_conflicts(
     d = diagnosis("search", "traffic_spike", "scale", quote='"status": "headroom"')
     assert validate_diagnosis(d, {"obs-1": good}, {"obs-1": "check_capacity"})["action"] == "scale"
     wrong = json.dumps(dict(kind="capacity", service="auth", status="headroom"))
-    with pytest.raises(ValueError, match="check_capacity"):
-        validate_diagnosis(d, {"obs-1": wrong}, {"obs-1": "check_capacity"})
+    invalid_target = validate_diagnosis(d, {"obs-1": wrong}, {"obs-1": "check_capacity"})
+    assert invalid_target["action"] is None and invalid_target["recovery_status"] == "unverified"
     blocked = json.dumps(dict(kind="capacity", service="search", status="blocked"))
-    with pytest.raises(ValueError, match="blocked"):
-        validate_diagnosis(d, {"obs-1": good, "obs-2": blocked}, {"obs-1": "check_capacity", "obs-2": "check_capacity"})
+    conflict = validate_diagnosis(d, {"obs-1": good, "obs-2": blocked}, {"obs-1": "check_capacity", "obs-2": "check_capacity"})
+    assert conflict["action"] is None and conflict["recovery_status"] == "blocked"
     uncited = {**d, "evidence": [dict(observation_id="obs-2", quote="search traffic") ]}
-    with pytest.raises(ValueError, match="cite"):
-        validate_diagnosis(uncited, {"obs-1": good, "obs-2": "search traffic"}, {"obs-1": "check_capacity"})
+    result = validate_diagnosis(uncited, {"obs-1": good, "obs-2": "search traffic"}, {"obs-1": "check_capacity"})
+    assert result["action"] is None and result["recovery_status"] == "unverified"
 
 
 def test_missing_or_malformed_check_rejects_scale_but_allows_abstention():
     d = diagnosis("search", "traffic_spike", "scale", quote="search traffic")
-    with pytest.raises(ValueError, match="check_capacity"):
-        validate_diagnosis(d, {"obs-1": "search traffic", "obs-2": "not JSON"}, {"obs-2": "check_capacity"})
+    result = validate_diagnosis(d, {"obs-1": "search traffic", "obs-2": "not JSON"}, {"obs-2": "check_capacity"})
+    assert result["action"] is None and result["recovery_status"] == "unverified"
     assert validate_diagnosis(insufficient(), {})["action"] is None
 
 
@@ -103,7 +103,7 @@ def test_graph_rejects_caller_certificate_diagnosis_then_accepts_supported_peer(
     assert any(e["type"] == "validation_error" and "certificate owner" in e["output"] for e in result["trace"])
 
 
-def test_graph_rejects_scaling_at_limit_then_accepts_alternative_action():
+def test_graph_removes_blocked_scaling_without_discarding_diagnosis_or_guessing_alternative():
     sc = generate(5, "traffic_spike")
     blocked = diagnosis("search", "traffic_spike", "scale", quote='"status": "blocked"')
     alternative = {**blocked, "action": "rate_limit"}
@@ -114,8 +114,10 @@ def test_graph_rejects_scaling_at_limit_then_accepts_alternative_action():
     ]
     result = asyncio.run(run_scenario(sc, ScriptedLLM(script), max_steps=3))
     assert result["error"] is None and result["grade"]["both_ok"]
-    assert result["diagnosis"]["action"] == "rate_limit"
-    assert any(e["type"] == "validation_error" and "blocked" in e["output"] for e in result["trace"])
+    assert result["diagnosis"]["action"] is None and result["diagnosis"]["target"] is None
+    assert result["diagnosis"]["recovery_status"] == "blocked"
+    assert result["model_calls"] == 2 and result["termination_reason"] == "model_submission"
+    assert not any(e["type"] == "validation_error" for e in result["trace"])
 
 
 def test_unknown_ownership_exhausts_budget_into_abstention_without_extra_call():
@@ -132,7 +134,7 @@ def test_unknown_ownership_exhausts_budget_into_abstention_without_extra_call():
     ("live-cert_expiry-2026-10-11-2c5ec81643c4.json", "check_certificate", certificate_check, "cert_expiry", "unknown"),
     ("live-traffic_spike-2026-10-11-8c9a12acc1d5.json", "check_capacity", capacity_check, "traffic_spike", "blocked"),
 ])
-def test_actual_saved_failure_payload_is_rejected_even_after_fetching_target_check(filename, tool, check, fault, expected):
+def test_actual_saved_failure_payload_cannot_publish_bad_recovery(filename, tool, check, fault, expected):
     root = Path(__file__).resolve().parents[1]
     record = json.loads((root/"results"/filename).read_text())["records"][0]
     d = record["diagnosis"]
@@ -142,5 +144,10 @@ def test_actual_saved_failure_payload_is_rejected_even_after_fetching_target_che
     assessment = check(sc.logs, sc.now, d["target"])
     assert assessment["status"] == expected
     observations["obs-check"] = json.dumps(assessment)
-    with pytest.raises(ValueError, match=expected):
-        validate_diagnosis(d, observations, {"obs-check": tool})
+    if fault == "cert_expiry":
+        with pytest.raises(ValueError, match=expected):
+            validate_diagnosis(d, observations, {"obs-check": tool})
+    else:
+        result = validate_diagnosis(d, observations, {"obs-check": tool})
+        assert result["status"] == "diagnosed" and result["root_cause_service"] == "search"
+        assert result["action"] is None and result["recovery_status"] == "blocked"

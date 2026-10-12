@@ -16,7 +16,7 @@ Measured offline baselines and live-model runs on synthetic telemetry. Transport
 | python312-rules-challenge-77334f82ea35 | direct simulator log search | 24 | 33.3% (18.0–53.3) | 0 | not applicable | $0.000000 | 0.000138 / 0.000960 |
 | python312-rules-original-bd66349c44c0 | direct simulator log search | 60 | 100.0% (94.0–100.0) | 0 | not applicable | $0.000000 | 0.001171 / 0.001318 |
 
-Outcome accuracy counts a budget-forced abstention as correct on redacted cases; it does not demonstrate model-selected stopping. Finalization is shown where the saved trace has been reviewed, otherwise not recorded. Latency quantiles describe runs without exceptions; diagnostic misses remain included. Failure elapsed time and observed spend remain in JSON records. API cost is calculated from provider-reported token usage at list prices, not reconciled against an invoice. Structured action compatibility is not a remediation-quality score. These small live smoke runs do not establish reliability; see docs/live-v4-validation.md for current findings and the earlier live-smoke, live-config-smoke and live-remaining-smoke documents for prior runs.
+Outcome accuracy counts a budget-forced abstention as correct on redacted cases; it does not demonstrate model-selected stopping. Finalization is persisted for new runs or derived from reviewed saved traces; older runs may show not recorded. Latency quantiles describe runs without exceptions; diagnostic misses remain included. Failure elapsed time and observed spend remain in JSON records. API cost is calculated from provider-reported token usage at list prices, not reconciled against an invoice. Structured action compatibility is not a remediation-quality score. These small live smoke runs do not establish reliability; see docs/live-v4-validation.md for live findings and docs/diagnosis-stopping.md for subsequent offline changes.
 
 Retrieval smoke checks (small author-written query set):
 - tfidf: 14 queries, recall@1 100.0%, recall@3 100.0%.
@@ -27,3 +27,8 @@ Version-specific recovery policy lookup (offline structured reader, not an LLM a
 |---|---:|---:|
 | no-retrieval | 0/12 | 3/3 |
 | tfidf | 12/12 | 3/3 |
+
+Offline replay of the recorded missing-evidence query schedule (not new model behavior):
+- Original live schedule: 12 model calls, 49 tool calls.
+- New policy replay: 7 scripted responses, 32 MCP executions, 0 cache hits, 2 skipped requests; stopped by tool_limit.
+- Zero provider calls; effects on live accuracy, cost and stopping remain unmeasured.

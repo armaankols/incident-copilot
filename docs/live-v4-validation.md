@@ -20,7 +20,7 @@ The batch has two expected outcomes under the existing grader (certificate and r
 
 ## Next work
 
-Separate evidence-backed diagnosis from recovery-action availability so blocked scaling does not force loss of an otherwise supported diagnosis. Reduce repeated tool queries and provide an explicit stopping path when evidence cannot be obtained; improve targeted feedback when a submission fails several checks. Validate these changes offline first. Any additional live validation requires another paid-run approval.
+Separate evidence-backed diagnosis from recovery-action availability so blocked scaling does not force loss of an otherwise supported diagnosis. Reduce repeated tool queries and provide an explicit stopping path when evidence cannot be obtained; improve targeted feedback when a submission fails several checks. Follow-up changes were implemented and verified offline; see [diagnosis-stopping.md](diagnosis-stopping.md). These live outcomes are preserved and not regraded. Any additional live validation requires another paid-run approval.
 
 These findings defer deployment validation work. They do not establish production reliability or verified recovery. Single-case before/after reruns change the prompt, available tools and validator together, so they cannot isolate the effect of one change.
 

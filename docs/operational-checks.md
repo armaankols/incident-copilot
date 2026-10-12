@@ -21,3 +21,8 @@ The prompt and TLS/traffic runbooks explain caller-versus-peer reasoning, normal
 - TF-IDF recall@1 and recall@3 remained 14/14; optional FastEmbed was skipped because it is absent. Existing benchmark fixture checks and compilation passed.
 
 No paid API calls were made during implementation. Subsequent authorized live validation is recorded in [live-v4-validation.md](live-v4-validation.md): certificate ownership was correct, blocked scaling was rejected, and stopping/diagnostic-completion problems remained. Effects on general live diagnosis accuracy or retry rates remain unmeasured. These narrow parsers recognize this demo's telemetry formats; unrecognized formats remain unknown and must not be treated as evidence of health or available capacity. They do not constitute production certificate verification or a complete recovery-feasibility assessment. Other fault diagnoses still rely on exact-quote provenance and the model's inference; a compatible alternative action still requires service-policy verification before execution.
+
+A subsequent v5 change separates diagnosis from recovery: unavailable/blocked
+scaling removes the proposed action while retaining a validated diagnosis.
+Certificate ownership remains diagnostic evidence and cannot be bypassed with
+null recovery. See [diagnosis-stopping.md](diagnosis-stopping.md).

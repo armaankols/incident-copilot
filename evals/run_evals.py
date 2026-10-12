@@ -74,6 +74,11 @@ def summarize(records: list[dict]) -> dict:
         "outcome_accuracy_by_variant": {variant: pct([r["grade"]["both_ok"] for r in records if r.get("variant") == variant]) for variant in sorted({r.get("variant", "original") for r in records})},
         "insufficient_evidence_cases": sum(r["fault_type"] == "insufficient_evidence" for r in records),
         "abstention_accuracy": pct([r["grade"]["both_ok"] for r in records if r["fault_type"] == "insufficient_evidence"]),
+        "model_submitted_abstentions": sum(r.get("termination_reason") == "model_submission" and r.get("diagnosis", {}).get("status") == "insufficient_evidence" for r in records),
+        "forced_abstentions": sum(r.get("termination_reason") in ("step_budget", "stagnation", "tool_limit", "correction_limit") and r.get("diagnosis", {}).get("status") == "insufficient_evidence" for r in records),
+        "correct_diagnoses_without_recovery": sum(r["grade"]["both_ok"] and r.get("diagnosis", {}).get("status") == "diagnosed" and r["diagnosis"].get("action") is None for r in records),
+        "finalization_counts": {reason: sum((r.get("termination_reason") or "not_recorded") == reason for r in records) for reason in sorted({r.get("termination_reason") or "not_recorded" for r in records})},
+        "total_cache_hits": sum(r.get("cache_hits", 0) for r in records),
     }
 
 

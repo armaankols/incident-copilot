@@ -1,5 +1,7 @@
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const recoveryLabels = {recommended:"Recommendation available", unverified:"No verified action", blocked:"Scaling blocked", unavailable:"Unavailable"};
+const stopLabels = {model_submission:"Final result submitted", step_budget:"Model call limit reached", stagnation:"Repeated results", correction_limit:"Repeated invalid submissions", tool_limit:"Query limit reached", timeout:"Timed out", error:"Investigation failed"};
 let busy = false;
 let liveEnabled = false;
 
@@ -34,6 +36,8 @@ function traceHTML(trace = []) {
     if (event.type === "investigation_update") return `<li class="update"><span class="call">Model note (unverified)</span> <span class="txt">${esc(event.text)}</span></li>`;
     if (event.type === "tool_call") return `<li><span class="call">${esc(event.tool)}</span> <span class="args">${esc(JSON.stringify(event.args))}</span></li>`;
     if (event.type === "tool_result") return `<li><details><summary>Evidence ${esc(event.observation_id)}</summary><pre>${esc(event.output)}</pre></details></li>`;
+    if (event.type === "tool_cache_hit") return `<li class="update">Reused ${esc(event.tool)} evidence ${esc(event.observation_id)}</li>`;
+    if (event.type === "tool_skipped") return `<li class="err">${esc(event.tool)}: ${esc(event.output)}</li>`;
     if (event.type === "validation_error") return `<li class="err">${esc(event.output)}</li>`;
     if (event.type === "diagnosis") return `<li class="diag"><span class="call">Diagnosis</span><pre>${esc(JSON.stringify(event.args, null, 2))}</pre></li>`;
     return "";
@@ -48,10 +52,14 @@ function render(result) {
     <div class="verdict"><div><h3>${offline ? "Offline rules said" : "Agent said"}</h3>
     <div class="row"><span>Outcome</span><b>${esc(diagnosis.status || "unavailable")}</b></div>
     <div class="row"><span>Service</span><b>${esc(diagnosis.root_cause_service || "none")}</b></div>
-    <div class="row"><span>Fault type</span><b>${esc(diagnosis.fault_type || "none")}</b></div></div>
+    <div class="row"><span>Fault type</span><b>${esc(diagnosis.fault_type || "none")}</b></div>
+    <div class="row"><span>Recovery</span><b>${esc(recoveryLabels[diagnosis.recovery_status] || (diagnosis.action ? "Recommendation available" : "Not recorded"))}</b></div>
+    <div class="row"><span>Action</span><b>${esc(diagnosis.action || "none")}</b></div></div>
     <div><h3>Actually injected</h3><div class="row"><span>Service ${mark(grade.service_ok)}</span><b>${esc(truth.root_service)}</b></div>
     <div class="row"><span>Fault type ${mark(grade.type_ok)}</span><b>${esc(truth.fault_type)}</b></div></div></div>
-    <div class="stats">${result.tool_calls ?? 0} tool calls, ${result.model_calls ?? result.steps ?? 0} model calls,
+    ${diagnosis.remediation ? `<p>${esc(diagnosis.remediation)}</p>` : ""}
+    ${result.termination_reason ? `<p>Investigation ended: ${esc(stopLabels[result.termination_reason] || result.termination_reason)}.</p>` : ""}
+    <div class="stats">${result.tool_calls ?? 0} tool executions${result.tool_requests == null ? "" : ` from ${result.tool_requests} requests`}, ${result.model_calls ?? result.steps ?? 0} model calls,
     ${result.latency_s == null ? "latency not measured" : Number(result.latency_s).toFixed(2) + "s"},
     $${Number(result.cost_usd ?? 0).toFixed(6)} observed API cost on ${esc(result.model)}</div>`;
 }

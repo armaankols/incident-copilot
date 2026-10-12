@@ -1,0 +1,26 @@
+{
+  "mode": "offline-recorded-query-replay",
+  "source_run": "live-v4-missing_evidence-2026-10-11-e2dd981ee93f",
+  "fixture_sha256": "7bd127c2b0a0688d1e56d5bc0dfffe4a82a20301c9e680df49cba555bbb361a4",
+  "source_sha256": "664d68b24b400c3c2e6481e94cc61abc0017aaefa1d400b0495a24bb5f4bcd9a",
+  "prompt_version": "evidence-v5-diagnosis-recovery-stopping",
+  "case_id": "correlated-v1/redacted/18",
+  "limits": {
+    "model_calls": 12,
+    "tool_requests": 32,
+    "stagnant_rounds": 3,
+    "invalid_submissions": 3
+  },
+  "summary": {
+    "original_live_model_calls": 12,
+    "original_live_tool_calls": 49,
+    "scripted_responses_consumed": 7,
+    "tool_requests": 34,
+    "tool_executions": 32,
+    "cache_hits": 0,
+    "skipped_requests": 2,
+    "termination_reason": "tool_limit",
+    "outcome": "insufficient_evidence",
+    "provider_calls": 0
+  }
+}

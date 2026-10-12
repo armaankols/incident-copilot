@@ -2,7 +2,7 @@
 import json
 from pathlib import Path
 
-runs = [json.loads(p.read_text()) for p in Path("results").glob("*.json") if p.name not in ("retrieval.json", "recovery.json")]
+runs = [json.loads(p.read_text()) for p in Path("results").glob("*.json") if p.name not in ("retrieval.json", "recovery.json", "stopping.json")]
 for suite, n, expected in (("original", 60, 100), ("correlated-v1", 24, 33.3)):
     matched = [r for r in runs if r["config"].get("agent") == "rules" and r["config"].get("suite") == suite and r["summary"]["n"] == n]
     if not matched:
@@ -22,3 +22,10 @@ for run in recovery["runs"]:
     if s["exact_policy_correct"] != expected or s["correct_abstentions"] != 3:
         raise SystemExit("Unexpected recovery policy lookup fixture result")
 print("Recovery lookup fixture outcomes verified")
+
+stopping = json.loads(Path("results/stopping.json").read_text())["summary"]
+if (stopping["provider_calls"] != 0 or stopping["outcome"] != "insufficient_evidence"
+        or stopping["scripted_responses_consumed"] >= stopping["original_live_model_calls"]
+        or stopping["tool_executions"] >= stopping["original_live_tool_calls"]):
+    raise SystemExit("Unexpected recorded-query stopping replay result")
+print("Recorded-query stopping replay verified; no claim about new model behavior")
