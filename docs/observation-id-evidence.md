@@ -51,8 +51,8 @@ limits and existing spending reservations remain unchanged.
 Older clients may still submit the former quoted-reference objects. That
 compatibility path continues validating their exact substring claims and size
 limits. It does not silently repair invented quotes. Mixing the old and new
-reference formats is rejected. Live behavior under the new model-facing schema
-has not been measured.
+reference formats is rejected. The subsequent two-case live validation is recorded in
+[live-v8-validation.md](live-v8-validation.md); larger-suite behavior remains unmeasured.
 
 ## Offline recorded-selection replay
 
@@ -123,5 +123,7 @@ Reproduce:
 .venv/bin/python -m evals.report
 ```
 
-New live Haiku tests require another paid-run approval. No automatic model switch
-or additional provider calls were introduced.
+The subsequent live pair met both expected outcomes with no validation rejections
+or truncations; see [live-v8-validation.md](live-v8-validation.md). The user now
+authorizes up to $0.50 per API test for this collaboration; higher or unverified
+bounds require approval. No automatic model switch was introduced.

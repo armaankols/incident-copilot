@@ -9,8 +9,11 @@ Python 3.12.15 is installed at `/opt/homebrew/bin/python3.12`; `.venv` is ready.
 The user installed dependencies from a terminal outside the restricted shell.
 `requirements.lock` pins 72 runtime packages; `requirements-dev.lock` pins 76
 packages, including the development dependencies. Locks have no wheel hashes.
-Fifteen authorized live smoke investigations completed by 2026-10-12. No deployment
-has been performed; further paid runs require approval.
+Seventeen authorized live smoke investigations completed by 2026-10-12. No deployment
+has been performed. Standing API-test approval for this collaboration is up to
+$0.50 per test (user instruction, 2026-10-12). Before each test, verify a conservative
+token-cost bound; proceed without another API-budget confirmation within $0.50,
+and ask if the test requires a higher or unverified bound.
 
 Measured on Python 3.12.15:
 
@@ -142,3 +145,9 @@ inventory rollback proposals remain rejected. No provider calls were made. See
 
 Latest observation-ID verification: 158 tests passed in 3.17 seconds, including
 malformed-service input handling. No paid provider calls were made in this pass.
+
+V8 live validation passed both expected diagnostic outcomes: search/traffic_spike
+with null recovery fields, and model-submitted abstention on redacted evidence.
+Both had zero validation rejections and truncations. Per-test usage-derived costs
+were $0.053230 and $0.042555, within the standing $0.50-per-test authorization.
+See [live-v8-validation.md](live-v8-validation.md) for source evidence and limits.
