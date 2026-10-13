@@ -67,6 +67,10 @@ function render(result) {
   const diagnosis = result.diagnosis || {}, grade = result.grade || {}, truth = result.ground_truth || {};
   const mark = ok => ok ? '<span class="ok">match</span>' : '<span class="bad">miss</span>';
   const offline = result.model?.startsWith("offline");
+  const costRecorded = typeof result.cost_usd === "number" && Number.isFinite(result.cost_usd) && result.cost_usd >= 0;
+  const costNote = offline ? "Offline sample · No LLM calls"
+    : !costRecorded ? "Usage cost was not recorded."
+    : result.billing_uncertain ? "Reported usage · Final charge uncertain" : "From reported token usage";
   $("out").innerHTML = `${offline ? '<p class="sample">Sample investigation · Offline rules · No LLM calls</p>' : ""}
     ${result.error ? `<p class="err">${esc(result.error)}. Partial investigation preserved below.</p>` : ""}
     <div class="alert">${esc(result.alert)}</div>
@@ -80,9 +84,14 @@ function render(result) {
     <div class="row"><span>Fault type ${mark(grade.type_ok)}</span><b>${esc(truth.fault_type)}</b></div></div></div>
     ${diagnosis.remediation ? `<p>${esc(diagnosis.remediation)}</p>` : ""}
     ${result.termination_reason ? `<p>Investigation ended: ${esc(stopLabels[result.termination_reason] || result.termination_reason)}.</p>` : ""}
+    <div class="budget-card run-cost">
+      <div class="budget-title">This run’s API cost</div>
+      <div class="budget-amount">${costRecorded ? "$" + result.cost_usd.toFixed(6) : "Not recorded"}</div>
+      <p class="budget-note">${esc(costNote)}</p>
+    </div>
     <div class="stats">${result.tool_calls ?? 0} tool executions${result.tool_requests == null ? "" : ` from ${result.tool_requests} requests`}, ${result.model_calls ?? result.steps ?? 0} model calls,
     ${result.latency_s == null ? "latency not measured" : Number(result.latency_s).toFixed(2) + "s"},
-    $${Number(result.cost_usd ?? 0).toFixed(6)} observed API cost on ${esc(result.model)}</div>
+    model: ${esc(result.model || "not recorded")}</div>
     <h2 class="timeline-title">Investigation timeline</h2>
     <ol class="rail">${traceHTML(result.trace)}</ol>`;
 }
