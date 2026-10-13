@@ -19,12 +19,24 @@
   label{display:block;font-weight:600;font-size:14px;margin:16px 0 6px}
   select,button{font:inherit;width:100%;padding:10px 12px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:4px}
   button{background:var(--ink);color:var(--bg);border-color:var(--ink);font-weight:600;cursor:pointer;margin-top:22px}
+  #go{display:flex;align-items:center;justify-content:center;gap:10px;min-height:50px}
   #go:hover:not(:disabled){background:#FFF6E5;border-color:#FFF6E5}
-  .sparkles{margin-right:8px;font-weight:400}
-  button.sample-link{display:block;width:fit-content;padding:2px 0;margin-top:12px;background:none;color:var(--steel);border:0;font-size:14px;font-weight:400;text-decoration:underline;text-underline-offset:4px}
-  button.sample-link:hover:not(:disabled){color:var(--ink)}
+  #go:disabled{opacity:1;cursor:not-allowed}
+  .sparkles{font:400 28px/1 Georgia,serif}
+  button.sample-button{display:block;width:fit-content;padding:8px 14px;margin-top:12px;background:var(--panel);color:var(--ink);border:1px solid var(--steel);font-size:14px;font-weight:500}
+  button.sample-button:hover:not(:disabled){background:#21394E}
   button:disabled{opacity:.55;cursor:wait} :focus-visible{outline:3px solid var(--steel);outline-offset:2px}
   .meta{font-size:13px;color:var(--muted);margin-top:14px}
+  .budget-card{padding:14px 16px;background:var(--panel);border:1px solid var(--line);border-radius:6px}
+  .budget-title{color:var(--steel);font-size:12px;font-weight:600;margin-bottom:6px}
+  .budget-amount{color:var(--ink);font:600 18px var(--mono)}
+  .budget-limit{color:var(--muted);font:400 13px var(--sans)}
+  .budget-card progress{display:block;width:100%;height:6px;margin:12px 0 8px;border:0;border-radius:3px;overflow:hidden;background:var(--bg);accent-color:var(--steel)}
+  .budget-card progress::-webkit-progress-bar{background:var(--bg)}
+  .budget-card progress::-webkit-progress-value{background:var(--steel);border-radius:3px}
+  .budget-card progress::-moz-progress-bar{background:var(--steel);border-radius:3px}
+  .budget-note{font-size:12px;margin:0;color:var(--muted)}
+  .live-note{margin:10px 0 0;font-size:12px}
   .alert{border-left:5px solid var(--alert);background:var(--panel);padding:14px 16px;font:14px/1.5 var(--mono);margin-bottom:28px}
   .rail{position:relative;margin:0;padding:0 0 0 22px;list-style:none;border-left:2px solid var(--line)}
   .rail li{position:relative;margin:0 0 14px}
@@ -60,8 +72,8 @@
     <select id="fault"><option value="">Random</option></select>
     <label for="model">Model</label>
     <select id="model"></select>
-    <button id="go" disabled><span id="go-sparkles" class="sparkles" aria-hidden="true">✧˖°</span><span id="go-label">Page the agent</span></button>
-    <button id="replay" class="sample-link">View offline sample</button><div class="meta" id="meta"></div>
+    <button id="go" disabled><span id="go-label">Page the agent</span><span id="go-sparkles" class="sparkles" aria-hidden="true">✧</span></button>
+    <button id="replay" class="sample-button">View offline sample</button><div class="meta" id="meta"></div>
     <section class="history" aria-labelledby="history-title">
       <h2 id="history-title">Past investigations</h2>
       <p>Saved runs from this public synthetic demo. Viewing them makes no LLM calls.</p>

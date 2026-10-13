@@ -31,7 +31,14 @@ async function init() {
   options("fault", config.fault_types, true);
   options("model", config.models);
   liveEnabled = config.live_enabled;
-  $("meta").textContent = `Application budget: $${config.spent_today_usd} of $${config.daily_budget_usd} used today.${liveEnabled ? "" : " Live model is not configured."}`;
+  const spent = Number(config.spent_today_usd), budget = Number(config.daily_budget_usd);
+  const fraction = budget > 0 ? Math.min(1, Math.max(0, spent / budget)) : 0;
+  $("meta").innerHTML = `<div class="budget-card">
+    <div class="budget-title">Daily API budget</div>
+    <div class="budget-amount">$${spent.toFixed(3)} <span class="budget-limit">of $${budget.toFixed(2)}</span></div>
+    <progress max="1" value="${fraction}" aria-label="Reported API spend today"></progress>
+    <p class="budget-note">Reported spend today · Shared across visitors</p>
+    </div>${liveEnabled ? "" : '<p class="live-note">Live model is not configured.</p>'}`;
   controls();
 }
 function traceHTML(trace = []) {
