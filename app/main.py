@@ -10,7 +10,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Query, Request
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
@@ -28,7 +28,16 @@ MAX_STEPS = 12
 MAX_INPUT_TOKENS = 24000
 MAX_OUTPUT_TOKENS = 1000
 app = FastAPI(title="Incident Copilot")
-app.mount("/static", StaticFiles(directory=STATIC), name="static")
+
+
+class RevalidatedStaticFiles(StaticFiles):
+    async def get_response(self, path, scope):
+        response = await super().get_response(path, scope)
+        response.headers["Cache-Control"] = "no-cache"
+        return response
+
+
+app.mount("/static", RevalidatedStaticFiles(directory=STATIC), name="static")
 _jobs = {}
 _tasks = set()
 
@@ -48,7 +57,10 @@ class InvestigateRequest(BaseModel):
 
 @app.get("/")
 def index():
-    return FileResponse(STATIC / "index.html")
+    version = hashlib.sha256((STATIC / "demo.js").read_bytes()).hexdigest()[:16]
+    html = (STATIC / "index.html").read_text().replace(
+        'src="/static/demo.js"', f'src="/static/demo.js?v={version}"')
+    return HTMLResponse(html, headers={"Cache-Control": "no-cache"})
 
 
 @app.get("/healthz")

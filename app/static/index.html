@@ -70,6 +70,6 @@
     <div id="out"><p class="lede">Loading sample investigation…</p></div>
   </section>
 </main>
-<script src="/static/demo.js" defer></script>
+<script src="/static/demo.js" defer onerror="document.getElementById('out').textContent='Unable to load the application. Please reload the page.'; document.getElementById('history-status').textContent='Saved investigations could not load.';"></script>
 </body>
 </html>

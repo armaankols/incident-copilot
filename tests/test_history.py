@@ -1,10 +1,26 @@
 """Saved-run discovery stays read-only and omits private admission data."""
 import json
+import hashlib
 
 from fastapi.testclient import TestClient
 
 import app.main as main
 from copilot.budget import Ledger
+
+
+def test_page_requests_matching_script_and_revalidates_cached_assets():
+    version = hashlib.sha256((main.STATIC / "demo.js").read_bytes()).hexdigest()[:16]
+    with TestClient(main.app) as client:
+        page = client.get("/")
+        assert f'src="/static/demo.js?v={version}"' in page.text
+        assert page.headers["cache-control"] == "no-cache"
+        script = client.get(f"/static/demo.js?v={version}")
+        assert script.status_code == 200
+        assert script.content == (main.STATIC / "demo.js").read_bytes()
+        assert script.headers["cache-control"] == "no-cache"
+        cached = client.get(f"/static/demo.js?v={version}", headers={"If-None-Match": script.headers["etag"]})
+        assert cached.status_code == 304
+        assert cached.headers["cache-control"] == "no-cache"
 
 
 def test_saved_history_paginates_and_reopens_without_credentials(monkeypatch, tmp_path):
