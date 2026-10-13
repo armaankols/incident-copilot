@@ -1,0 +1,61 @@
+{
+  "measured_at": "2026-10-13T20:45:23.892956+00:00",
+  "url": "https://incident-copilot.fly.dev",
+  "deployed_commit": "4c6ccbdc3fa0d4e5a0149b9f334e37c8ebc8c528",
+  "runtime_ci": {
+    "url": "https://github.com/armaankols/incident-copilot/actions/runs/38465120783",
+    "conclusion": "success"
+  },
+  "image": "registry.fly.io/incident-copilot:4c6ccbd",
+  "script_url": "/static/demo.js?v=88e5e5a300f11da4",
+  "html_cache_control": "no-cache",
+  "script_cache_control": "no-cache",
+  "conditional_script_status": 304,
+  "deployed_script_matches_local": true,
+  "old_script_with_new_html_reproduces_loading_placeholders": true,
+  "user_browser_cache_confirmed": false,
+  "browser_visual_review": false,
+  "offline_tests": {
+    "passed": 174,
+    "seconds": 3.41
+  },
+  "replay_count": 2,
+  "all_saved_links_reopen": true,
+  "before": {
+    "measured_at": "2026-10-13T20:44:08.124875+00:00",
+    "replay_sha256": "ce21f28b99d5b2991baf967fb7745cdfba98cc1ddc6b9b78ace303c007a5a65a",
+    "spent_today_usd": 0.091,
+    "ledger": {
+      "run_count": 2,
+      "replay_count": 2,
+      "active_count": 0,
+      "charged_usd": 0.09067800000000001
+    }
+  },
+  "after": {
+    "measured_at": "2026-10-13T20:45:23.154215+00:00",
+    "replay_sha256": "ce21f28b99d5b2991baf967fb7745cdfba98cc1ddc6b9b78ace303c007a5a65a",
+    "spent_today_usd": 0.091
+  },
+  "existing_replay_unchanged": true,
+  "displayed_spend_unchanged": true,
+  "new_llm_calls": 0,
+  "container": {
+    "measured_at": "2026-10-13T20:44:21.238901+00:00",
+    "image": "registry.fly.io/incident-copilot:4c6ccbd",
+    "image_id": "sha256:f71a057f9e61a00c55b6ff4e247d590a9e8ee7843e4352cf5d15539a48db71fe",
+    "platform": "linux/amd64",
+    "http_statuses": {
+      "/healthz": 200,
+      "/": 200,
+      "/static/demo.js": 200,
+      "/api/config": 200,
+      "/api/replay": 200
+    },
+    "no_key_status": 503,
+    "persistent_test_charge_usd": 0.1,
+    "replay_survived_restart": true,
+    "server_uid": 10001,
+    "root_owned_mount_repaired": true
+  }
+}

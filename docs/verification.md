@@ -231,3 +231,19 @@ Trial clarification: Fly's current trial stops machines after five minutes.
 This can confound the historical idle-stop observation above; paid-account
 idle-stop behavior has not been independently measured. See the current
 [deployment notes](deployment.md) and [Fly trial terms](https://docs.fly.io/about/free-trial).
+
+2026-10-13 frontend cache fix: the user reported both new loading placeholders
+remaining on screen. All five relevant HTTPS endpoints returned 200. Running the
+previous `3171705` script against the new HTML reproduced both unchanged loading
+messages and only requested `/api/config`; the user's actual cached browser
+response was not inspected, so caching remains a supported explanation rather
+than a confirmed diagnosis. Runtime commit `4c6ccbd` adds a content-hashed script
+URL, `Cache-Control: no-cache` on HTML/static responses, and a script-load error
+message. Offline tests passed 174 cases in 3.41 seconds, container checks and
+[runtime CI](https://github.com/armaankols/incident-copilot/actions/runs/38465120783)
+passed. The live page referenced `/static/demo.js?v=88e5e5a300f11da4`, its script
+matched local bytes, both cache headers were verified, and a conditional script
+request returned 304 with the revalidation header. Both saved runs reopened, the
+existing replay fingerprint and displayed spend were unchanged, and no new LLM
+calls were made. Browser visual verification remains unavailable. See
+[measured record](frontend-cache-verification.json).
