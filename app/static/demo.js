@@ -69,7 +69,7 @@ function render(result) {
   const offline = result.model?.startsWith("offline");
   $("out").innerHTML = `${offline ? '<p class="sample">Sample investigation · Offline rules · No LLM calls</p>' : ""}
     ${result.error ? `<p class="err">${esc(result.error)}. Partial investigation preserved below.</p>` : ""}
-    <div class="alert">${esc(result.alert)}</div><ol class="rail">${traceHTML(result.trace)}</ol>
+    <div class="alert">${esc(result.alert)}</div>
     <div class="verdict"><div><h3>${offline ? "Offline rules said" : "Agent said"}</h3>
     <div class="row"><span>Outcome</span><b>${esc(diagnosis.status || "unavailable")}</b></div>
     <div class="row"><span>Service</span><b>${esc(diagnosis.root_cause_service || "none")}</b></div>
@@ -82,7 +82,9 @@ function render(result) {
     ${result.termination_reason ? `<p>Investigation ended: ${esc(stopLabels[result.termination_reason] || result.termination_reason)}.</p>` : ""}
     <div class="stats">${result.tool_calls ?? 0} tool executions${result.tool_requests == null ? "" : ` from ${result.tool_requests} requests`}, ${result.model_calls ?? result.steps ?? 0} model calls,
     ${result.latency_s == null ? "latency not measured" : Number(result.latency_s).toFixed(2) + "s"},
-    $${Number(result.cost_usd ?? 0).toFixed(6)} observed API cost on ${esc(result.model)}</div>`;
+    $${Number(result.cost_usd ?? 0).toFixed(6)} observed API cost on ${esc(result.model)}</div>
+    <h2 class="timeline-title">Investigation timeline</h2>
+    <ol class="rail">${traceHTML(result.trace)}</ol>`;
 }
 function renderProgress(progress) {
   $("out").innerHTML = `${progress.alert ? `<div class="alert">${esc(progress.alert)}</div>` : ""}
