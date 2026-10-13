@@ -181,3 +181,8 @@ Deployment preflight: Fly login verified for `personal` (zero apps), strict
 passed HTTP/non-root/persistence checks. App name and $0.50/day public API cap are
 proposed only; hosting/public API budget approval is pending. No Fly resources
 were created. See [deployment-preflight.json](deployment-preflight.json).
+
+2026-10-13 authorization update: user approved the $0.50/day public API budget.
+Hosting target approval remains pending clarification; no Fly resources have been
+provisioned. No enforced hosting bill cap or automatic cutoff exists. See
+[deployment-authorization.json](deployment-authorization.json).

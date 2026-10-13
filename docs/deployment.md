@@ -108,8 +108,8 @@ Do not enable this trust setting on a directly reachable local server.
 Fly CLI 0.4.116 login was verified against the personal organization, which had
 zero existing apps. `fly.toml` now proposes `incident-copilot-armaankols` in `sjc`,
 one shared CPU with 1 GB RAM, one 1 GB volume, HTTPS, and idle auto-stop. Strict Fly
-configuration validation passed. A $0.50/day application API budget is proposed;
-it is not yet approved for public usage. Its offline admission check accepted a
+configuration validation passed. The $0.50/day application API budget was approved by the user on 2026-10-13.
+Hosting budget approval remains pending. Its offline admission check accepted a
 $0.42 Haiku reservation and rejected Sonnet with 429 before any provider call.
 The UI still lists both models; Sonnet cannot fit this proposed daily cap.
 
@@ -134,3 +134,19 @@ is not an enforced Fly bill cap. Current pricing references:
 [resource pricing](https://docs.fly.io/about/pricing),
 [cost management](https://docs.fly.io/about/cost-management). No hosting spend has
 been measured in this preparation.
+
+## Hosting target controls
+
+The user approved $0.50/day for public API usage on 2026-10-13, and asked how a
+$10/month hosting target would be enforced. This is not hosting-budget approval.
+See [deployment authorization](deployment-authorization.json).
+
+Fly's current [cost-management documentation](https://docs.fly.io/about/cost-management)
+states there is no billing ceiling or native billing alert. Fixed resource counts
+(one machine/volume), idle stopping, shared IPs and no paid add-ons constrain the
+base cost; they do not cap bandwidth or the final invoice. A manual billing check
+and pausing the service near $8 would provide headroom, but is not implemented
+automation or a guaranteed $10 limit. Pausing must disable auto-start as well as
+stop the machine; storage and stopped-machine rootfs still incur charges. A hard
+$10 requirement needs a host with an enforced spending cap. No monitoring or
+automatic hosting cutoff has been deployed or measured.

@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-13",
+  "public_api_daily_budget_usd": 0.5,
+  "public_api_budget_approved": true,
+  "approval_source": "User: yes 50 cents is fine",
+  "hosting_monthly_target_usd": 10.0,
+  "hosting_budget_approved": false,
+  "hosting_status": "Pending clarification of enforcement; no resources provisioned."
+}
