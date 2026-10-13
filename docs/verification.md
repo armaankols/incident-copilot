@@ -212,3 +212,22 @@ passed on the replacement. One run, one replay and $0.060967 charged were
 preserved. Six HTTPS routes passed; one machine and encrypted 1 GB volume
 remain. No new LLM calls were made. See [name-migration.md](name-migration.md).
 Historical deployment records retain their original URLs/resource identifiers.
+
+2026-10-13 UI update: deployed runtime commit `425cf35` opens with a labeled offline
+sample and adds paginated Past investigations for saved hosted results. Existing
+run links still open their specific investigation. Offline tests passed 173 cases
+in 3.38 seconds; JavaScript VM checks covered default loading, deep links, sample
+selection, 20+3 pagination, empty history, config failure and HTML escaping.
+No browser was connected, so no visual browser review was performed. The Linux
+AMD64 image passed container HTTP/non-root/restart-persistence checks, and
+[runtime CI](https://github.com/armaankols/incident-copilot/actions/runs/38463405661)
+passed. Six deployed HTTPS routes returned 200 and served HTML/JS matched local
+files. Both hosted saved runs reopened, pagination passed, and the existing
+memory-leak replay hash and ledger totals ($0.090678 charged, zero active) were
+unchanged. There were no new LLM calls. See
+[measured record](history-ui-verification.json).
+
+Trial clarification: Fly's current trial stops machines after five minutes.
+This can confound the historical idle-stop observation above; paid-account
+idle-stop behavior has not been independently measured. See the current
+[deployment notes](deployment.md) and [Fly trial terms](https://docs.fly.io/about/free-trial).

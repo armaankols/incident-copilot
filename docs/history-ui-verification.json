@@ -1,0 +1,81 @@
+{
+  "measured_at": "2026-10-13T20:33:11.517880+00:00",
+  "url": "https://incident-copilot.fly.dev",
+  "deployed_commit": "425cf3563fddb6ad4bd000f584e9807535daa1ad",
+  "runtime_ci": {
+    "url": "https://github.com/armaankols/incident-copilot/actions/runs/38463405661",
+    "conclusion": "success"
+  },
+  "image": "registry.fly.io/incident-copilot:425cf35",
+  "machine_id": "7843e61a994648",
+  "volume_id": "vol_4m3mklle2q5n32zv",
+  "http_statuses": {
+    "/healthz": 200,
+    "/": 200,
+    "/static/demo.js": 200,
+    "/api/config": 200,
+    "/api/replay": 200,
+    "/api/runs": 200
+  },
+  "served_html_js_match_local": true,
+  "history_runs": 2,
+  "history_pagination_verified": true,
+  "all_history_links_reopen": true,
+  "before": {
+    "measured_at": "2026-10-13T20:31:38.352458+00:00",
+    "replay_sha256": "ce21f28b99d5b2991baf967fb7745cdfba98cc1ddc6b9b78ace303c007a5a65a",
+    "spent_today_usd": 0.091,
+    "ledger": {
+      "run_count": 2,
+      "replay_count": 2,
+      "active_count": 0,
+      "charged_usd": 0.09067800000000001
+    }
+  },
+  "after": {
+    "measured_at": "2026-10-13T20:33:06.568916+00:00",
+    "replay_sha256": "ce21f28b99d5b2991baf967fb7745cdfba98cc1ddc6b9b78ace303c007a5a65a",
+    "spent_today_usd": 0.091,
+    "ledger": {
+      "run_count": 2,
+      "replay_count": 2,
+      "active_count": 0,
+      "charged_usd": 0.09067800000000001
+    }
+  },
+  "ledger_totals_unchanged": true,
+  "existing_replay_sha256_unchanged": true,
+  "new_llm_calls": 0,
+  "offline_tests": {
+    "passed": 173,
+    "seconds": 3.38
+  },
+  "javascript_vm_checks": [
+    "default sample",
+    "deep links",
+    "sample button",
+    "pagination 20 + 3",
+    "empty history",
+    "config failure",
+    "HTML escaping"
+  ],
+  "browser_visual_review": false,
+  "container": {
+    "measured_at": "2026-10-13T20:31:22.348863+00:00",
+    "image": "registry.fly.io/incident-copilot:425cf35",
+    "image_id": "sha256:940a70d95c3d52b869b6a379780b983111d5d237b524ddbff8aa030d52d3380b",
+    "platform": "linux/amd64",
+    "http_statuses": {
+      "/healthz": 200,
+      "/": 200,
+      "/static/demo.js": 200,
+      "/api/config": 200,
+      "/api/replay": 200
+    },
+    "no_key_status": 503,
+    "persistent_test_charge_usd": 0.1,
+    "replay_survived_restart": true,
+    "server_uid": 10001,
+    "root_owned_mount_repaired": true
+  }
+}
