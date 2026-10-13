@@ -28,6 +28,20 @@ survived a machine restart and idle stop/wake. Idle stop was observed after
 local AMD64/ARM64 and GitHub CI container checks also passed. These tests do not
 establish production reliability or recovery effectiveness.
 
+Fly's [trial terms](https://docs.fly.io/about/free-trial), checked on 2026-10-13,
+state that trial machines stop after five minutes. That can confound the initial
+idle-stop observation; it does not independently verify idle behavior on a paid
+account. The trial lasts seven days or two shared VM hours, whichever comes first;
+adding a credit card ends the trial immediately.
+
+The UI loads the labeled offline sample by default. Past investigations lists
+completed saved hosted results, including saved failures, newest first with
+20 results per page. The read-only `GET /api/runs` endpoint accepts `limit` (1–50)
+and `offset` (nonnegative), and exposes summary fields without visitor hashes,
+reservation amounts or full traces. Active or interrupted runs without saved
+results are excluded. Historical local benchmark files are not imported into
+the hosted database. Existing `?run=...` links take priority over the sample.
+
 ## Local setup
 
 Run `./scripts/setup.sh` from a terminal with network access to install the

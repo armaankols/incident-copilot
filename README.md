@@ -48,8 +48,10 @@ requested, but cache savings have not been measured.
   concurrency. Success, failure and cancellation settle reservations; uncertain
   billing retains the full reservation. This is an application guardrail, not a
   provider billing hard cap. Deployment requires one machine and one worker.
-- The UI polls investigation progress and links saved replays. The bundled offline
-  replay uses the tailored rule baseline, and does not represent a model run.
+- The UI opens with a labeled offline sample and polls live investigation progress.
+  Past investigations lists saved hosted runs newest first, with pagination and
+  links to each result. Viewing samples or history makes no LLM calls. Saved run
+  links open their specific result. The sample uses the tailored rule baseline.
 - Evaluations checkpoint each record and use unique experiment names, source
   hashes, dataset/prompt versions, case IDs, errors and observed usage.
 

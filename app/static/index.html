@@ -36,6 +36,15 @@
   .ok{color:var(--ok);font-weight:600} .bad{color:var(--alert);font-weight:600}
   .stats{font:13px var(--mono);color:var(--muted);margin-top:12px}
   .err{color:var(--alert);margin-top:16px;font-weight:600}
+  .sample{font-size:13px;color:var(--steel);margin:0 0 14px}
+  .history{margin-top:32px;border-top:1px solid var(--line);padding-top:20px}
+  .history h2{font:700 24px var(--serif);margin:0 0 8px}
+  .history ul{list-style:none;margin:0;padding:0}
+  .history li{border-bottom:1px solid var(--line);padding:12px 0}
+  .history a{display:block;color:var(--steel);font-weight:600;overflow-wrap:anywhere}
+  .history small{display:block;color:var(--muted);font-size:12px;overflow-wrap:anywhere}
+  .history p{font-size:13px;color:var(--muted)}
+  .history button{margin-top:12px;background:var(--panel);color:var(--ink);border-color:var(--line)}
 </style>
 </head>
 <body>
@@ -49,9 +58,16 @@
     <select id="model"></select>
     <button id="go" disabled>Page the agent</button>
     <button id="replay">View offline replay</button><div class="meta" id="meta"></div>
+    <section class="history" aria-labelledby="history-title">
+      <h2 id="history-title">Past investigations</h2>
+      <p>Saved runs from this public synthetic demo. Viewing them makes no LLM calls.</p>
+      <ul id="history-list"></ul>
+      <p id="history-status" role="status">Loading saved investigations…</p>
+      <button id="history-more" hidden>Load more</button>
+    </section>
   </section>
   <section aria-live="polite">
-    <div id="out"><p class="lede">Pick a synthetic fault or view the saved offline replay. Live investigations require a configured model API.</p></div>
+    <div id="out"><p class="lede">Loading sample investigation…</p></div>
   </section>
 </main>
 <script src="/static/demo.js" defer></script>

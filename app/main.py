@@ -6,9 +6,10 @@ import hashlib
 import json
 import os
 import random
+from datetime import datetime, timezone
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -120,6 +121,24 @@ async def start_run(req: InvestigateRequest, request: Request):
     _tasks.add(task)
     task.add_done_callback(_tasks.discard)
     return {"run_id": rid}
+
+
+@app.get("/api/runs")
+def saved_runs(limit: int = Query(20, ge=1, le=50), offset: int = Query(0, ge=0)):
+    rows = ledger().saved_runs(limit + 1, offset)
+    summaries = []
+    for rid, started, payload in rows[:limit]:
+        result = json.loads(payload)
+        diagnosis = result.get("diagnosis") or {}
+        summaries.append({
+            "run_id": rid,
+            "started_at": datetime.fromtimestamp(started, timezone.utc).isoformat(),
+            "model": result.get("model"),
+            "fault_type": (result.get("ground_truth") or {}).get("fault_type"),
+            "root_cause_service": diagnosis.get("root_cause_service"),
+            "outcome": "error" if result.get("error") else diagnosis.get("status", "unavailable"),
+        })
+    return {"runs": summaries, "next_offset": offset + limit if len(rows) > limit else None}
 
 
 @app.get("/api/runs/{rid}")

@@ -4,6 +4,8 @@ const recoveryLabels = {recommended:"Recommendation available", unverified:"No v
 const stopLabels = {model_submission:"Final result submitted", step_budget:"Model call limit reached", stagnation:"Repeated results", correction_limit:"Repeated invalid submissions", output_limit:"Repeated output truncation", tool_limit:"Query limit reached", timeout:"Timed out", error:"Investigation failed"};
 let busy = false;
 let liveEnabled = false;
+let historyOffset = null;
+let historyLoading = false;
 
 async function fetchJSON(url, options) {
   const response = await fetch(url, options);
@@ -48,7 +50,8 @@ function render(result) {
   const diagnosis = result.diagnosis || {}, grade = result.grade || {}, truth = result.ground_truth || {};
   const mark = ok => ok ? '<span class="ok">match</span>' : '<span class="bad">miss</span>';
   const offline = result.model?.startsWith("offline");
-  $("out").innerHTML = `${result.error ? `<p class="err">${esc(result.error)}. Partial investigation preserved below.</p>` : ""}
+  $("out").innerHTML = `${offline ? '<p class="sample">Sample investigation · Offline rules · No LLM calls</p>' : ""}
+    ${result.error ? `<p class="err">${esc(result.error)}. Partial investigation preserved below.</p>` : ""}
     <div class="alert">${esc(result.alert)}</div><ol class="rail">${traceHTML(result.trace)}</ol>
     <div class="verdict"><div><h3>${offline ? "Offline rules said" : "Agent said"}</h3>
     <div class="row"><span>Outcome</span><b>${esc(diagnosis.status || "unavailable")}</b></div>
@@ -86,9 +89,32 @@ async function runUI(action) {
   finally {
     busy = false;
     try { await init(); } catch (error) { $("meta").textContent = error.message; }
+    await loadHistory();
     controls();
   }
 }
+async function loadHistory(append = false) {
+  if (historyLoading || (append && historyOffset == null)) return;
+  historyLoading = true;
+  $("history-more").disabled = true;
+  try {
+    const data = await fetchJSON(`/api/runs?offset=${append ? historyOffset : 0}`);
+    const html = data.runs.map(run => `<li><a href="?run=${encodeURIComponent(run.run_id)}">${esc(run.fault_type || "Investigation")} · ${esc(run.root_cause_service || "No accepted cause")}</a>
+      <small>${esc(new Date(run.started_at).toLocaleString())} · ${esc(run.outcome.replaceAll("_", " "))}</small>
+      <small>${esc(run.model || "Model not recorded")}</small></li>`).join("");
+    if (append) $("history-list").insertAdjacentHTML("beforeend", html);
+    else $("history-list").innerHTML = html;
+    historyOffset = data.next_offset;
+    $("history-more").hidden = historyOffset == null;
+    $("history-status").textContent = !append && !data.runs.length ? "No saved investigations yet." : "";
+  } catch (error) {
+    $("history-status").textContent = `Could not load saved investigations: ${error.message}`;
+  } finally {
+    historyLoading = false;
+    $("history-more").disabled = false;
+  }
+}
+$("history-more").onclick = () => loadHistory(true);
 $("go").onclick = () => runUI(async () => {
   $("out").innerHTML = '<p class="lede">Starting the investigation…</p>';
   const {run_id} = await fetchJSON("/api/runs", {method:"POST", headers:{"Content-Type":"application/json"},
@@ -101,9 +127,8 @@ $("replay").onclick = () => runUI(async () => {
   history.replaceState(null, "", "?replay=offline");
 });
 async function boot() {
-  await init();
   const query = new URLSearchParams(location.search);
   if (query.get("run")) await runUI(() => poll(query.get("run")));
-  else if (query.get("replay") === "offline") $("replay").click();
+  else await runUI(async () => render(await fetchJSON("/api/replay")));
 }
 boot().catch(error => { liveEnabled = false; controls(); $("meta").textContent = error.message; });

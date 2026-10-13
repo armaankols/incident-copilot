@@ -71,3 +71,12 @@ class Ledger:
         with self.connect() as db:
             row = db.execute("SELECT payload FROM replays WHERE id=?", (rid,)).fetchone()
             return row[0] if row else None
+
+    def saved_runs(self, limit, offset):
+        with self.connect() as db:
+            return db.execute(
+                "SELECT runs.id, runs.started, replays.payload FROM runs "
+                "JOIN replays ON replays.id=runs.id "
+                "ORDER BY runs.started DESC, runs.id DESC LIMIT ? OFFSET ?",
+                (limit, offset),
+            ).fetchall()
