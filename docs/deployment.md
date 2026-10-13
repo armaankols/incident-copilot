@@ -1,6 +1,6 @@
 # Deployment and operations
 
-The demo is deployed at [incident-copilot-armaankols.fly.dev](https://incident-copilot-armaankols.fly.dev/)
+The demo is deployed at [incident-copilot.fly.dev](https://incident-copilot.fly.dev/)
 in the personal Fly organization. It uses one shared CPU/1 GB machine in `sjc`,
 one encrypted 1 GB persistent volume, HTTPS, one non-root worker, and idle
 stop/start. The server key is stored as a Fly secret. GitHub pushes run offline
@@ -154,6 +154,17 @@ stop the machine; storage and stopped-machine rootfs still incur charges. A hard
 $10 requirement needs a host with an enforced spending cap. No monitoring or
 automatic hosting cutoff has been deployed or measured.
 
+## Current name and preserved data
+
+The user-selected name `incident-copilot` is deployed at
+[incident-copilot.fly.dev](https://incident-copilot.fly.dev/). The old app was
+retired after snapshot restoration, identical ledger/replay fingerprints, matching
+API-key digests and six HTTPS checks. One run, one replay and $0.060967 of charges
+were preserved; no new LLM calls were made. Current machine is `7843e61a994648`,
+current encrypted 1 GB volume is `vol_4m3mklle2q5n32zv`. The daily API cap remains
+$0.50. See [migration verification](name-migration.md). Historical initial
+deployment records below keep their original names and resource identifiers.
+
 ## Updating the app
 
 Edit locally, run relevant tests, commit the code and build a fresh tagged Linux
@@ -163,10 +174,10 @@ AMD64 image. On this Mac the verified standalone Buildx binary is in ignored
 
 ```bash
 COPILOT_DEPLOY_TAG=$(git rev-parse --short HEAD)
-.bootstrap/docker-buildx/buildx-v0.38.0.darwin-arm64 build --builder colima --platform linux/amd64 --load -t "registry.fly.io/incident-copilot-armaankols:${COPILOT_DEPLOY_TAG}" .
+.bootstrap/docker-buildx/buildx-v0.38.0.darwin-arm64 build --builder colima --platform linux/amd64 --load -t "registry.fly.io/incident-copilot:${COPILOT_DEPLOY_TAG}" .
 .bootstrap/flyctl/flyctl auth docker
-docker push "registry.fly.io/incident-copilot-armaankols:${COPILOT_DEPLOY_TAG}"
-.bootstrap/flyctl/flyctl deploy --config fly.toml --image "registry.fly.io/incident-copilot-armaankols:${COPILOT_DEPLOY_TAG}" --ha=false
+docker push "registry.fly.io/incident-copilot:${COPILOT_DEPLOY_TAG}"
+.bootstrap/flyctl/flyctl deploy --config fly.toml --image "registry.fly.io/incident-copilot:${COPILOT_DEPLOY_TAG}" --ha=false
 ```
 
 Deploy between investigations: replacing the single machine's process may

@@ -1,5 +1,5 @@
 # Personal Fly organization; one machine, monitored hosting target, approved $0.50/day API budget.
-app = "incident-copilot-armaankols"
+app = "incident-copilot"
 primary_region = "sjc"
 
 [build]

@@ -1,0 +1,130 @@
+{
+  "measured_at": "2026-10-13T19:59:25.484355+00:00",
+  "old_app": "incident-copilot-armaankols",
+  "new_app": "incident-copilot",
+  "public_url": "https://incident-copilot.fly.dev/",
+  "snapshot_id": "vs_yG1JoQj1Vb5ZuOjyG10owaK",
+  "snapshot_method": "Source app admission disabled and machine stopped before volume snapshot.",
+  "source_data": {
+    "logical_database_sha256": "6ea8f319c06c2805c40df101f85b8c7e3618b2ec84832430051d5f364675fc04",
+    "run_rows": 1,
+    "replay_rows": 1,
+    "replay_ids": [
+      "ae9d2aebca074348a6bae644f4993245"
+    ],
+    "replay_payload_sha256": {
+      "ae9d2aebca074348a6bae644f4993245": "b7adef6df4da68c17de5eb70a440ee6497d03bc5f3b3bcda883e152ffae0d3b1"
+    },
+    "active_reservations": 0,
+    "charged_total_usd": 0.060967,
+    "spent_today_usd": 0.060967,
+    "runtime_sha256": "8ed1d0d63c29218e380f95ada502cb3aad17d6626f9c77bb768099c97ca4591e",
+    "python": "3.12.15",
+    "app_processes": [
+      {
+        "uids": [
+          "10001",
+          "10001",
+          "10001",
+          "10001"
+        ],
+        "workers": "1"
+      }
+    ],
+    "db_owner_uid": 10001,
+    "daily_budget_usd": "0"
+  },
+  "restored_data": {
+    "logical_database_sha256": "6ea8f319c06c2805c40df101f85b8c7e3618b2ec84832430051d5f364675fc04",
+    "run_rows": 1,
+    "replay_rows": 1,
+    "replay_ids": [
+      "ae9d2aebca074348a6bae644f4993245"
+    ],
+    "replay_payload_sha256": {
+      "ae9d2aebca074348a6bae644f4993245": "b7adef6df4da68c17de5eb70a440ee6497d03bc5f3b3bcda883e152ffae0d3b1"
+    },
+    "active_reservations": 0,
+    "charged_total_usd": 0.060967,
+    "spent_today_usd": 0.060967,
+    "runtime_sha256": "8ed1d0d63c29218e380f95ada502cb3aad17d6626f9c77bb768099c97ca4591e",
+    "python": "3.12.15",
+    "app_processes": [
+      {
+        "uids": [
+          "10001",
+          "10001",
+          "10001",
+          "10001"
+        ],
+        "workers": "1"
+      }
+    ],
+    "db_owner_uid": 10001,
+    "daily_budget_usd": "0.50"
+  },
+  "database_fingerprints_match": true,
+  "server_key_digest_matches": true,
+  "http_statuses": {
+    "/healthz": 200,
+    "/": 200,
+    "/static/demo.js": 200,
+    "/api/config": 200,
+    "/api/replay": 200,
+    "/api/runs/ae9d2aebca074348a6bae644f4993245": 200
+  },
+  "api_config": {
+    "models": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "fault_types": [
+      "bad_deploy",
+      "memory_leak",
+      "slow_dependency",
+      "config_error",
+      "cert_expiry",
+      "traffic_spike"
+    ],
+    "daily_budget_usd": 0.5,
+    "spent_today_usd": 0.061,
+    "live_enabled": true
+  },
+  "saved_replay_unchanged": true,
+  "sonnet_rejection_status": 429,
+  "sonnet_rejection": {
+    "detail": "Daily budget has insufficient unreserved funds"
+  },
+  "additional_provider_calls": 0,
+  "additional_observed_api_cost_usd": 0,
+  "machine": {
+    "id": "7843e61a994648",
+    "region": "sjc",
+    "guest": {
+      "cpu_kind": "shared",
+      "cpus": 1,
+      "memory_mb": 1024
+    },
+    "image_ref": {
+      "registry": "registry.fly.io",
+      "repository": "incident-copilot",
+      "tag": "354393a",
+      "digest": "sha256:e15380d62e331f590334d0c852260ac2ac99f34b541c17b45a45b150ff08372b"
+    },
+    "autostart": true,
+    "autostop": true,
+    "minimum_running": 0
+  },
+  "volume": {
+    "id": "vol_4m3mklle2q5n32zv",
+    "size_gb": 1,
+    "encrypted": true,
+    "attached_machine_id": "7843e61a994648"
+  },
+  "old_app_retired": true,
+  "remaining_app_names": [
+    "incident-copilot"
+  ],
+  "remaining_volume_count": 1,
+  "post_retirement_health_status": 200
+}

@@ -3,12 +3,14 @@
 A Python/FastAPI demo that investigates **synthetic incident telemetry** using
 Claude tool calls, a LangGraph investigation loop, and an in-memory MCP session.
 It compares diagnoses with injected ground truth. The demo is deployed at
-[incident-copilot-armaankols.fly.dev](https://incident-copilot-armaankols.fly.dev/).
+[incident-copilot.fly.dev](https://incident-copilot.fly.dev/).
 Thirty authorized Haiku smoke investigations have completed across prompt versions.
 The hosted memory-leak smoke correctly diagnosed orders, returned the OOMKilled
 excerpt, and cost $0.060967 from reported token usage, with zero validation
 rejections or truncations. See [deployment verification](docs/deployment-live.md)
-and [prior seven edge cases](docs/live-v8-edge-cases.md). These small synthetic runs
+and [prior seven edge cases](docs/live-v8-edge-cases.md). The subsequent
+[name migration](docs/name-migration.md) preserved the ledger and saved replay
+without another LLM call; the old app was retired. These small synthetic runs
 do not establish reliability or recovery effectiveness. Public API usage has a
 $0.50/day application budget. Hosting has a monitored $10/month target, not a hard
 billing cap. No automatic hosting cutoff is installed.
@@ -200,7 +202,7 @@ billing-uncertainty flags before expanding a run.
 
 [Deployment preparation](docs/deployment.md) describes persistent storage,
 health checks, single-machine constraints, and the verification steps still
-needed. The repository is on GitHub and the [demo is deployed](https://incident-copilot-armaankols.fly.dev/).
+needed. The repository is on GitHub and the [demo is deployed](https://incident-copilot.fly.dev/).
 
 ## Next experiments
 

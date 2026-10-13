@@ -204,3 +204,11 @@ seconds after the last web request (state polled every 15 seconds); the next
 HTTPS health request returned 200 in 3.698 seconds. The replay and rounded
 $0.061 ledger charge survived wakeup. This is one observed cycle, not a timing
 guarantee, and does not test background work after a browser closes.
+
+2026-10-13 name migration: user selected `incident-copilot`; current URL is
+https://incident-copilot.fly.dev/. The old app was paused before snapshotting,
+then retired after exact database/replay hashes and secret-digest comparison
+passed on the replacement. One run, one replay and $0.060967 charged were
+preserved. Six HTTPS routes passed; one machine and encrypted 1 GB volume
+remain. No new LLM calls were made. See [name-migration.md](name-migration.md).
+Historical deployment records retain their original URLs/resource identifiers.

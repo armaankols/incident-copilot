@@ -1,6 +1,9 @@
-# Fly deployment verification — 2026-10-13
+# Initial Fly deployment verification — 2026-10-13
 
-The demo is live at [incident-copilot-armaankols.fly.dev](https://incident-copilot-armaankols.fly.dev/).
+This records the initial deployment at `incident-copilot-armaankols.fly.dev`.
+The subsequent [name migration](name-migration.md) moved it to
+[incident-copilot.fly.dev](https://incident-copilot.fly.dev/) and retired the old app.
+The measurements and original resource identifiers below remain unchanged.
 One authorized hosted Haiku investigation correctly diagnosed orders/memory_leak,
 returned the OOMKilled excerpt, and stopped on a model submission. It had zero
 validation rejections, truncations, runtime errors or billing uncertainty.
@@ -72,7 +75,7 @@ successful tool results. This exercises the corrected excerpt path on a new seed
 it does not establish arbitrary source relevance or general causality.
 
 [Measured result](../results/live-fly-memory_leak-2026-10-13-ae9d2aebca07.json).
-[View the saved hosted investigation](https://incident-copilot-armaankols.fly.dev/?run=ae9d2aebca074348a6bae644f4993245).
+[View the saved hosted investigation](https://incident-copilot.fly.dev/?run=ae9d2aebca074348a6bae644f4993245).
 Viewing this replay does not start a new model investigation.
 
 ## Budget and persistence checks

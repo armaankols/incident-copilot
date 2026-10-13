@@ -10,7 +10,10 @@
   "hosting_approval_source": "User: okay. we can proceed, after clarification of manual billing checks and absence of a hard cap.",
   "deployed": true,
   "deployment_date": "2026-10-13",
-  "public_url": "https://incident-copilot-armaankols.fly.dev/",
+  "public_url": "https://incident-copilot.fly.dev/",
   "hosting_monthly_target_enforced": false,
-  "automated_hosting_cutoff": false
+  "automated_hosting_cutoff": false,
+  "name_migration_approved": true,
+  "name_migration_approval_source": "User: ok lets do the first! (incident-copilot)",
+  "old_app_retired": true
 }
