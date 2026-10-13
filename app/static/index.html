@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-  :root{--bg:#EDF1F3;--panel:#fff;--ink:#0F1E2A;--muted:#5B6B76;--line:#CBD5DB;--alert:#C8321E;--ok:#1F7A5A;--steel:#2F5D7C;
+  :root{color-scheme:dark;--bg:#101E2C;--panel:#192B3B;--ink:#F4ECD9;--muted:#B6C1C5;--line:#425B70;--alert:#FFB09D;--ok:#98D5B4;--steel:#D5C6A5;
         --serif:"Newsreader",Georgia,serif;--mono:"JetBrains Mono",ui-monospace,Menlo,monospace;--sans:system-ui,-apple-system,"Segoe UI",sans-serif}
   *{box-sizing:border-box} html{scroll-behavior:smooth}
   body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 var(--sans)}
@@ -18,7 +18,11 @@
   .lede{color:var(--muted);margin:0 0 28px;max-width:34ch}
   label{display:block;font-weight:600;font-size:14px;margin:16px 0 6px}
   select,button{font:inherit;width:100%;padding:10px 12px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:4px}
-  button{background:var(--ink);color:#fff;border-color:var(--ink);font-weight:600;cursor:pointer;margin-top:22px}
+  button{background:var(--ink);color:var(--bg);border-color:var(--ink);font-weight:600;cursor:pointer;margin-top:22px}
+  #go:hover:not(:disabled){background:#FFF6E5;border-color:#FFF6E5}
+  .sparkles{margin-right:8px;font-weight:400}
+  button.sample-link{display:block;width:fit-content;padding:2px 0;margin-top:12px;background:none;color:var(--steel);border:0;font-size:14px;font-weight:400;text-decoration:underline;text-underline-offset:4px}
+  button.sample-link:hover:not(:disabled){color:var(--ink)}
   button:disabled{opacity:.55;cursor:wait} :focus-visible{outline:3px solid var(--steel);outline-offset:2px}
   .meta{font-size:13px;color:var(--muted);margin-top:14px}
   .alert{border-left:5px solid var(--alert);background:var(--panel);padding:14px 16px;font:14px/1.5 var(--mono);margin-bottom:28px}
@@ -56,8 +60,8 @@
     <select id="fault"><option value="">Random</option></select>
     <label for="model">Model</label>
     <select id="model"></select>
-    <button id="go" disabled>Page the agent</button>
-    <button id="replay">View offline replay</button><div class="meta" id="meta"></div>
+    <button id="go" disabled><span id="go-sparkles" class="sparkles" aria-hidden="true">✧˖°</span><span id="go-label">Page the agent</span></button>
+    <button id="replay" class="sample-link">View offline sample</button><div class="meta" id="meta"></div>
     <section class="history" aria-labelledby="history-title">
       <h2 id="history-title">Past investigations</h2>
       <p>Saved runs from this public synthetic demo. Viewing them makes no LLM calls.</p>

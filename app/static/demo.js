@@ -18,7 +18,8 @@ function controls() {
   $("replay").disabled = busy;
   $("fault").disabled = busy;
   $("model").disabled = busy;
-  $("go").textContent = busy ? "Investigating…" : "Page the agent";
+  $("go-label").textContent = busy ? "Investigating…" : "Page the agent";
+  $("go-sparkles").hidden = busy;
 }
 function options(id, values, random = false) {
   const select = $(id), previous = select.value;
