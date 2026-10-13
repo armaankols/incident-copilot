@@ -46,9 +46,9 @@ def check(image):
         req = urllib.request.Request(base+"/api/runs", data=b'{}', headers={"Content-Type":"application/json"})
         try:
             urllib.request.urlopen(req, timeout=5)
-            raise AssertionError("Live endpoint must reject missing credentials")
+            raise AssertionError("Live endpoint must reject missing agent access")
         except urllib.error.HTTPError as error:
-            assert error.code == 503
+            assert error.code == 401
         uid_line = docker("exec", name, "sh", "-c", "sed -n '/^Uid:/p' /proc/1/status")
         assert uid_line.split()[1:] == ["10001"]*4
         seed = "from copilot.budget import Ledger; import os; l=Ledger(os.environ['BUDGET_DB']); r=l.reserve(.25,2,'smoke'); l.settle(r,.1); l.save_replay('persistent-check','{\"offline\":true}'); print(l.spent())"
@@ -70,7 +70,7 @@ def check(image):
         verify = "from copilot.budget import Ledger; import os; l=Ledger(os.environ['BUDGET_DB']); assert l.replay('persistent-check')=='{\"offline\":true}'; print('persistence verified')"
         assert docker("exec", "--user", "10001", name, "python", "-c", verify) == "persistence verified"
         result = {"measured_at": datetime.now(timezone.utc).isoformat(), "image": image, "image_id": docker("image", "inspect", image, "--format", "{{.Id}}"),
-                  "platform": docker("image", "inspect", image, "--format", "{{.Os}}/{{.Architecture}}"), "http_statuses": statuses, "no_key_status": 503,
+                  "platform": docker("image", "inspect", image, "--format", "{{.Os}}/{{.Architecture}}"), "http_statuses": statuses, "unauthorized_status": 401,
                   "persistent_test_charge_usd": cfg["spent_today_usd"], "replay_survived_restart": True, "server_uid": 10001, "root_owned_mount_repaired": True}
         print(json.dumps(result, indent=2))
         return result

@@ -87,7 +87,9 @@ def test_web_app_roundtrip(monkeypatch):
         ], model=model)
 
     monkeypatch.setattr(m, "make_llm", fake_llm)
-    c = TestClient(m.app)
+    monkeypatch.setenv("DEMO_ACCESS_TOKEN", "test-demo-access-token-" + "a" * 32)
+    c = TestClient(m.app, base_url="https://testserver")
+    assert c.post("/api/access", json={"token": "test-demo-access-token-" + "a" * 32}).status_code == 200
     assert c.get("/").status_code == 200
     r = c.post("/api/investigate", json={"fault_type": "traffic_spike"})
     assert r.status_code == 200, r.text
@@ -142,9 +144,11 @@ def test_background_run_persists_replay(monkeypatch, tmp_path):
     from fastapi.testclient import TestClient
     import app.main as m
     monkeypatch.setenv("ANTHROPIC_API_KEY", "test")
+    monkeypatch.setenv("DEMO_ACCESS_TOKEN", "test-demo-access-token-" + "a" * 32)
     monkeypatch.setenv("BUDGET_DB", str(tmp_path/"ledger.sqlite3"))
     monkeypatch.setattr(m, "make_llm", lambda model: ScriptedLLM([[{"type": "tool_use", "id": "d", "name": "submit_diagnosis", "input": insufficient()}]], model=model))
-    with TestClient(m.app) as client:
+    with TestClient(m.app, base_url="https://testserver") as client:
+        assert client.post("/api/access", json={"token": "test-demo-access-token-" + "a" * 32}).status_code == 200
         response = client.post("/api/runs", json={"fault_type": "traffic_spike"})
         assert response.status_code == 202
         rid = response.json()["run_id"]

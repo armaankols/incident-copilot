@@ -37,6 +37,8 @@
   .budget-card progress::-moz-progress-bar{background:var(--steel);border-radius:3px}
   .budget-note{font-size:12px;margin:0;color:var(--muted)}
   .live-note{margin:10px 0 0;font-size:12px}
+  .access-message{font-size:13px;color:var(--muted);margin:14px 0 0;white-space:pre-line}
+  .access-message.granted{color:var(--ok)}
   .alert{border-left:5px solid var(--alert);background:var(--panel);padding:14px 16px;font:14px/1.5 var(--mono);margin-bottom:28px}
   .rail{position:relative;margin:0;padding:0 0 0 22px;list-style:none;border-left:2px solid var(--line)}
   .rail li{position:relative;margin:0 0 14px}
@@ -73,7 +75,9 @@
     <label for="model">Model</label>
     <select id="model"></select>
     <button id="go" disabled><span id="go-label">Page the agent</span><span id="go-sparkles" class="sparkles" aria-hidden="true">✧</span></button>
-    <button id="replay" class="sample-button">View offline sample</button><div class="meta" id="meta"></div>
+    <button id="replay" class="sample-button">View offline sample</button>
+    <p id="access-message" class="access-message" role="status" tabindex="-1"></p>
+    <div class="meta" id="meta"></div>
     <section class="history" aria-labelledby="history-title">
       <h2 id="history-title">Past investigations</h2>
       <p>Saved runs from this public synthetic demo. Viewing them makes no LLM calls.</p>

@@ -9,6 +9,7 @@ jobs:
         with: { python-version: "3.12" }
       - run: pip install -r requirements-dev.lock
       - run: python -m pytest -q tests
+      - run: node scripts/ui_checks.mjs
       - run: python -m evals.retrieval_eval
       - run: python -m evals.recovery_eval
       - run: python -m evals.stopping_eval

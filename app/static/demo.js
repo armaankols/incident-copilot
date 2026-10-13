@@ -4,6 +4,7 @@ const recoveryLabels = {recommended:"Recommendation available", unverified:"No v
 const stopLabels = {model_submission:"Final result submitted", step_budget:"Model call limit reached", stagnation:"Repeated results", correction_limit:"Repeated invalid submissions", output_limit:"Repeated output truncation", tool_limit:"Query limit reached", timeout:"Timed out", error:"Investigation failed"};
 let busy = false;
 let liveEnabled = false;
+let agentAccess = false;
 let historyOffset = null;
 let historyLoading = false;
 
@@ -14,12 +15,18 @@ async function fetchJSON(url, options) {
   return data;
 }
 function controls() {
-  $("go").disabled = busy || !liveEnabled;
+  $("go").disabled = busy;
   $("replay").disabled = busy;
   $("fault").disabled = busy;
   $("model").disabled = busy;
   $("go-label").textContent = busy ? "Investigating…" : "Page the agent";
   $("go-sparkles").hidden = busy;
+}
+function showAccess() {
+  $("access-message").className = `access-message${agentAccess ? " granted" : ""}`;
+  $("access-message").textContent = agentAccess
+    ? "Thanks for checking out Armaan’s profile. You have agent access!"
+    : "Oops! You don’t have agent access.\nHint: check Armaan’s portfolio or résumé.";
 }
 function options(id, values, random = false) {
   const select = $(id), previous = select.value;
@@ -31,6 +38,8 @@ async function init() {
   options("fault", config.fault_types, true);
   options("model", config.models);
   liveEnabled = config.live_enabled;
+  agentAccess = config.agent_access === true;
+  showAccess();
   const spent = Number(config.spent_today_usd), budget = Number(config.daily_budget_usd);
   const fraction = budget > 0 ? Math.min(1, Math.max(0, spent / budget)) : 0;
   $("meta").innerHTML = `<div class="budget-card">
@@ -38,7 +47,7 @@ async function init() {
     <div class="budget-amount">$${spent.toFixed(3)} <span class="budget-limit">of $${budget.toFixed(2)}</span></div>
     <progress max="1" value="${fraction}" aria-label="Reported API spend today"></progress>
     <p class="budget-note">Reported spend today · Shared across visitors</p>
-    </div>${liveEnabled ? "" : '<p class="live-note">Live model is not configured.</p>'}`;
+    </div><p id="live-status" class="live-note">${liveEnabled ? "" : "Live model is not configured."}</p>`;
   controls();
 }
 function traceHTML(trace = []) {
@@ -123,18 +132,34 @@ async function loadHistory(append = false) {
   }
 }
 $("history-more").onclick = () => loadHistory(true);
-$("go").onclick = () => runUI(async () => {
+$("go").onclick = () => {
+  if (!agentAccess) { showAccess(); $("access-message").focus?.(); return; }
+  if (!liveEnabled) { $("live-status").textContent = "Live investigations are not configured."; return; }
+  return runUI(async () => {
   $("out").innerHTML = '<p class="lede">Starting the investigation…</p>';
   const {run_id} = await fetchJSON("/api/runs", {method:"POST", headers:{"Content-Type":"application/json"},
     body:JSON.stringify({fault_type:$("fault").value || null, model:$("model").value})});
   history.replaceState(null, "", `?run=${encodeURIComponent(run_id)}`);
   await poll(run_id);
-});
+  });
+};
 $("replay").onclick = () => runUI(async () => {
   render(await fetchJSON("/api/replay"));
   history.replaceState(null, "", "?replay=offline");
 });
 async function boot() {
+  showAccess();
+  const fragment = new URLSearchParams(location.hash.slice(1));
+  const token = fragment.get("access");
+  if (token !== null) {
+    history.replaceState(null, "", location.pathname + location.search);
+    try {
+      await fetchJSON("/api/access", {method:"POST", headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({token})});
+    } catch {
+      agentAccess = false;
+    }
+  }
   const query = new URLSearchParams(location.search);
   if (query.get("run")) await runUI(() => poll(query.get("run")));
   else await runUI(async () => render(await fetchJSON("/api/replay")));

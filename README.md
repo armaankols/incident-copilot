@@ -52,6 +52,12 @@ requested, but cache savings have not been measured.
   Past investigations lists saved hosted runs newest first, with pagination and
   links to each result. Viewing samples or history makes no LLM calls. Saved run
   links open their specific result. The sample uses the tailored rule baseline.
+- Current source requires a link-based session before starting live investigations.
+  Ordinary visitors can still browse samples and history. The access link uses
+  `#access=TOKEN`; its token is exchanged for a two-hour signed cookie and removed
+  from the address bar. The gate and navy/cream UI are pending local review and
+  deployment; the existing hosted build does not yet enforce this gate. See
+  [demo access](docs/demo-access.md).
 - Evaluations checkpoint each record and use unique experiment names, source
   hashes, dataset/prompt versions, case IDs, errors and observed usage.
 

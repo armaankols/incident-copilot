@@ -10,6 +10,7 @@ from copilot.llm import LLMResponse, ScriptedLLM
 import app.main as demo
 
 os.environ["ANTHROPIC_API_KEY"] = "offline-browser-fixture-not-a-real-key"
+os.environ.setdefault("DEMO_ACCESS_TOKEN", "offline-browser-fixture-access-not-for-deployment")
 
 
 class BrowserLLM(ScriptedLLM):

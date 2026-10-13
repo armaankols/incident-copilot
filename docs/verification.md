@@ -247,3 +247,17 @@ request returned 304 with the revalidation header. Both saved runs reopened, the
 existing replay fingerprint and displayed spend were unchanged, and no new LLM
 calls were made. Browser visual verification remains unavailable. See
 [measured record](frontend-cache-verification.json).
+
+2026-10-13 local access gate: the user requested matching button appearance and
+separate granted/no-access messages. The current source adds `#access=TOKEN`
+exchange, a two-hour signed HttpOnly/SameSite cookie, fail-closed checks before
+both paid endpoints, and no-store API responses. Tests cover wrong/malformed,
+expired and revoked credentials, same-origin checks, and budget/model guards.
+Offline tests passed 194 cases in 3.31 seconds. The committed Node VM frontend
+checks passed 14 named checks with mocked HTTP/DOM and no real model or network
+calls; they do not constitute browser visual verification. Local HTTP checks
+verified public reads, 401 on both unauthorized paid routes, successful session
+exchange, and 503 with an authorized session but no model credentials. The local
+synthetic $1/$2 budget fixture remains at 50% and was unchanged by those probes.
+No provider calls were made. Deployment remains on hold for visual review, and
+the production token has not been configured. See [demo-access.md](demo-access.md).

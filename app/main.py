@@ -10,9 +10,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Query, Request
-from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
+
+from app.access import COOKIE, SESSION_SECONDS, check_origin, has_access, make_session, require_access, valid_link_token
 
 from copilot.budget import AdmissionDenied, Ledger
 from copilot.llm import AnthropicLLM
@@ -42,6 +44,14 @@ _jobs = {}
 _tasks = set()
 
 
+@app.middleware("http")
+async def private_api_responses(request, call_next):
+    response = await call_next(request)
+    if request.url.path.startswith("/api/"):
+        response.headers["Cache-Control"] = "no-store"
+    return response
+
+
 def ledger():
     return Ledger(os.getenv("BUDGET_DB", "data/demo.sqlite3"))
 
@@ -53,6 +63,22 @@ def make_llm(model):
 class InvestigateRequest(BaseModel):
     fault_type: str | None = None
     model: str = DEFAULT_MODEL
+
+
+class AccessRequest(BaseModel):
+    token: str
+
+
+@app.post("/api/access")
+def unlock(req: AccessRequest, request: Request):
+    check_origin(request)
+    if not valid_link_token(req.token):
+        raise HTTPException(401, "Agent access link is invalid")
+    response = JSONResponse({"agent_access": True})
+    response.set_cookie(COOKIE, make_session(), max_age=SESSION_SECONDS, httponly=True,
+                        secure=request.url.hostname not in ("localhost", "127.0.0.1", "::1"),
+                        samesite="strict", path="/api")
+    return response
 
 
 @app.get("/")
@@ -70,12 +96,14 @@ def health():
 
 
 @app.get("/api/config")
-def config():
+def config(request: Request):
     return {"models": ALLOWED_MODELS, "fault_types": FAULT_TYPES, "daily_budget_usd": DAILY_BUDGET_USD,
-            "spent_today_usd": round(ledger().spent(), 3), "live_enabled": bool(os.getenv("ANTHROPIC_API_KEY"))}
+            "spent_today_usd": round(ledger().spent(), 3), "live_enabled": bool(os.getenv("ANTHROPIC_API_KEY")),
+            "agent_access": has_access(request)}
 
 
 def admit(req, request):
+    require_access(request)
     if req.model not in ALLOWED_MODELS:
         raise HTTPException(400, f"model must be one of {ALLOWED_MODELS}")
     if req.fault_type and req.fault_type not in FAULT_TYPES:
