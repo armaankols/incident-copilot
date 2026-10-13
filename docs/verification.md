@@ -1,4 +1,4 @@
-# Local verification — updated 2026-10-12
+# Local and deployed verification — updated 2026-10-13
 
 Working directory: `/Users/armaankolsawala/IdeaProjects/incident-copilot`.
 The initial inspection found no Git repository or applicable AGENTS.md. Git is
@@ -9,8 +9,8 @@ Python 3.12.15 is installed at `/opt/homebrew/bin/python3.12`; `.venv` is ready.
 The user installed dependencies from a terminal outside the restricted shell.
 `requirements.lock` pins 72 runtime packages; `requirements-dev.lock` pins 76
 packages, including the development dependencies. Locks have no wheel hashes.
-Twenty-nine authorized live smoke investigations completed by 2026-10-12. No deployment
-has been performed. Standing API-test approval for this collaboration is up to
+Thirty authorized live smoke investigations completed by 2026-10-13. The demo is
+deployed on Fly; see [deployment-live.md](deployment-live.md). Standing API-test approval for this collaboration is up to
 $0.50 per test (user instruction, 2026-10-12). Before each test, verify a conservative
 token-cost bound; proceed without another API-budget confirmation within $0.50,
 and ask if the test requires a higher or unverified bound.
@@ -186,3 +186,21 @@ were created. See [deployment-preflight.json](deployment-preflight.json).
 Hosting target approval remains pending clarification; no Fly resources have been
 provisioned. No enforced hosting bill cap or automatic cutoff exists. See
 [deployment-authorization.json](deployment-authorization.json).
+
+2026-10-13 deployment: user approved the monitored $10/month hosting target after
+manual $8 billing checks and absence of a hard cap were explained. One Fly machine
+(1 shared CPU, 1 GB RAM) and encrypted 1 GB volume are deployed in `sjc`. The server
+key is a Fly secret, not included in the image or repository. Five HTTPS routes
+passed. Hosted Haiku seed 75014 diagnosed orders/memory_leak with an OOMKilled
+excerpt, zero rejections/truncations, 8 model/19 MCP calls and $0.060967 reported
+usage cost. Sonnet and in-flight budget probes returned 429. Source fingerprint
+matched the local packaged files; UID 10001, one worker and DB owner 10001 were
+verified. Completed replay and charged amount survived restart. See
+[deployment verification](deployment-verification.json). Hosting invoices have not
+been reconciled. No automated billing cutoff or active-job idle protection exists.
+
+Idle stop/wake was observed in the deployed app: stopped state appeared 269.019
+seconds after the last web request (state polled every 15 seconds); the next
+HTTPS health request returned 200 in 3.698 seconds. The replay and rounded
+$0.061 ledger charge survived wakeup. This is one observed cycle, not a timing
+guarantee, and does not test background work after a browser closes.

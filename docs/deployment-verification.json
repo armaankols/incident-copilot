@@ -1,0 +1,249 @@
+{
+  "measured_at": "2026-10-13T19:10:56.704719+00:00",
+  "base_url": "https://incident-copilot-armaankols.fly.dev",
+  "http_statuses": {
+    "/healthz": 200,
+    "/": 200,
+    "/static/demo.js": 200,
+    "/api/config": 200,
+    "/api/replay": 200
+  },
+  "live_runs": [
+    {
+      "run_id": "ae9d2aebca074348a6bae644f4993245",
+      "seed": 75014,
+      "root_service": "orders",
+      "fault_type": "memory_leak",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "orders",
+        "fault_type": "memory_leak",
+        "evidence": [
+          {
+            "observation_id": "obs-14",
+            "quote": "13:27:00 orders ERROR container terminated: OOMKilled (exit code 137)"
+          },
+          {
+            "observation_id": "obs-16",
+            "quote": "orders.memory_mb last 60m: min=547.4 mean=787.9 max=1004.0 latest=980.2"
+          },
+          {
+            "observation_id": "obs-17",
+            "quote": "\"status\": \"supported\""
+          }
+        ],
+        "action": "restart",
+        "target": "orders",
+        "recovery_status": "recommended",
+        "recovery_reason": "Compatible recommendation; service policy still requires verification.",
+        "remediation": "Recommendation only; no change has been executed. Consider a controlled restart of orders after checking redundancy, draining traffic where required, and confirming the service-specific restart procedure. A restart may only provide temporary relief. After any approved change, check service and caller error rates and latency against their configured SLOs."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "model_calls": 8,
+      "tool_calls": 19,
+      "tool_requests": 19,
+      "validation_rejections": 0,
+      "output_truncations": 0,
+      "termination_reason": "model_submission",
+      "usage": {
+        "input_tokens": 50892,
+        "output_tokens": 2015,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "cost_usd": 0.060967,
+      "latency_s": 26.397477151000004,
+      "error": null,
+      "billing_uncertain": false,
+      "exact_server_excerpts": 3,
+      "result_file": "results/live-fly-memory_leak-2026-10-13-ae9d2aebca07.json",
+      "replay_url": "https://incident-copilot-armaankols.fly.dev/?run=ae9d2aebca074348a6bae644f4993245"
+    }
+  ],
+  "provider_pricing_verified_on": "2026-10-13",
+  "conservative_per_test_bound_usd": 0.42,
+  "health": {
+    "status": "ok",
+    "live_model_configured": true
+  },
+  "initial_api_config": {
+    "models": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "fault_types": [
+      "bad_deploy",
+      "memory_leak",
+      "slow_dependency",
+      "config_error",
+      "cert_expiry",
+      "traffic_spike"
+    ],
+    "daily_budget_usd": 0.5,
+    "spent_today_usd": 0,
+    "live_enabled": true
+  },
+  "sonnet_admission_probe": {
+    "status": 429,
+    "response": {
+      "detail": "Daily budget has insufficient unreserved funds"
+    }
+  },
+  "concurrent_budget_probe": {
+    "status": 429,
+    "response": {
+      "detail": "Daily budget has insufficient unreserved funds"
+    }
+  },
+  "client_elapsed_s": 28.558933041989803,
+  "final_api_config": {
+    "models": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "fault_types": [
+      "bad_deploy",
+      "memory_leak",
+      "slow_dependency",
+      "config_error",
+      "cert_expiry",
+      "traffic_spike"
+    ],
+    "daily_budget_usd": 0.5,
+    "spent_today_usd": 0.061,
+    "live_enabled": true
+  },
+  "manual_restart_verification": {
+    "replay_unchanged": true,
+    "spent_today_usd": 0.061,
+    "daily_budget_usd": 0.5,
+    "health_status": "ok",
+    "replay_sha256": "ea263d3bebab29a57f243db633e5ba8f8bc8f084561a5d87c44f4e4848180ed6"
+  },
+  "machine": {
+    "id": "08034d7bd172d8",
+    "state": "started",
+    "region": "sjc",
+    "image_ref": {
+      "registry": "registry.fly.io",
+      "repository": "incident-copilot-armaankols",
+      "tag": "354393a",
+      "digest": "sha256:e15380d62e331f590334d0c852260ac2ac99f34b541c17b45a45b150ff08372b"
+    },
+    "guest": {
+      "cpu_kind": "shared",
+      "cpus": 1,
+      "memory_mb": 1024
+    },
+    "mounts": [
+      {
+        "encrypted": true,
+        "path": "/data",
+        "size_gb": 1,
+        "volume": "vol_r68q10897ywgo2j4",
+        "name": "copilot_data"
+      }
+    ],
+    "services": [
+      {
+        "protocol": "tcp",
+        "internal_port": 8080,
+        "autostop": true,
+        "autostart": true,
+        "min_machines_running": 0,
+        "ports": [
+          {
+            "port": 80,
+            "handlers": [
+              "http"
+            ],
+            "force_https": true
+          },
+          {
+            "port": 443,
+            "handlers": [
+              "http",
+              "tls"
+            ]
+          }
+        ],
+        "checks": [
+          {
+            "type": "http",
+            "interval": "30s",
+            "timeout": "5s",
+            "grace_period": "10s",
+            "method": "GET",
+            "path": "/healthz"
+          }
+        ],
+        "force_instance_key": null
+      }
+    ],
+    "env": {
+      "DAILY_BUDGET_USD": "0.50",
+      "BUDGET_DB": "/data/demo.sqlite3",
+      "TRUST_FLY_PROXY": "1",
+      "RATE_LIMIT_PER_HOUR": "8"
+    }
+  },
+  "runtime": {
+    "python": "3.12.15",
+    "runtime_sha256": "8ed1d0d63c29218e380f95ada502cb3aad17d6626f9c77bb768099c97ca4591e",
+    "app_processes": [
+      {
+        "pid": 643,
+        "uids": [
+          "10001",
+          "10001",
+          "10001",
+          "10001"
+        ],
+        "workers": "1"
+      }
+    ],
+    "db_owner_uid": 10001,
+    "spent_today_usd": 0.060967,
+    "active_reservations": 0
+  },
+  "idle_verification": {
+    "last_http_at": "2026-10-13T19:15:40.977806+00:00",
+    "stopped_observed": true,
+    "stopped_observed_after_last_http_s": 269.019,
+    "poll_interval_s": 15,
+    "states": [
+      {
+        "state": "started",
+        "observed_after_last_http_s": 0.675
+      },
+      {
+        "state": "stopped",
+        "observed_after_last_http_s": 269.019
+      }
+    ],
+    "wake_request_status": 200,
+    "wake_request_elapsed_s": 3.698,
+    "replay_unchanged_after_wake": true,
+    "spent_today_usd_after_wake": 0.061
+  },
+  "public_ips": {
+    "ipv6": "2a09:8280:1::1b5:35fe:0",
+    "shared_ipv4": "66.241.124.99",
+    "paid_dedicated_ipv4": false
+  },
+  "authorization": {
+    "hosting_monthly_target_usd": 10,
+    "hosting_target_approved": true,
+    "hosting_bill_hard_cap": false,
+    "public_api_daily_budget_usd": 0.5,
+    "standing_per_test_budget_usd": 0.5,
+    "manual_billing_pause_threshold_usd": 8,
+    "automated_hosting_cutoff": false
+  }
+}

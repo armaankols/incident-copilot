@@ -1,29 +1,32 @@
-# Deployment preparation and remaining checks
+# Deployment and operations
 
-The application is not deployed. Python 3.12.15 and locked dependencies are ready;
-the latest local suite passed 171 tests in 3.25 seconds. Linux ARM64 container
-verification passed HTTP, non-root execution and budget/replay persistence checks
-(`container-verification-v8.json`); CI also covers Linux AMD64. Browser checks were
-reported working by the user on 2026-10-06.
+The demo is deployed at [incident-copilot-armaankols.fly.dev](https://incident-copilot-armaankols.fly.dev/)
+in the personal Fly organization. It uses one shared CPU/1 GB machine in `sjc`,
+one encrypted 1 GB persistent volume, HTTPS, one non-root worker, and idle
+stop/start. The server key is stored as a Fly secret. GitHub pushes run offline
+CI; deployment is a separate explicit action.
 
-Twenty-nine authorized Haiku smoke investigations completed across prompt versions.
-The seven latest selected edge cases met expected outcomes: six correct diagnoses
-and one model-selected missing-evidence abstention, with zero rejections or
-truncations. The assessment-backed excerpt fix repairs the recorded memory log
-selection. Generic supplemental source selections can still display generic
-excerpts. These small tests do not establish production reliability or recovery
-effectiveness. See [latest live validation](live-v8-edge-cases.md).
+The public API budget is $0.50/day across visitors, separate from standing
+$0.50-per-test development authorization. Haiku's conservative per-run reservation
+is $0.42; Sonnet exceeds the daily cap and is denied before provider calls. This
+can reject new investigations before actual spend reaches $0.50, because each
+run must fit its worst-case reservation. The application ledger uses reported
+usage, not reconciled provider invoices. Saved replays remain available.
 
-The updated local container passed HTTP, non-root execution and persistent
-ledger/replay checks; see `container-verification-excerpt.json`. The user requested
-these edge-case tests before deployment; they are complete. Broader repeated-seed
-challenge and recovery experiments remain follow-up work. Account/destination
-access and hosting budget are still needed before public deployment.
+The user approved a monitored $10/month Fly hosting target after clarification
+that it is not a hard cap. Check actual month-to-date billing manually; near $8,
+disable automatic startup and stop the machine if pausing for the rest of the
+month. Storage/stopped-rootfs charges continue. No automated billing monitor or
+cutoff exists. See [authorization](deployment-authorization.json).
 
-All six fault types now require matching MCP assessments, missing telemetry is
-explicit, and diagnostic cause is separate from recovery recommendations. Standing
-API-test authorization is up to $0.50 per test, with a verified conservative bound
-required before each test. Deployment account/destination access is still needed.
+The hosted Haiku memory-leak investigation correctly diagnosed orders, with zero
+rejections/truncations and $0.060967 usage-derived cost. Five HTTPS routes passed;
+Sonnet and concurrent-budget probes returned 429. The replay and charged amount
+survived a machine restart and idle stop/wake. Idle stop was observed after
+269.019 seconds without web traffic; the wake health request took 3.698 seconds. See [live verification](deployment-live.md) and
+[measured record](deployment-verification.json). Prior local tests passed 171 cases;
+local AMD64/ARM64 and GitHub CI container checks also passed. These tests do not
+establish production reliability or recovery effectiveness.
 
 ## Local setup
 
@@ -73,8 +76,7 @@ real-world incidents or a blind external test set.
 
 ## Fly.io
 
-Account access and a destination name are still needed. After local checks and
-model smoke tests pass:
+The account/app/volume are established. The initial deployment used these steps:
 
 1. Set a unique app name in `fly.toml`, create that app in the chosen account.
 2. Create a persistent volume named `copilot_data` in `sjc`.
@@ -103,13 +105,13 @@ recovery plans still require verified versions and service-policy checks.
 IP-based rate limiting trusts `fly-client-ip` only when explicitly enabled on Fly.
 Do not enable this trust setting on a directly reachable local server.
 
-## Prepared deployment — awaiting budget approval
+## Initial preflight — historical record
 
 Fly CLI 0.4.116 login was verified against the personal organization, which had
 zero existing apps. `fly.toml` now proposes `incident-copilot-armaankols` in `sjc`,
 one shared CPU with 1 GB RAM, one 1 GB volume, HTTPS, and idle auto-stop. Strict Fly
 configuration validation passed. The $0.50/day application API budget was approved by the user on 2026-10-13.
-Hosting budget approval remains pending. Its offline admission check accepted a
+Hosting budget approval was subsequently granted on 2026-10-13. Its offline admission check accepted a
 $0.42 Haiku reservation and rejected Sonnet with 429 before any provider call.
 The UI still lists both models; Sonnet cannot fit this proposed daily cap.
 
@@ -117,12 +119,13 @@ Official Fly and Buildx binaries were downloaded into ignored `.bootstrap/` and
 their GitHub release digests were verified. The initial legacy Docker cross-build
 failed; Buildx 0.38.0 built the Linux AMD64 image successfully. The deployment
 image `registry.fly.io/incident-copilot-armaankols:354393a` passed local HTTP, UID
-10001, missing-key rejection and ledger/replay persistence checks. The registry
-tag is local only; no Fly app, volume, machine or public URL has been created.
+10001, missing-key rejection and ledger/replay persistence checks. At preflight the registry
+tag was local only and no Fly resources existed. The app/image/volume/machine
+were subsequently published on 2026-10-13.
 See [preflight record](deployment-preflight.json) and
 [deployment-image verification](container-verification-deploy.json).
 
-After hosting and public API budget approval: create the app in `personal`, create
+The completed initial deployment sequence was: create the app in `personal`, create
 `copilot_data` at 1 GB in `sjc`, stage the existing server key through secret-import
 stdin, authenticate Docker to Fly, push the verified image, and deploy with
 `--image registry.fly.io/incident-copilot-armaankols:354393a --ha=false`. Verify a
@@ -138,7 +141,7 @@ been measured in this preparation.
 ## Hosting target controls
 
 The user approved $0.50/day for public API usage on 2026-10-13, and asked how a
-$10/month hosting target would be enforced. This is not hosting-budget approval.
+$10/month hosting target would be enforced. Hosting approval was then granted after the manual-check/non-enforced-cap explanation.
 See [deployment authorization](deployment-authorization.json).
 
 Fly's current [cost-management documentation](https://docs.fly.io/about/cost-management)
@@ -150,3 +153,30 @@ automation or a guaranteed $10 limit. Pausing must disable auto-start as well as
 stop the machine; storage and stopped-machine rootfs still incur charges. A hard
 $10 requirement needs a host with an enforced spending cap. No monitoring or
 automatic hosting cutoff has been deployed or measured.
+
+## Updating the app
+
+Edit locally, run relevant tests, commit the code and build a fresh tagged Linux
+AMD64 image. On this Mac the verified standalone Buildx binary is in ignored
+`.bootstrap/`; Docker with a normally installed Buildx plugin can use
+`docker buildx build` instead. After local tests and container verification:
+
+```bash
+COPILOT_DEPLOY_TAG=$(git rev-parse --short HEAD)
+.bootstrap/docker-buildx/buildx-v0.38.0.darwin-arm64 build --builder colima --platform linux/amd64 --load -t "registry.fly.io/incident-copilot-armaankols:${COPILOT_DEPLOY_TAG}" .
+.bootstrap/flyctl/flyctl auth docker
+docker push "registry.fly.io/incident-copilot-armaankols:${COPILOT_DEPLOY_TAG}"
+.bootstrap/flyctl/flyctl deploy --config fly.toml --image "registry.fly.io/incident-copilot-armaankols:${COPILOT_DEPLOY_TAG}" --ha=false
+```
+
+Deploy between investigations: replacing the single machine's process may
+interrupt active runs, and their unsettled reservations remain held. Completed
+replays and budget data reside on the existing volume; do not create a new volume
+or second machine for a routine update. Secrets remain configured. Verify HTTPS
+health, the deployed image and persisted data afterward. The public URL stays the
+same. Database/schema changes require their own migration review.
+
+The current idle mechanism follows HTTP traffic, not background-job activity.
+Closed-browser investigations may be interrupted by idle stopping; that case has
+not been verified or protected by a job-aware idle mechanism. Keep this limitation
+separate from the completed-run persistence checks.

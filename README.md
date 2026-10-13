@@ -2,15 +2,16 @@
 
 A Python/FastAPI demo that investigates **synthetic incident telemetry** using
 Claude tool calls, a LangGraph investigation loop, and an in-memory MCP session.
-It compares diagnoses with injected ground truth. Twenty-nine authorized Haiku smoke
-investigations have completed across several prompt versions. The latest seven
-edge cases met their expected outcomes: six correct service/fault diagnoses and
-one model-submitted abstention on missing telemetry, with zero validation
-rejections or output truncations and $0.287074 total usage-derived cost. See
-[latest validation](docs/live-v8-edge-cases.md), including the limits of the tests
-and supplemental evidence selection. These small synthetic runs do not establish
-reliability. No public deployment has been completed. Live testing follows the
-collaborator-approved per-test budget.
+It compares diagnoses with injected ground truth. The demo is deployed at
+[incident-copilot-armaankols.fly.dev](https://incident-copilot-armaankols.fly.dev/).
+Thirty authorized Haiku smoke investigations have completed across prompt versions.
+The hosted memory-leak smoke correctly diagnosed orders, returned the OOMKilled
+excerpt, and cost $0.060967 from reported token usage, with zero validation
+rejections or truncations. See [deployment verification](docs/deployment-live.md)
+and [prior seven edge cases](docs/live-v8-edge-cases.md). These small synthetic runs
+do not establish reliability or recovery effectiveness. Public API usage has a
+$0.50/day application budget. Hosting has a monitored $10/month target, not a hard
+billing cap. No automatic hosting cutoff is installed.
 
 The existing simulator models six fault types across seven services. This is not
 a Docker service fault lab. Runbook retrieval uses sparse TF-IDF vectors and
@@ -59,6 +60,7 @@ Measured offline baselines and live-model runs on synthetic telemetry. Transport
 |---|---|---:|---|---:|---|---:|---|
 | live-cert_expiry-2026-10-11-2c5ec81643c4 | live LLM + in-memory MCP | 1 | 0.0% (0.0–79.3) | 0 | not recorded | $0.024902 | 19.132095 / 19.132095 |
 | live-config-2026-10-11-efc42552331a | live LLM + in-memory MCP | 1 | 100.0% (20.7–100.0) | 0 | not recorded | $0.036508 | 22.930292 / 22.930292 |
+| live-fly-memory_leak-2026-10-13-ae9d2aebca07 | live HTTPS / Fly / in-memory MCP | 1 | 100.0% (20.7–100.0) | 0 | model_submission | $0.060967 | 26.397477 / 26.397477 |
 | live-slow_dependency-2026-10-11-5fe3b18769bc | live LLM + in-memory MCP | 1 | 100.0% (20.7–100.0) | 0 | not recorded | $0.072066 | 40.251977 / 40.251977 |
 | live-smoke-2026-10-11-98d7a0333c47 | live LLM + in-memory MCP | 2 | 100.0% (34.2–100.0) | 0 | not recorded | $0.087672 | 31.311510 / 34.786287 |
 | live-traffic_spike-2026-10-11-8c9a12acc1d5 | live LLM + in-memory MCP | 1 | 100.0% (20.7–100.0) | 0 | not recorded | $0.097339 | 45.331751 / 45.331751 |
@@ -101,7 +103,7 @@ Measured offline baselines and live-model runs on synthetic telemetry. Transport
 | v8-offline-rules-v1-76a7aece1c0a | direct simulator log search | 24 | 33.3% (18.0–53.3) | 0 | not applicable | $0.000000 | 0.000146 / 0.001034 |
 | v8-offline-rules-v2-20c7e2b15ee1 | direct simulator log search | 24 | 33.3% (18.0–53.3) | 0 | not applicable | $0.000000 | 0.000140 / 0.000984 |
 
-Outcome accuracy counts a budget-forced abstention as correct on redacted cases; it does not demonstrate model-selected stopping. Finalization is persisted for new runs or derived from reviewed saved traces; older runs may show not recorded. Latency quantiles describe runs without exceptions; diagnostic misses remain included. Failure elapsed time and observed spend remain in JSON records. API cost is calculated from provider-reported token usage at list prices, not reconciled against an invoice. Structured action compatibility is not a remediation-quality score. These small live smoke runs do not establish reliability; see docs/live-v8-edge-cases.md for the latest seven challenge outcomes and remaining presentation limitations, docs/live-v8-fresh-faults.md for the prior five fresh-seed outcomes, docs/live-v8-validation.md for the prior traffic/redacted pair, docs/live-v7-validation.md for prior mixed results, and docs/observation-id-evidence.md for the interface changes.
+Outcome accuracy counts a budget-forced abstention as correct on redacted cases; it does not demonstrate model-selected stopping. Finalization is persisted for new runs or derived from reviewed saved traces; older runs may show not recorded. Latency quantiles describe runs without exceptions; diagnostic misses remain included. Failure elapsed time and observed spend remain in JSON records. API cost is calculated from provider-reported token usage at list prices, not reconciled against an invoice. Structured action compatibility is not a remediation-quality score. These small live smoke runs do not establish reliability; see docs/deployment-live.md for the hosted memory-leak verification, docs/live-v8-edge-cases.md for the prior seven challenge outcomes and remaining presentation limitations, docs/live-v8-fresh-faults.md for the prior five fresh-seed outcomes, docs/live-v8-validation.md for the prior traffic/redacted pair, docs/live-v7-validation.md for prior mixed results, and docs/observation-id-evidence.md for the interface changes.
 
 Retrieval smoke checks (small author-written query set):
 - tfidf: 14 queries, recall@1 100.0%, recall@3 100.0%.
@@ -198,7 +200,7 @@ billing-uncertainty flags before expanding a run.
 
 [Deployment preparation](docs/deployment.md) describes persistent storage,
 health checks, single-machine constraints, and the verification steps still
-needed. The repository is on GitHub; no public demo URL has been established.
+needed. The repository is on GitHub and the [demo is deployed](https://incident-copilot-armaankols.fly.dev/).
 
 ## Next experiments
 

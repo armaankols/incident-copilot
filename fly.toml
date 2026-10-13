@@ -1,4 +1,4 @@
-# Prepared for the personal Fly organization; provisioning awaits hosting budget approval.
+# Personal Fly organization; one machine, monitored hosting target, approved $0.50/day API budget.
 app = "incident-copilot-armaankols"
 primary_region = "sjc"
 

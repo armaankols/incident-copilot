@@ -4,6 +4,13 @@
   "public_api_budget_approved": true,
   "approval_source": "User: yes 50 cents is fine",
   "hosting_monthly_target_usd": 10.0,
-  "hosting_budget_approved": false,
-  "hosting_status": "Pending clarification of enforcement; no resources provisioned."
+  "hosting_budget_approved": true,
+  "hosting_status": "Approved monitored target; manual billing review near $8, no automated cutoff.",
+  "hosting_approval_date": "2026-10-13",
+  "hosting_approval_source": "User: okay. we can proceed, after clarification of manual billing checks and absence of a hard cap.",
+  "deployed": true,
+  "deployment_date": "2026-10-13",
+  "public_url": "https://incident-copilot-armaankols.fly.dev/",
+  "hosting_monthly_target_enforced": false,
+  "automated_hosting_cutoff": false
 }

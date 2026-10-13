@@ -1,0 +1,163 @@
+{
+  "name": "live-fly-memory_leak-2026-10-13-ae9d2aebca07",
+  "config": {
+    "agent": "llm",
+    "suite": "original",
+    "model": "claude-haiku-4-5-20251001",
+    "n": 1,
+    "embedder": "tfidf",
+    "no_rag": false,
+    "max_steps": 12,
+    "approved_per_test_budget_usd": 0.5,
+    "standing_per_test_approval": true,
+    "approved_public_api_daily_budget_usd": 0.5,
+    "scenario_seed": 75014,
+    "seed_source": "Server-selected original scenario; reproduce with generate(scenario_seed, fault_type)."
+  },
+  "metadata": {
+    "started_at": "2026-10-13T19:10:56.704719+00:00",
+    "prompt_version": "evidence-v8-observation-id-submission",
+    "baseline_transport": "live HTTPS / Fly / in-memory MCP",
+    "runtime_image": "registry.fly.io/incident-copilot-armaankols:354393a",
+    "runtime_image_digest": "sha256:6e4002e72521c807d583bfcccda6e82a37c4ca2fcfa7cd90273c27d577ed2c47",
+    "runtime_git_revision": "354393a2cb81cf6178a594c94b391b329c2860c5",
+    "pricing_source": "https://platform.claude.com/docs/en/about-claude/pricing",
+    "pricing_verified_on": "2026-10-13",
+    "calculated_per_test_token_bound_usd": 0.42,
+    "server_python": "3.12.15",
+    "packaged_runtime_sha256": "8ed1d0d63c29218e380f95ada502cb3aad17d6626f9c77bb768099c97ca4591e",
+    "deployment_config_git_revision": "6bfd202cdc682ab281cac9ed085bf7a84a83b738",
+    "source_hash_verified_over_ssh": true
+  },
+  "summary": {
+    "n": 1,
+    "errors": 0,
+    "root_cause_service_acc": 100.0,
+    "fault_type_acc": 100.0,
+    "both_correct_acc": 100.0,
+    "both_correct_ci95": [
+      20.7,
+      100.0
+    ],
+    "action_compatibility_rate": 100.0,
+    "avg_tool_calls": 19,
+    "avg_steps": 8,
+    "avg_input_tokens": 50892,
+    "avg_output_tokens": 2015,
+    "avg_cost_usd": 0.060967,
+    "total_cost_usd": 0.060967,
+    "error_rate": 0.0,
+    "cost_per_correct_diagnosis_usd": 0.060967,
+    "billing_uncertain_runs": 0,
+    "latency_scope": "successful runs only",
+    "total_attempted_latency_s": 26.397477,
+    "latency_p50_s": 26.397477,
+    "latency_p95_s": 26.397477,
+    "accuracy_by_fault_type": {
+      "bad_deploy": 0.0,
+      "memory_leak": 100.0,
+      "slow_dependency": 0.0,
+      "config_error": 0.0,
+      "cert_expiry": 0.0,
+      "traffic_spike": 0.0
+    },
+    "total_observed_usage": {
+      "input_tokens": 50892,
+      "output_tokens": 2015,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0
+    },
+    "outcome_accuracy_by_variant": {
+      "original": 100.0
+    },
+    "insufficient_evidence_cases": 0,
+    "abstention_accuracy": 0.0,
+    "model_submitted_abstentions": 0,
+    "forced_abstentions": 0,
+    "total_output_truncations": 0,
+    "correct_diagnoses_without_recovery": 0,
+    "finalization_counts": {
+      "model_submission": 1
+    },
+    "total_cache_hits": 0
+  },
+  "records": [
+    {
+      "seed": 75014,
+      "fault_type": "memory_leak",
+      "root_service": "orders",
+      "diagnosis": {
+        "status": "diagnosed",
+        "root_cause_service": "orders",
+        "fault_type": "memory_leak",
+        "evidence": [
+          {
+            "observation_id": "obs-14",
+            "quote": "13:27:00 orders ERROR container terminated: OOMKilled (exit code 137)"
+          },
+          {
+            "observation_id": "obs-16",
+            "quote": "orders.memory_mb last 60m: min=547.4 mean=787.9 max=1004.0 latest=980.2"
+          },
+          {
+            "observation_id": "obs-17",
+            "quote": "\"status\": \"supported\""
+          }
+        ],
+        "action": "restart",
+        "target": "orders",
+        "recovery_status": "recommended",
+        "recovery_reason": "Compatible recommendation; service policy still requires verification.",
+        "remediation": "Recommendation only; no change has been executed. Consider a controlled restart of orders after checking redundancy, draining traffic where required, and confirming the service-specific restart procedure. A restart may only provide temporary relief. After any approved change, check service and caller error rates and latency against their configured SLOs."
+      },
+      "grade": {
+        "service_ok": true,
+        "type_ok": true,
+        "both_ok": true,
+        "remediation_ok": true,
+        "abstained": false
+      },
+      "error": null,
+      "model_calls": 8,
+      "alert": "ALERT [SEV2] gateway: p95 latency 359ms (SLO 500ms), 5xx rate 3.6% (SLO 1%). Firing since 13:21:00 (38 min). Current time 13:59:00. Find the root cause and recommend remediation.",
+      "steps": 8,
+      "tool_calls": 19,
+      "tool_requests": 19,
+      "cache_hits": 0,
+      "validation_rejections": 0,
+      "output_truncations": 0,
+      "stagnant_steps": 1,
+      "termination_reason": "model_submission",
+      "billing_uncertain": false,
+      "investigation_limits": {
+        "model_calls": 12,
+        "tool_requests": 32,
+        "stagnant_rounds": 3,
+        "invalid_submissions": 3,
+        "output_truncations": 3
+      },
+      "usage": {
+        "input_tokens": 50892,
+        "output_tokens": 2015,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "latency_s": 26.397477151000004,
+      "cost_usd": 0.060967,
+      "model": "claude-haiku-4-5-20251001",
+      "run_id": "ae9d2aebca074348a6bae644f4993245",
+      "ground_truth": {
+        "root_service": "orders",
+        "fault_type": "memory_leak"
+      },
+      "case_id": "original/original/75014",
+      "variant": "original"
+    }
+  ],
+  "trace_review": {
+    "finalization_source": "model_submission",
+    "exact_server_excerpts": 3,
+    "evidence_references": 3,
+    "validation_errors": []
+  }
+}
