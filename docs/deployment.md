@@ -33,6 +33,14 @@ access link and machine/volume were preserved. All 229 offline tests, frontend
 checks, runtime CI and exact AMD64 container checks passed. No provider calls or
 new model reservations were made. See [Pacific-budget verification](pacific-budget-verification.json).
 
+Runtime `df5d588` implements the subsequently approved start-threshold policy.
+All 241 offline tests, 15 named frontend checks, runtime CI and exact AMD64
+container checks passed. Live verification confirmed the policy/configuration,
+unchanged four-run ledger and $0.198665 total, preserved replays and access link,
+401 without access and 429 for Sonnet's oversized per-run bound. A temporary
+copy of the live ledger admitted a Haiku reservation at the current spend; no
+paid run was started. See [start-threshold verification](start-threshold-verification.json).
+
 The user approved $0.50 as a daily **start threshold** across visitors: a final
 run started below $0.50 may finish above it. This is separate from standing
 $0.50-per-test development authorization. The day resets at midnight Pacific

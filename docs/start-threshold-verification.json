@@ -1,0 +1,96 @@
+{
+  "measured_at": "2026-10-14T04:29:36.546458+00:00",
+  "url": "https://incident-copilot.fly.dev",
+  "deployed_commit": "df5d5880762a5a015eff0f7ad569eec1f3825905",
+  "image": "registry.fly.io/incident-copilot:df5d588",
+  "before": {
+    "run_count": 4,
+    "replay_count": 4,
+    "active_count": 0,
+    "charged_usd": 0.198665,
+    "runs_sha256": "6b1da1a65602f9e0501e57c278119c57fc680ed7d9f70c331f98ca582e960d45",
+    "replays_sha256": "02718d393b59bdd67521d674aab4ce2ba63b643f3a223678940221951afae556",
+    "machine_id": "7843e61a994648",
+    "volume_id": "vol_4m3mklle2q5n32zv",
+    "image": "registry.fly.io/incident-copilot:aac136a"
+  },
+  "after": {
+    "run_count": 4,
+    "replay_count": 4,
+    "active_count": 0,
+    "charged_usd": 0.198665,
+    "runs_sha256": "6b1da1a65602f9e0501e57c278119c57fc680ed7d9f70c331f98ca582e960d45",
+    "replays_sha256": "02718d393b59bdd67521d674aab4ce2ba63b643f3a223678940221951afae556",
+    "machine_id": "7843e61a994648",
+    "volume_id": "vol_4m3mklle2q5n32zv",
+    "image": "registry.fly.io/incident-copilot:df5d588"
+  },
+  "budget": {
+    "daily_budget_usd": 0.5,
+    "spent_today_usd": 0.198665,
+    "budget_policy": "start_threshold",
+    "budget_date": "2026-10-13",
+    "budget_timezone": "America/Los_Angeles",
+    "budget_resets_at": "2026-10-14T00:00:00-07:00"
+  },
+  "runtime_source_files_match": true,
+  "http_statuses": {
+    "unauthorized /api/runs": 401,
+    "unauthorized /api/investigate": 401,
+    "oversized model /api/runs": 429,
+    "oversized model /api/investigate": 429
+  },
+  "ledger_and_raw_replays_unchanged": true,
+  "credentials_unchanged": true,
+  "old_access_link_still_valid": true,
+  "all_saved_runs_reopen": true,
+  "threshold_explanation_served": true,
+  "production_ledger_copy_probe": {
+    "temporary_copy_only": true,
+    "current_recorded_spend_usd": 0.198665,
+    "haiku_start_allowed": true,
+    "provider_calls": 0
+  },
+  "new_model_reservations": 0,
+  "new_provider_calls": 0,
+  "offline_tests": {
+    "passed": 241,
+    "seconds": 5.08
+  },
+  "frontend_checks": {
+    "named_checks_passed": 15,
+    "mock_dom_and_http": true,
+    "browser_visual_review": false
+  },
+  "container": {
+    "measured_at": "2026-10-14T04:27:22.336673+00:00",
+    "image": "registry.fly.io/incident-copilot:df5d588",
+    "image_id": "sha256:b5fa7118cc2b00b4524cd1f5dc03440f10833575a4001b7e04b0cd1d34e2fc2f",
+    "platform": "linux/amd64",
+    "http_statuses": {
+      "/healthz": 200,
+      "/": 200,
+      "/static/demo.js": 200,
+      "/api/config": 200,
+      "/api/replay": 200
+    },
+    "unauthorized_status": 401,
+    "persistent_test_charge_usd": 0.1,
+    "replay_survived_restart": true,
+    "server_uid": 10001,
+    "root_owned_mount_repaired": true,
+    "trailing_slash_access_status": 404,
+    "trailing_slash_no_location": true,
+    "start_threshold_checks": {
+      "synthetic_fixture": true,
+      "start_at_49_cents_allowed": true,
+      "finish_at_51_cents_recorded": true,
+      "next_start_denied": true,
+      "provider_calls": 0
+    }
+  },
+  "runtime_ci": {
+    "status": "success",
+    "url": "https://github.com/armaankols/incident-copilot/actions/runs/38511420676"
+  }
+}

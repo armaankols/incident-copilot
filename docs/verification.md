@@ -303,3 +303,26 @@ existing machine/volume were preserved. Every saved run reopened and the old
 access link still worked. The served frontend includes the revised “Hint: click
 in from Armaan’s portfolio or résumé.” No new model reservations or provider
 calls were made. See [measured record](pacific-budget-verification.json).
+
+2026-10-13 start-threshold change (verified at 2026-10-14 04:29 UTC): the user
+explicitly approved starting below $0.50 even if the final investigation takes
+the day's total above it. Runtime `df5d588` checks existing charges and active
+holds without requiring room for the new run's full maximum. Per-run bounds,
+concurrency, visitor quotas, Pacific reset and uncertain-billing accounting
+remain enforced. The UI explains that the final run may exceed the threshold.
+
+All 241 offline tests passed in 5.08 seconds. The tests exercised both paid
+endpoints at $0.49 using a mocked model, settlement at $0.51 and rejection of
+another start, concurrent admission, cross-midnight holds and Sonnet rejection
+before SDK creation. Fifteen named mocked frontend checks, the exact AMD64
+container's serving/persistence and synthetic $0.49/$0.51 checks, and
+[runtime CI](https://github.com/armaankols/incident-copilot/actions/runs/38511420676)
+passed. No browser visual review was performed.
+
+Live verification confirmed the new config policy and served explanation,
+preserved all four runs and raw replays at $0.198665, reopened every saved run,
+and checked the existing access link and unchanged credential digests. Both
+unauthorized paid routes returned 401 and both oversized Sonnet requests returned
+429 before creating reservations. A temporary copy of the live ledger admitted
+Haiku at its current spend. There were no new production model reservations or
+provider calls. See [measured record](start-threshold-verification.json).
