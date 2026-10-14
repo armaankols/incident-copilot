@@ -7,8 +7,12 @@ import math
 import sqlite3
 import time
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, time as midnight, timedelta, timezone
 from pathlib import Path
+from zoneinfo import ZoneInfo
+
+BUDGET_TIMEZONE = "America/Los_Angeles"
+PACIFIC = ZoneInfo(BUDGET_TIMEZONE)
 
 
 class AdmissionDenied(Exception):
@@ -20,16 +24,55 @@ class Ledger:
         self.path = str(path)
         Path(path).parent.mkdir(parents=True, exist_ok=True)
         with self.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
             db.execute("CREATE TABLE IF NOT EXISTS runs (id TEXT PRIMARY KEY, day TEXT, visitor TEXT, started REAL, reserved REAL, charged REAL, active INTEGER)")
             db.execute("CREATE TABLE IF NOT EXISTS replays (id TEXT PRIMARY KEY, payload TEXT)")
             db.execute("CREATE TABLE IF NOT EXISTS request_limits (bucket TEXT, window INTEGER, hits INTEGER, PRIMARY KEY (bucket, window))")
+            db.execute("CREATE TABLE IF NOT EXISTS ledger_settings (key TEXT PRIMARY KEY, value TEXT)")
+            setting = db.execute("SELECT value FROM ledger_settings WHERE key='budget_timezone'").fetchone()
+            if setting is None:
+                self._migrate_utc_days(db)
+            elif setting[0] != BUDGET_TIMEZONE:
+                raise ValueError("Ledger budget timezone needs a reviewed migration")
 
     def connect(self):
         return sqlite3.connect(self.path, timeout=10)
 
     @staticmethod
+    def now():
+        return datetime.now(timezone.utc)
+
+    @staticmethod
     def day():
-        return datetime.now(timezone.utc).date().isoformat()
+        return Ledger.now().astimezone(PACIFIC).date().isoformat()
+
+    def _migrate_utc_days(self, db):
+        """Convert legacy UTC settlement days only when their Pacific day is certain.
+
+        Old rows have no settlement timestamp. Bound it by the recorded UTC day,
+        admission time and migration time; refuse ambiguous history rather than
+        guess or silently omit a charge. All updates and the marker are atomic.
+        """
+        now = self.now()
+        updates = []
+        for rid, day, started, active in db.execute("SELECT id,day,started,active FROM runs"):
+            if active:
+                # Unsettled holds count across every day, and get their final
+                # accounting day when settled by the new code.
+                pacific_day = now.astimezone(PACIFIC).date()
+            else:
+                start = datetime.fromisoformat(day).replace(tzinfo=timezone.utc)
+                earliest = max(start, datetime.fromtimestamp(started, timezone.utc))
+                latest = min(start + timedelta(days=1, microseconds=-1), now)
+                if earliest > latest or earliest.astimezone(PACIFIC).date() != latest.astimezone(PACIFIC).date():
+                    raise ValueError("Legacy ledger needs reviewed Pacific day assignments before migration")
+                pacific_day = earliest.astimezone(PACIFIC).date()
+            updates.append((rid, day, pacific_day.isoformat()))
+        db.execute("CREATE TABLE IF NOT EXISTS legacy_utc_days (id TEXT PRIMARY KEY, day TEXT)")
+        for rid, old_day, new_day in updates:
+            db.execute("INSERT INTO legacy_utc_days VALUES (?,?)", (rid, old_day))
+            db.execute("UPDATE runs SET day=? WHERE id=?", (new_day, rid))
+        db.execute("INSERT INTO ledger_settings VALUES ('budget_timezone',?)", (BUDGET_TIMEZONE,))
 
     def allow_request(self, buckets):
         """Atomic fixed-minute quotas retained on restart; no raw client IPs.
@@ -78,7 +121,7 @@ class Ledger:
                 raise ValueError("Unknown reservation")
             if row[1]:
                 # Active holds count across every day. On settlement put the
-                # full charge on the current UTC day, conservatively including
+                # full charge on the current Pacific day, conservatively including
                 # any earlier-day usage, so crossing midnight cannot free it.
                 db.execute("UPDATE runs SET day=?, charged=?, active=0 WHERE id=?",
                            (self.day(), max(charged, row[0]) if uncertain else charged, rid))
@@ -86,6 +129,15 @@ class Ledger:
     def spent(self):
         with self.connect() as db:
             return db.execute("SELECT COALESCE(SUM(charged),0) FROM runs WHERE day=?", (self.day(),)).fetchone()[0]
+
+    def budget_status(self):
+        # Read the date once so the amount and period cannot disagree at midnight.
+        day = self.now().astimezone(PACIFIC).date()
+        reset = datetime.combine(day + timedelta(days=1), midnight.min, PACIFIC)
+        with self.connect() as db:
+            spent = db.execute("SELECT COALESCE(SUM(charged),0) FROM runs WHERE day=?", (day.isoformat(),)).fetchone()[0]
+        return {"spent_today_usd": round(spent, 6), "budget_date": day.isoformat(),
+                "budget_timezone": BUDGET_TIMEZONE, "budget_resets_at": reset.isoformat()}
 
     def save_replay(self, rid, payload):
         with self.connect() as db:

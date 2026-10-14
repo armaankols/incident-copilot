@@ -112,7 +112,7 @@ def health():
 @app.get("/api/config")
 def config(request: Request):
     return {"models": ALLOWED_MODELS, "fault_types": FAULT_TYPES, "daily_budget_usd": DAILY_BUDGET_USD,
-            "spent_today_usd": round(ledger().spent(), 3), "live_enabled": bool(os.getenv("ANTHROPIC_API_KEY")),
+            **ledger().budget_status(), "live_enabled": bool(os.getenv("ANTHROPIC_API_KEY")),
             "agent_access": has_access(request)}
 
 

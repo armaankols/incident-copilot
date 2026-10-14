@@ -25,7 +25,9 @@ payloads. No provider calls or new model reservations were made. See
 [follow-up verification](security-fixes-verification.json).
 
 The public API budget is $0.50/day across visitors, separate from standing
-$0.50-per-test development authorization. Haiku's conservative per-run reservation
+$0.50-per-test development authorization. The day resets at midnight Pacific
+(`America/Los_Angeles`), including daylight saving transitions. The UI labels the
+Pacific accounting date and reset boundary. Haiku's conservative per-run reservation
 is $0.42; Sonnet exceeds the daily cap and is denied before provider calls. This
 can reject new investigations before actual spend reaches $0.50, because each
 run must fit its worst-case reservation. The application ledger uses reported
@@ -128,9 +130,18 @@ Never blindly release a hold because its process stopped.
 
 Confirmed insufficient-credit rejections release only unused model reservations;
 previously reported usage stays charged. Ambiguous failures retain the worst-case
-reservation. Cross-midnight runs are conservatively charged to their UTC
-settlement day, and active holds count across days. Existing settled rows and
-saved replays are not rewritten by these fixes.
+reservation. Cross-midnight runs are conservatively charged to their Pacific
+settlement day, and active holds count across days.
+
+The Pacific-day upgrade migrates legacy UTC accounting dates once, atomically,
+and retains their originals in `legacy_utc_days`. It uses admission time, the
+recorded UTC settlement day and migration time to bound the possible settlement
+time; ambiguous Pacific dates require operator review before startup can proceed.
+Preflight a private database backup with the new code before deployment. Charges,
+other reservation fields and raw replays remain unchanged. Do not roll back to
+UTC-only code against a migrated ledger: it would use the wrong accounting days.
+Restore the matching pre-migration backup only if no newer runs would be lost;
+otherwise use a reviewed accounting migration.
 
 The web app exposes no remediation execution. Structured actions are only
 recommendations. Accepted recommendation text is generated from conservative

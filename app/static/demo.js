@@ -26,7 +26,7 @@ function showAccess() {
   $("access-message").className = `access-message${agentAccess ? " granted" : ""}`;
   $("access-message").textContent = agentAccess
     ? "Thanks for checking out Armaan’s profile. You have agent access!"
-    : "Oops! You don’t have agent access.\nHint: check Armaan’s portfolio or résumé.";
+    : "Oops! You don’t have agent access.\nHint: click in from Armaan’s portfolio or résumé.";
 }
 function options(id, values, random = false) {
   const select = $(id), previous = select.value;
@@ -45,8 +45,8 @@ async function init() {
   $("meta").innerHTML = `<div class="budget-card">
     <div class="budget-title">Daily API budget</div>
     <div class="budget-amount">$${spent.toFixed(3)} <span class="budget-limit">of $${budget.toFixed(2)}</span></div>
-    <progress max="1" value="${fraction}" aria-label="Reported API spend today"></progress>
-    <p class="budget-note">Reported spend today · Shared across visitors</p>
+    <progress max="1" value="${fraction}" aria-label="Reported API spend today in Pacific time"></progress>
+    <p class="budget-note">${esc(config.budget_date)} · Pacific time<br>Resets at midnight Pacific · Shared across visitors</p>
     </div><p id="live-status" class="live-note">${liveEnabled ? "" : "Live model is not configured."}</p>`;
   controls();
 }

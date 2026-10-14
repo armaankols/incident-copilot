@@ -50,10 +50,18 @@ unavailability message and releases the unused reservation while retaining usage
 from earlier successful calls. Unknown 400s, server failures, timeouts and
 disconnects still retain the conservative reservation. SDK retries remain off.
 
-Active model reservations count across all UTC days. A run spanning midnight is
+The daily budget resets at midnight in `America/Los_Angeles`, following Pacific
+daylight saving time. The config response reports the accounting date, timezone,
+next reset timestamp and spend from the same date snapshot.
+
+Active model reservations count across all Pacific days. A run spanning midnight is
 conservatively charged in full to its settlement day, including any earlier-day
-usage, so it cannot vanish from that day's admission total. Settled historical
-charges are not rewritten, and repeated settlement cannot move an old charge.
+usage, so it cannot vanish from that day's admission total. Repeated settlement
+cannot move an old charge. A one-time, atomic migration converts legacy UTC days
+only when admission time, the recorded UTC settlement day and migration time
+identify a single possible Pacific date. Ambiguous history blocks migration for
+review. Original UTC days remain in `legacy_utc_days`; charges, reservations and
+raw replay payloads are preserved. A durable timezone marker prevents remigration.
 
 The access-link design remains a shared possession-based gate, not user accounts.
 The token is configured as a Fly secret and must not be committed or baked into an

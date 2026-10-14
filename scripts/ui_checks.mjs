@@ -28,7 +28,7 @@ async function page({search='', hash='', count=23, configFails=false, live=true,
     } else if(url === '/api/runs' && method==='POST') {
       assert.equal(granted,true);assert.equal(live,true);data={run_id:'saved-1'};
     } else if(url === '/api/replay') data=sample;
-    else if(url === '/api/config') {if(configFails) return {ok:false,statusText:'Unavailable',json:async()=>({detail:'Config unavailable'})};data={models:[saved.model],fault_types:['memory_leak'],live_enabled:live,agent_access:granted,spent_today_usd:.25,daily_budget_usd:.5};}
+    else if(url === '/api/config') {if(configFails) return {ok:false,statusText:'Unavailable',json:async()=>({detail:'Config unavailable'})};data={models:[saved.model],fault_types:['memory_leak'],live_enabled:live,agent_access:granted,spent_today_usd:.25,daily_budget_usd:.5,budget_date:'2026-10-13',budget_timezone:'America/Los_Angeles',budget_resets_at:'2026-10-14T00:00:00-07:00'};}
     else if(url.startsWith('/api/runs?')) {const offset=Number(new URLSearchParams(url.split('?')[1]).get('offset'));data={runs:rows.slice(offset,Math.min(offset+20,count)),next_offset:offset+20<count ? offset+20 : null};}
     else if(url === '/api/runs/saved-1') data={status:'completed',result:saved};
     else throw new Error('Unexpected request '+url);
@@ -43,6 +43,7 @@ assert.match(home.node('out').innerHTML,/Sample investigation · Offline rules �
 assert.equal(home.requests[0][0],'/api/replay');
 assert.match(home.node('access-message').textContent,/Oops! You don’t have agent access/);
 assert.match(home.node('access-message').textContent,/portfolio or résumé/);
+assert.equal(home.node('access-message').textContent,'Oops! You don’t have agent access.\nHint: click in from Armaan’s portfolio or résumé.');
 assert.equal(home.node('go').disabled,false);
 await home.node('go').onclick();
 assert.equal(home.node('access-message').focused,true);
@@ -56,6 +57,8 @@ assert.equal((home.node('history-list').innerHTML.match(/<li>/g)||[]).length,23)
 assert.equal(home.node('history-more').hidden,true);
 assert.match(home.node('meta').innerHTML,/Daily API budget/);
 assert.match(home.node('meta').innerHTML,/value="0.5"/);
+assert.match(home.node('meta').innerHTML,/2026-10-13 · Pacific time/);
+assert.match(home.node('meta').innerHTML,/Resets at midnight Pacific/);
 assert.match(home.node('out').innerHTML,/This run’s API cost/);
 assert.match(home.node('out').innerHTML,/\$0.000000/);
 assert.match(home.node('out').innerHTML,/Offline sample · No LLM calls/);
