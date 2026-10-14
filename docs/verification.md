@@ -283,3 +283,23 @@ still unlocks access; both credential digests and all runtime source hashes were
 verified. The original machine/volume, two runs/replays, their logical hashes and
 $0.090678 recorded charges were unchanged. No new model reservations or provider
 calls were made. See [measured record](security-fixes-verification.json).
+
+2026-10-13 Pacific-day budget update (verified at 2026-10-14 04:11 UTC): runtime
+`aac136a` resets admission and displayed daily spend at midnight in
+`America/Los_Angeles`, following daylight saving time. Tests cover UTC versus
+Pacific midnight, 23/25-hour DST days, holds and settlement across midnight,
+one-time migration, ambiguous legacy history and API period metadata. All 229
+offline tests passed in 4.95 seconds, 15 named mocked frontend checks passed, and
+[runtime CI](https://github.com/armaankols/incident-copilot/actions/runs/38509939901)
+passed. The exact non-root AMD64 container passed serving/restart checks and
+migration of a private production database copy. These are programmatic checks;
+no browser visual review was performed.
+
+Live verification confirmed four runs/replays and $0.198665 in the October 13
+Pacific accounting period, next resetting at `2026-10-14T00:00:00-07:00`. Only
+the run accounting dates changed; original UTC dates are retained in an audit
+table. Other run fields, charges, raw replay payloads, both credentials and the
+existing machine/volume were preserved. Every saved run reopened and the old
+access link still worked. The served frontend includes the revised “Hint: click
+in from Armaan’s portfolio or résumé.” No new model reservations or provider
+calls were made. See [measured record](pacific-budget-verification.json).

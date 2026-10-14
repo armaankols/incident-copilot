@@ -1,0 +1,73 @@
+{
+  "measured_at": "2026-10-14T04:11:52.241595+00:00",
+  "url": "https://incident-copilot.fly.dev",
+  "deployed_commit": "aac136a2a86a77b63ef7c7633987563b63a29f32",
+  "image": "registry.fly.io/incident-copilot:aac136a",
+  "machine_id": "7843e61a994648",
+  "volume_id": "vol_4m3mklle2q5n32zv",
+  "run_count": 4,
+  "replay_count": 4,
+  "total_charged_usd": 0.198665,
+  "budget": {
+    "daily_budget_usd": 0.5,
+    "spent_today_usd": 0.198665,
+    "budget_date": "2026-10-13",
+    "budget_timezone": "America/Los_Angeles",
+    "budget_resets_at": "2026-10-14T00:00:00-07:00"
+  },
+  "original_utc_days_preserved_in_audit_table": true,
+  "only_run_day_column_changed": true,
+  "raw_replays_unchanged": true,
+  "credentials_unchanged": true,
+  "old_access_link_still_valid": true,
+  "runtime_source_files_match": true,
+  "all_saved_links_reopen": true,
+  "updated_access_message_served": true,
+  "new_model_reservations": 0,
+  "new_provider_calls": 0,
+  "offline_tests": {
+    "passed": 229,
+    "seconds": 4.95
+  },
+  "frontend_checks": {
+    "named_checks_passed": 15,
+    "mock_dom_and_http": true,
+    "browser_visual_review": false
+  },
+  "runtime_ci": {
+    "status": "success",
+    "url": "https://github.com/armaankols/incident-copilot/actions/runs/38509939901"
+  },
+  "container": {
+    "measured_at": "2026-10-14T04:09:59.723453+00:00",
+    "image": "registry.fly.io/incident-copilot:aac136a",
+    "image_id": "sha256:89dcaec44a7e9e3f7e6f23c9915ef9966fdea134d296c84c5f3096b243cfa667",
+    "platform": "linux/amd64",
+    "http_statuses": {
+      "/healthz": 200,
+      "/": 200,
+      "/static/demo.js": 200,
+      "/api/config": 200,
+      "/api/replay": 200
+    },
+    "unauthorized_status": 401,
+    "persistent_test_charge_usd": 0.1,
+    "replay_survived_restart": true,
+    "server_uid": 10001,
+    "root_owned_mount_repaired": true,
+    "trailing_slash_access_status": 404,
+    "trailing_slash_no_location": true,
+    "production_copy_migration": {
+      "production_copy_migration_passed": true,
+      "charges_and_raw_replays_unchanged": true,
+      "original_utc_days_retained": true,
+      "migration_idempotent": true,
+      "budget": {
+        "spent_today_usd": 0.198665,
+        "budget_date": "2026-10-13",
+        "budget_timezone": "America/Los_Angeles",
+        "budget_resets_at": "2026-10-14T00:00:00-07:00"
+      }
+    }
+  }
+}

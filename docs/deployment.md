@@ -24,6 +24,15 @@ the original access link, both credentials, machine/volume, ledger rows and repl
 payloads. No provider calls or new model reservations were made. See
 [follow-up verification](security-fixes-verification.json).
 
+Runtime `aac136a` adds the midnight-Pacific budget reset and revised no-access
+hint. Live verification measured all four existing runs in October 13's Pacific
+period: $0.198665 of the $0.50 daily budget, with the next reset at
+`2026-10-14T00:00:00-07:00`. The one-time migration changed only their accounting
+dates and retained the original UTC dates. Charges, raw replays, credentials,
+access link and machine/volume were preserved. All 229 offline tests, frontend
+checks, runtime CI and exact AMD64 container checks passed. No provider calls or
+new model reservations were made. See [Pacific-budget verification](pacific-budget-verification.json).
+
 The public API budget is $0.50/day across visitors, separate from standing
 $0.50-per-test development authorization. The day resets at midnight Pacific
 (`America/Los_Angeles`), including daylight saving transitions. The UI labels the
