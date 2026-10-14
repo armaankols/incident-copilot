@@ -1,8 +1,11 @@
 # Live-demo access
 
-The new gate and navy/cream UI are implemented locally; deployment remains on
-hold for user review. The existing hosted build still allows budgeted live runs
-without this access gate. No production access token has been configured yet.
+The access gate and request security controls were deployed on 2026-10-13 to
+the existing machine and volume. A fresh production access token is configured
+as a Fly secret. Both paid endpoints reject unauthenticated requests with 401;
+authorized over-budget probes return 429 before model calls. Existing ledger
+rows, replay payloads and charges were preserved. See
+[verification](security-verification.json) and [controls](security-controls.md).
 
 The ordinary URL shows the offline sample and public saved investigations.
 A special link has this form:
@@ -42,7 +45,8 @@ referring site or identity. Keep the existing daily budget, per-visitor rate lim
 and concurrency controls. Unlock requests make no model calls. The standing
 public API cap remains $0.50/day; the local 50% budget fixture is not provider spend.
 
-Before the next deployment, configure a fresh production token securely, verify
-both modes and both paid endpoints, and provide the resume/portfolio access link.
-Deployment remains a separate action after local visual review. Do not publish
-the preview link as the production access link.
+The production portfolio/resume link is stored locally in the ignored,
+owner-readable `.bootstrap/demo-access-link.txt`; it is not included in the image
+or this documentation. Use that link rather than the preview fixture link.
+Routine deployments preserve the production token; rotate it deliberately when
+revoking existing links and sessions. Repeat access and budget checks after updates.

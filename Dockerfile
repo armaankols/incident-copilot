@@ -10,4 +10,4 @@ RUN useradd --uid 10001 --create-home demo && mkdir /data && chown demo /data
 ENV PORT=8080 BUDGET_DB=/data/demo.sqlite3
 EXPOSE 8080
 ENTRYPOINT ["python", "app/container_entrypoint.py"]
-CMD ["sh", "-c", "exec uvicorn app.main:app --workers 1 --host 0.0.0.0 --port ${PORT}"]
+CMD ["sh", "-c", "exec uvicorn app.main:app --workers 1 --host 0.0.0.0 --port ${PORT} --no-proxy-headers --limit-concurrency 32"]

@@ -49,6 +49,16 @@ def check(image):
             raise AssertionError("Live endpoint must reject missing agent access")
         except urllib.error.HTTPError as error:
             assert error.code == 401
+        class NoRedirect(urllib.request.HTTPRedirectHandler):
+            def redirect_request(self, *args, **kwargs):
+                return None
+        trailing = urllib.request.Request(base+"/api/access/", data=b'{"token":"offline-dummy"}',
+                                          headers={"Content-Type": "application/json"})
+        try:
+            urllib.request.build_opener(NoRedirect).open(trailing, timeout=5)
+            raise AssertionError("Trailing-slash access route must not redirect")
+        except urllib.error.HTTPError as error:
+            assert error.code == 404 and "Location" not in error.headers
         uid_line = docker("exec", name, "sh", "-c", "sed -n '/^Uid:/p' /proc/1/status")
         assert uid_line.split()[1:] == ["10001"]*4
         seed = "from copilot.budget import Ledger; import os; l=Ledger(os.environ['BUDGET_DB']); r=l.reserve(.25,2,'smoke'); l.settle(r,.1); l.save_replay('persistent-check','{\"offline\":true}'); print(l.spent())"
@@ -71,7 +81,8 @@ def check(image):
         assert docker("exec", "--user", "10001", name, "python", "-c", verify) == "persistence verified"
         result = {"measured_at": datetime.now(timezone.utc).isoformat(), "image": image, "image_id": docker("image", "inspect", image, "--format", "{{.Id}}"),
                   "platform": docker("image", "inspect", image, "--format", "{{.Os}}/{{.Architecture}}"), "http_statuses": statuses, "unauthorized_status": 401,
-                  "persistent_test_charge_usd": cfg["spent_today_usd"], "replay_survived_restart": True, "server_uid": 10001, "root_owned_mount_repaired": True}
+                  "persistent_test_charge_usd": cfg["spent_today_usd"], "replay_survived_restart": True, "server_uid": 10001, "root_owned_mount_repaired": True,
+                  "trailing_slash_access_status": 404, "trailing_slash_no_location": True}
         print(json.dumps(result, indent=2))
         return result
     except BaseException:

@@ -22,6 +22,7 @@ class Ledger:
         with self.connect() as db:
             db.execute("CREATE TABLE IF NOT EXISTS runs (id TEXT PRIMARY KEY, day TEXT, visitor TEXT, started REAL, reserved REAL, charged REAL, active INTEGER)")
             db.execute("CREATE TABLE IF NOT EXISTS replays (id TEXT PRIMARY KEY, payload TEXT)")
+            db.execute("CREATE TABLE IF NOT EXISTS request_limits (bucket TEXT, window INTEGER, hits INTEGER, PRIMARY KEY (bucket, window))")
 
     def connect(self):
         return sqlite3.connect(self.path, timeout=10)
@@ -30,12 +31,31 @@ class Ledger:
     def day():
         return datetime.now(timezone.utc).date().isoformat()
 
+    def allow_request(self, buckets):
+        """Atomic fixed-minute quotas retained on restart; no raw client IPs.
+
+        Return seconds until the next window, or zero when admitted.
+        """
+        now = int(time.time())
+        window = now // 60
+        with self.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            db.execute("DELETE FROM request_limits WHERE window < ?", (window,))
+            for bucket, limit in buckets:
+                row = db.execute("SELECT hits FROM request_limits WHERE bucket=? AND window=?", (bucket, window)).fetchone()
+                if row and row[0] >= limit:
+                    return 60 - now % 60
+            for bucket, _ in buckets:
+                db.execute("INSERT INTO request_limits VALUES (?,?,1) ON CONFLICT(bucket,window) DO UPDATE SET hits=hits+1", (bucket, window))
+        return 0
+
     def reserve(self, amount, daily_cap, visitor, hourly_limit=8, concurrency=2):
         if not math.isfinite(amount) or amount <= 0 or not math.isfinite(daily_cap) or daily_cap < 0:
             raise ValueError("Invalid budget")
         with self.connect() as db:
             db.execute("BEGIN IMMEDIATE")
-            spent = db.execute("SELECT COALESCE(SUM(charged),0) FROM runs WHERE day=?", (self.day(),)).fetchone()[0]
+            day = self.day()
+            spent = db.execute("SELECT COALESCE(SUM(charged),0) FROM runs WHERE day=?", (day,)).fetchone()[0]
             holds = db.execute("SELECT COALESCE(SUM(reserved),0), COALESCE(SUM(active),0) FROM runs WHERE active=1").fetchone()
             if spent + holds[0] + amount > daily_cap + 1e-12:
                 raise AdmissionDenied("Daily budget has insufficient unreserved funds")
@@ -45,7 +65,7 @@ class Ledger:
             if hits >= hourly_limit:
                 raise AdmissionDenied("Visitor hourly rate limit reached")
             rid = uuid.uuid4().hex
-            db.execute("INSERT INTO runs VALUES (?,?,?,?,?,0,1)", (rid, self.day(), visitor, time.time(), amount))
+            db.execute("INSERT INTO runs VALUES (?,?,?,?,?,0,1)", (rid, day, visitor, time.time(), amount))
             return rid
 
     def settle(self, rid, charged, uncertain=False):
@@ -57,7 +77,11 @@ class Ledger:
             if row is None:
                 raise ValueError("Unknown reservation")
             if row[1]:
-                db.execute("UPDATE runs SET charged=?, active=0 WHERE id=?", (max(charged, row[0]) if uncertain else charged, rid))
+                # Active holds count across every day. On settlement put the
+                # full charge on the current UTC day, conservatively including
+                # any earlier-day usage, so crossing midnight cannot free it.
+                db.execute("UPDATE runs SET day=?, charged=?, active=0 WHERE id=?",
+                           (self.day(), max(charged, row[0]) if uncertain else charged, rid))
 
     def spent(self):
         with self.connect() as db:

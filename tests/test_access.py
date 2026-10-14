@@ -58,7 +58,7 @@ def test_valid_session_cookie_is_private_and_does_not_create_run(client):
 
 @pytest.mark.parametrize("token", ["incorrect", "", "x" * 257, "✧" * 32])
 def test_invalid_access_links_never_grant_access(client, token):
-    assert client.post("/api/access", json={"token": token}).status_code == 401
+    assert client.post("/api/access", json={"token": token}).status_code == (422 if len(token) > 256 else 401)
     assert client.get("/api/config").json()["agent_access"] is False
     assert_no_reservations()
 

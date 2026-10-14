@@ -10,14 +10,17 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Query, Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from app.access import COOKIE, SESSION_SECONDS, check_origin, has_access, make_session, require_access, valid_link_token
+from app.security import RequestGuard, visitor_id
 
 from copilot.budget import AdmissionDenied, Ledger
 from copilot.llm import AnthropicLLM
+from copilot.errors import public_error, public_result
 from copilot.pricing import DEFAULT_MODEL, cost_usd
 from copilot.runner import run_scenario
 from copilot.sim import FAULT_TYPES, generate
@@ -29,7 +32,7 @@ RATE_LIMIT_PER_HOUR = int(os.getenv("RATE_LIMIT_PER_HOUR", "8"))
 MAX_STEPS = 12
 MAX_INPUT_TOKENS = 24000
 MAX_OUTPUT_TOKENS = 1000
-app = FastAPI(title="Incident Copilot")
+app = FastAPI(title="Incident Copilot", redirect_slashes=False)
 
 
 class RevalidatedStaticFiles(StaticFiles):
@@ -56,17 +59,28 @@ def ledger():
     return Ledger(os.getenv("BUDGET_DB", "data/demo.sqlite3"))
 
 
+app.add_middleware(RequestGuard, ledger_factory=ledger)
+
+
+@app.exception_handler(RequestValidationError)
+async def invalid_request(request, error):
+    # Default validation errors echo input, including submitted access tokens.
+    return JSONResponse({"detail": [{key: item[key] for key in ("loc", "msg", "type")}
+                                    for item in error.errors()]}, status_code=422,
+                        headers={"Cache-Control": "no-store"})
+
+
 def make_llm(model):
     return AnthropicLLM(model, max_tokens=MAX_OUTPUT_TOKENS, max_input_tokens=MAX_INPUT_TOKENS)
 
 
 class InvestigateRequest(BaseModel):
-    fault_type: str | None = None
-    model: str = DEFAULT_MODEL
+    fault_type: str | None = Field(None, max_length=64)
+    model: str = Field(DEFAULT_MODEL, max_length=64)
 
 
 class AccessRequest(BaseModel):
-    token: str
+    token: str = Field(max_length=256)
 
 
 @app.post("/api/access")
@@ -110,11 +124,7 @@ def admit(req, request):
         raise HTTPException(400, f"fault_type must be one of {FAULT_TYPES}")
     if not os.getenv("ANTHROPIC_API_KEY"):
         raise HTTPException(503, "Live investigations require server API credentials; saved replays are available.")
-    # Trust proxy headers only on explicitly configured deployments.
-    ip = request.client.host if request.client else "unknown"
-    if os.getenv("TRUST_FLY_PROXY") == "1":
-        ip = request.headers.get("fly-client-ip", ip)
-    visitor = hashlib.sha256(ip.encode()).hexdigest()
+    visitor = visitor_id(request)
     # Worst-case 5-minute cache writes on every input token, plus capped output.
     maximum = cost_usd(req.model, {"cache_write_tokens": MAX_INPUT_TOKENS * MAX_STEPS,
                                   "output_tokens": MAX_OUTPUT_TOKENS * MAX_STEPS})
@@ -134,7 +144,7 @@ async def execute(rid, req):
         result.update(alert=sc.alert, model=req.model, run_id=rid,
                       ground_truth={"root_service": sc.root_service, "fault_type": sc.fault_type})
         ledger().save_replay(rid, json.dumps(result))
-        return result
+        return public_result(result)
     finally:
         ledger().settle(rid, cost_usd(req.model, progress.get("usage", {})),
                         uncertain=result is None or progress.get("billing_uncertain", False))
@@ -149,8 +159,8 @@ async def investigate(req: InvestigateRequest, request: Request):
 async def background(rid, req):
     try:
         await execute(rid, req)
-    except Exception:
-        ledger().save_replay(rid, json.dumps({"run_id": rid, "error": "Investigation failed", "trace": [], "diagnosis": None}))
+    except Exception as error:
+        ledger().save_replay(rid, json.dumps({"run_id": rid, "error": public_error(error), "trace": [], "diagnosis": None}))
 
 
 @app.post("/api/runs", status_code=202)
@@ -185,9 +195,9 @@ def saved_runs(limit: int = Query(20, ge=1, le=50), offset: int = Query(0, ge=0)
 def run_status(rid: str):
     saved = ledger().replay(rid)
     if saved:
-        return {"status": "completed", "result": json.loads(saved)}
+        return {"status": "completed", "result": public_result(json.loads(saved))}
     if rid in _jobs:
-        return {"status": "running", "progress": _jobs[rid]}
+        return {"status": "running", "progress": public_result(_jobs[rid])}
     raise HTTPException(404, "Run unavailable; it may have been interrupted by a restart")
 
 

@@ -12,6 +12,7 @@ from .pricing import cost_usd
 from .sim import Scenario
 from .diagnosis import ACTIONS, insufficient
 from .llm import MeteredLLM
+from .errors import public_error
 
 
 from .grading import grade, baseline_latest_deploy
@@ -50,7 +51,7 @@ async def run_scenario(sc: Scenario, llm, use_rag: bool = True, max_steps: int =
         state = await asyncio.wait_for(investigate(), timeout=timeout_s)
         diagnosis = state["diagnosis"]
     except Exception as e:
-        error = f"{type(e).__name__}: {e}"
+        error = public_error(e)
         progress["termination_reason"] = "timeout" if isinstance(e, TimeoutError) else "error"
         diagnosis = {**insufficient("Investigation failed; inspect the recorded trace."), "recovery_status": "unavailable", "recovery_reason": "Investigation failed."}
     finally:

@@ -55,9 +55,9 @@ requested, but cache savings have not been measured.
 - Current source requires a link-based session before starting live investigations.
   Ordinary visitors can still browse samples and history. The access link uses
   `#access=TOKEN`; its token is exchanged for a two-hour signed cookie and removed
-  from the address bar. The gate and navy/cream UI are pending local review and
-  deployment; the existing hosted build does not yet enforce this gate. See
-  [demo access](docs/demo-access.md).
+  from the address bar. The access gate and navy/cream UI are deployed. Request
+  bodies and rates are bounded, and both paid routes authenticate before parsing
+  JSON. See [demo access](docs/demo-access.md) and [security controls](docs/security-controls.md).
 - Evaluations checkpoint each record and use unique experiment names, source
   hashes, dataset/prompt versions, case IDs, errors and observed usage.
 
@@ -162,7 +162,7 @@ Run from a terminal with network access:
 .venv/bin/python -m pytest -q tests
 .venv/bin/python -m evals.retrieval_eval
 .venv/bin/python -m evals.recovery_eval
-.venv/bin/python -m uvicorn app.main:app --workers 1
+.venv/bin/python -m uvicorn app.main:app --workers 1 --no-proxy-headers --limit-concurrency 32
 ```
 
 Python 3.12.15 and `.venv` are configured. Runtime and development version locks

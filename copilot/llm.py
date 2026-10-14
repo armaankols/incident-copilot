@@ -4,6 +4,22 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
+from .errors import ProviderCreditUnavailable
+
+
+def is_credit_rejection(error):
+    """Match only the provider's explicit low-credit rejection, not arbitrary 400s."""
+    import anthropic
+    if not isinstance(error, anthropic.BadRequestError) or error.status_code != 400:
+        return False
+    body = error.body
+    if not isinstance(body, dict):
+        return False
+    detail = body.get("error", body)
+    return (isinstance(detail, dict) and detail.get("type") == "invalid_request_error"
+            and isinstance(detail.get("message"), str)
+            and "credit balance is too low" in detail["message"].lower())
+
 
 @dataclass
 class LLMResponse:
@@ -30,10 +46,15 @@ class AnthropicLLM:
         )
         if tool_choice:
             kwargs["tool_choice"] = tool_choice
-        counted = await self.client.messages.count_tokens(model=self.model, system=kwargs["system"], messages=messages, tools=tools)
-        if counted.input_tokens > self.max_input_tokens:
-            raise ValueError("Per-call input token budget exceeded")
-        resp = await self.client.messages.create(**kwargs)
+        try:
+            counted = await self.client.messages.count_tokens(model=self.model, system=kwargs["system"], messages=messages, tools=tools)
+            if counted.input_tokens > self.max_input_tokens:
+                raise ValueError("Per-call input token budget exceeded")
+            resp = await self.client.messages.create(**kwargs)
+        except Exception as error:
+            if is_credit_rejection(error):
+                raise ProviderCreditUnavailable() from None
+            raise
         blocks = []
         for b in resp.content:
             if b.type == "text":
@@ -71,9 +92,14 @@ class MeteredLLM:
         self.progress["model_calls"] += 1
         try:
             response = await self.llm.complete(*args, **kwargs)
+        except ProviderCreditUnavailable:
+            self.progress["error_code"] = "provider_credit_unavailable"
+            # Previously returned usage remains chargeable; this rejected call
+            # adds no usage and must not create a full-reservation charge.
+            raise
         except BaseException:
             # A timeout/disconnect may have reached the provider without a usage response.
-            self.progress["billing_uncertain"] = isinstance(self.llm, AnthropicLLM)
+            self.progress["billing_uncertain"] = self.progress.get("billing_uncertain", False) or isinstance(self.llm, AnthropicLLM)
             raise
         for key in self.progress["usage"]:
             self.progress["usage"][key] += getattr(response, key)

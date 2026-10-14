@@ -9,6 +9,8 @@ primary_region = "sjc"
   RATE_LIMIT_PER_HOUR = "8"
   BUDGET_DB = "/data/demo.sqlite3"
   TRUST_FLY_PROXY = "1"
+  # Measured socket peer on the existing machine; reverify if ingress changes.
+  TRUSTED_PROXY_CIDRS = "172.16.38.2/32"
 
 [[mounts]]
   source = "copilot_data"

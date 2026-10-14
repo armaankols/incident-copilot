@@ -13,6 +13,7 @@ from typing import Any, TypedDict
 from langgraph.graph import END, START, StateGraph
 
 from .sim import FAULT_TYPES, SERVICES
+from .errors import ToolFailure, public_error
 
 SYSTEM_PROMPT = """You are an expert on-call SRE investigating a production incident in a microservice system.
 Use the tools to gather evidence: current health, metrics over time, logs, recent deploys and the team runbooks.
@@ -186,9 +187,9 @@ def build_graph(llm, session, tool_specs: list[dict], max_steps: int = 12, progr
                     r = await session.call_tool(name, args)
                     text = "\n".join(c.text for c in r.content if getattr(c, "text", None))
                     if r.isError:
-                        text = "ERROR: " + text
+                        text = "ERROR: " + public_error(ToolFailure())
                 except Exception as e:  # noqa: BLE001
-                    text = f"ERROR: {e}"
+                    text = "ERROR: " + public_error(e)
                 text = text[:6000]
                 oid = f"obs-{state['tool_calls'] + n_calls}"
                 if text and not text.startswith("ERROR:"):

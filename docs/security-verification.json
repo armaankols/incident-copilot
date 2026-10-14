@@ -1,0 +1,64 @@
+{
+  "measured_at": "2026-10-13T23:15:41.710394+00:00",
+  "url": "https://incident-copilot.fly.dev",
+  "new_llm_calls": 0,
+  "before": {
+    "active_count": 0,
+    "run_count": 2,
+    "replay_count": 2,
+    "runs_sha256": "f36c38cdf18e2da36c64aeb0580a69596754fe3bef3936a731c209df7d4edfb1",
+    "replays_sha256": "1198f6a91fe685b4d22185dbdf6b4763f327a1608d70d00591bf9c6dbb30b197",
+    "charged_usd": 0.09067800000000001,
+    "server_credentials_configured": true,
+    "access_token_configured": false
+  },
+  "source_sha256": "b50ba7df752b50b5d4d0b47b3ebbef6734f34beb1ee03c609097061f39e51c71",
+  "image": "registry.fly.io/incident-copilot:security-b50ba7df752b",
+  "base_commit": "0a833bccb958d6645f7e6953c20067cfbce46e0a",
+  "proxy_verification": {
+    "supplied_ip_quota_hits": [
+      0,
+      0
+    ],
+    "trusted_proxy_cidrs": "172.16.38.2/32",
+    "server_commands": [
+      "/usr/local/bin/python3.12 /usr/local/bin/uvicorn app.main:app --workers 1 --host 0.0.0.0 --port 8080 --no-proxy-headers --limit-concurrency 32 "
+    ],
+    "guard_source_sha256": "0148ecfa0c73aff42653a3532e15e0ef9bd19a67e585a02467442784f507c0fb",
+    "access_token_configured": true,
+    "post_deployment_socket_peers": [
+      "172.16.38.2"
+    ]
+  },
+  "machine_id": "7843e61a994648",
+  "volume_id": "vol_4m3mklle2q5n32zv",
+  "http_statuses": {
+    "unauthorized /api/runs": 401,
+    "unauthorized /api/investigate": 401,
+    "oversized body": 413,
+    "sanitized validation": 422,
+    "valid access exchange": 200,
+    "authorized over-budget /api/runs": 429,
+    "authorized over-budget /api/investigate": 429,
+    "cross-origin paid request": 403
+  },
+  "after": {
+    "active_count": 0,
+    "run_count": 2,
+    "replay_count": 2,
+    "runs_sha256": "f36c38cdf18e2da36c64aeb0580a69596754fe3bef3936a731c209df7d4edfb1",
+    "replays_sha256": "1198f6a91fe685b4d22185dbdf6b4763f327a1608d70d00591bf9c6dbb30b197",
+    "charged_usd": 0.09067800000000001,
+    "server_credentials_configured": true,
+    "access_token_configured": true
+  },
+  "ledger_and_replays_preserved": true,
+  "tests": {
+    "passed": 206,
+    "container_platforms": [
+      "linux/arm64",
+      "linux/amd64"
+    ]
+  },
+  "verification_completed_at": "2026-10-13T23:15:47.114328+00:00"
+}

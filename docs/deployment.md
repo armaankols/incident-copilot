@@ -6,6 +6,15 @@ one encrypted 1 GB persistent volume, HTTPS, one non-root worker, and idle
 stop/start. The server key is stored as a Fly secret. GitHub pushes run offline
 CI; deployment is a separate explicit action.
 
+The access gate and request security controls were deployed on 2026-10-13 as
+`registry.fly.io/incident-copilot:security-b50ba7df752b`. Production checks verified
+both paid endpoints reject missing access, the signed cookie unlocks access,
+over-budget authenticated requests are denied without model calls, oversized
+bodies and validation-input reflection are blocked, and supplied IP headers do
+not create spoofed visitor quotas. The same machine/volume, two existing runs,
+two replay payloads and $0.090678 of charges were preserved. See
+[security verification](security-verification.json). No paid test was made.
+
 The public API budget is $0.50/day across visitors, separate from standing
 $0.50-per-test development authorization. Haiku's conservative per-run reservation
 is $0.42; Sonnet exceeds the daily cap and is denied before provider calls. This
@@ -49,7 +58,7 @@ locked environment and run offline checks. The locks contain exact version pins,
 without wheel hashes; Linux/ARM64 installation was verified by a local container build; Linux/AMD64 is covered by CI after push. Start with:
 
 ```bash
-.venv/bin/python -m uvicorn app.main:app --workers 1
+.venv/bin/python -m uvicorn app.main:app --workers 1 --no-proxy-headers --limit-concurrency 32
 ```
 
 API credentials must be exported into that process; `.env` is not automatically
@@ -108,6 +117,12 @@ Unsettled reservations survive restarts and count against admission indefinitely
 review provider billing before manually settling any orphaned reservation.
 Never blindly release a hold because its process stopped.
 
+Confirmed insufficient-credit rejections release only unused model reservations;
+previously reported usage stays charged. Ambiguous failures retain the worst-case
+reservation. Cross-midnight runs are conservatively charged to their UTC
+settlement day, and active holds count across days. Existing settled rows and
+saved replays are not rewritten by these fixes.
+
 The web app exposes no remediation execution. Structured actions are only
 recommendations. Accepted recommendation text is generated from conservative
 server policies; model prose is replaced, including on insufficient-evidence
@@ -117,7 +132,10 @@ fault-specific MCP assessment. Individual excerpts can still lack diagnostic
 relevance; these narrow synthetic checks do not establish general causality. Deployment-specific
 recovery plans still require verified versions and service-policy checks.
 IP-based rate limiting trusts `fly-client-ip` only when explicitly enabled on Fly.
-Do not enable this trust setting on a directly reachable local server.
+It also requires a verified socket peer in `TRUSTED_PROXY_CIDRS`; Uvicorn proxy
+header rewriting must remain disabled. Do not enable this trust setting on a
+directly reachable local server. See [request and access controls](security-controls.md)
+for body limits, persistent HTTP quotas, and public error sanitization.
 
 ## Initial preflight — historical record
 
