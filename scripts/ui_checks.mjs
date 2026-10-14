@@ -7,14 +7,16 @@ const root = fileURLToPath(new URL('../', import.meta.url));
 const script = readFileSync(root + 'app/static/demo.js', 'utf8').replace('boot().catch(', 'globalThis.ready = boot().catch(');
 const sample = JSON.parse(readFileSync(root + 'app/static/offline-replay.json', 'utf8'));
 const saved = {...sample, model:'claude-haiku-4-5-20251001', run_id:'saved-1', cost_usd:.012345};
+const sonnetModel='claude-sonnet-4-6';
 const rows = Array.from({length:23}, (_,i) => ({run_id:`saved-${i+1}`, started_at:'2026-10-13T20:00:00+00:00', model:saved.model, fault_type:i === 0 ? '<script>alert(1)</script>' : 'memory_leak', root_cause_service:'orders', outcome:'diagnosed'}));
-async function page({search='', hash='', count=23, configFails=false, live=true, invalidLink=false}={}) {
+async function page({search='', hash='', count=23, configFails=false, historyFails=false, savedFails=false, replayFails=false, sonnetFails=false, live=true, invalidLink=false}={}) {
   const nodes = new Map();
   const node = id => {
-    if (!nodes.has(id)) nodes.set(id, {innerHTML:'',textContent:'',value:'',options:[],hidden:false,disabled:false,focus(){this.focused=true;},replaceChildren(...children){this.options=children;},insertAdjacentHTML(_,html){this.innerHTML+=html;}});
+    if (!nodes.has(id)) nodes.set(id, {innerHTML:'',textContent:'',value:'',options:[],hidden:false,disabled:false,focus(){this.focused=true;},replaceChildren(...children){this.options=children;this.value=children[0]?.value||'';},insertAdjacentHTML(_,html){this.innerHTML+=html;}});
     return nodes.get(id);
   };
   let granted = false;
+  let resultModel=saved.model;
   const requests = [];
   const context = vm.createContext({document:{getElementById:node}, URLSearchParams, Date, setTimeout, Option:class {constructor(label,value){this.label=label;this.value=value;}}, location:{search,hash,pathname:'/'}, history:{replaceState(...args){context.changedURL=args[2];context.location.hash='';}}, fetch:async (url,options) => {
     const method=options?.method || 'GET';
@@ -26,11 +28,18 @@ async function page({search='', hash='', count=23, configFails=false, live=true,
       if(invalidLink) return {ok:false,statusText:'Unauthorized',json:async()=>({detail:'Invalid link'})};
       granted=true;data={agent_access:true};
     } else if(url === '/api/runs' && method==='POST') {
-      assert.equal(granted,true);assert.equal(live,true);data={run_id:'saved-1'};
-    } else if(url === '/api/replay') data=sample;
-    else if(url === '/api/config') {if(configFails) return {ok:false,statusText:'Unavailable',json:async()=>({detail:'Config unavailable'})};data={models:[saved.model],fault_types:['memory_leak'],live_enabled:live,agent_access:granted,spent_today_usd:.25,daily_budget_usd:.5,budget_date:'2026-10-13',budget_timezone:'America/Los_Angeles',budget_resets_at:'2026-10-14T00:00:00-07:00'};}
-    else if(url.startsWith('/api/runs?')) {const offset=Number(new URLSearchParams(url.split('?')[1]).get('offset'));data={runs:rows.slice(offset,Math.min(offset+20,count)),next_offset:offset+20<count ? offset+20 : null};}
-    else if(url === '/api/runs/saved-1') data={status:'completed',result:saved};
+      assert.equal(granted,true);assert.equal(live,true);
+      const body=JSON.parse(options.body);
+      if(body.model===sonnetModel) {
+        assert.equal(body.sonnet_passcode,'owner-fixture-password');
+        assert.equal(node('sonnet-passcode').value,'');
+        if(sonnetFails) return {ok:false,statusText:'Forbidden',json:async()=>({detail:'A valid owner password is required for Sonnet'})};
+      } else {assert.equal(body.model,saved.model);assert.equal('sonnet_passcode' in body,false);}
+      resultModel=body.model;data={run_id:'saved-1'};
+    } else if(url === '/api/replay') {if(replayFails) return {ok:false,statusText:'Unavailable',json:async()=>({detail:'Sample unavailable'})};data=sample;}
+    else if(url === '/api/config') {if(configFails) return {ok:false,statusText:'Unavailable',json:async()=>({detail:'Config unavailable'})};data={models:[saved.model,sonnetModel],fault_types:['memory_leak'],live_enabled:live,agent_access:granted,spent_today_usd:.25,daily_budget_usd:.5,budget_date:'2026-10-13',budget_timezone:'America/Los_Angeles',budget_resets_at:'2026-10-14T00:00:00-07:00'};}
+    else if(url.startsWith('/api/runs?')) {if(historyFails) return {ok:false,statusText:'Unavailable',json:async()=>({detail:'History unavailable'})};const params=new URLSearchParams(url.split('?')[1]),offset=Number(params.get('offset')||0),limit=Number(params.get('limit')||20);data={runs:rows.slice(offset,Math.min(offset+limit,count)),next_offset:offset+limit<count ? offset+limit : null};}
+    else if(url === '/api/runs/saved-1') {if(savedFails) return {ok:false,statusText:'Unavailable',json:async()=>({detail:'Saved run unavailable'})};data={status:'completed',result:{...saved,model:resultModel}};}
     else throw new Error('Unexpected request '+url);
     return {ok:true,json:async()=>data};
   }});
@@ -39,8 +48,12 @@ async function page({search='', hash='', count=23, configFails=false, live=true,
   return {context,node,requests};
 }
 const home=await page();
-assert.match(home.node('out').innerHTML,/Sample investigation · Offline rules · No LLM calls/);
-assert.equal(home.requests[0][0],'/api/replay');
+assert.match(home.node('out').innerHTML,/Latest saved investigation · /);
+assert.match(home.node('out').innerHTML,/Agent said/);
+assert.equal(home.requests[0][0],'/api/runs?limit=1');
+assert.equal(home.requests[1][0],'/api/runs/saved-1');
+assert.equal(home.requests.some(([url])=>url==='/api/replay'),false);
+assert.equal(home.requests.some(([,method])=>method==='POST'),false);
 assert.match(home.node('access-message').textContent,/Oops! You don’t have agent access/);
 assert.match(home.node('access-message').textContent,/portfolio or résumé/);
 assert.equal(home.node('access-message').textContent,'Oops! You don’t have agent access.\nHint: click in from Armaan’s portfolio or résumé.');
@@ -60,8 +73,8 @@ assert.match(home.node('meta').innerHTML,/value="0.5"/);
 assert.match(home.node('meta').innerHTML,/2026-10-13 · Pacific time/);
 assert.match(home.node('meta').innerHTML,/Resets at midnight Pacific/);
 assert.match(home.node('out').innerHTML,/This run’s API cost/);
-assert.match(home.node('out').innerHTML,/\$0.000000/);
-assert.match(home.node('out').innerHTML,/Offline sample · No LLM calls/);
+assert.match(home.node('out').innerHTML,/\$0.012345/);
+assert.equal(home.node('sonnet-access').hidden,true);
 const access=await page({hash:'#access=test-link-token'});
 assert.equal(access.requests[0][0],'/api/access');
 assert.equal(access.context.changedURL,'/');
@@ -76,6 +89,31 @@ assert.equal(access.requests.filter(([url,method])=>url==='/api/runs' && method=
 assert.match(access.node('out').innerHTML,/Agent said/);
 assert.match(access.node('out').innerHTML,/\$0.012345/);
 assert.match(access.node('out').innerHTML,/From reported token usage/);
+const owner=await page({hash:'#access=test-link-token'});
+owner.node('model').value=sonnetModel;
+owner.node('model').onchange();
+assert.equal(owner.node('sonnet-access').hidden,false);
+assert.equal(owner.node('sonnet-passcode').required,true);
+await owner.node('go').onclick();
+assert.equal(owner.node('sonnet-passcode').focused,true);
+assert.equal(owner.requests.some(([url,method])=>url==='/api/runs'&&method==='POST'),false);
+owner.node('sonnet-passcode').value='owner-fixture-password';
+await owner.node('go').onclick();
+assert.match(owner.node('out').innerHTML,/claude-sonnet-4-6/);
+assert.equal(owner.node('sonnet-passcode').value,'');
+assert.equal(owner.node('model').value,sonnetModel);
+owner.node('sonnet-passcode').value='leftover-password';
+owner.node('model').value=saved.model;
+owner.node('model').onchange();
+assert.equal(owner.node('sonnet-access').hidden,true);
+assert.equal(owner.node('sonnet-passcode').value,'');
+const wrongOwner=await page({hash:'#access=test-link-token',sonnetFails:true});
+wrongOwner.node('model').value=sonnetModel;
+wrongOwner.node('model').onchange();
+wrongOwner.node('sonnet-passcode').value='owner-fixture-password';
+await wrongOwner.node('go').onclick();
+assert.match(wrongOwner.node('out').innerHTML,/A valid owner password is required for Sonnet/);
+assert.equal(wrongOwner.node('sonnet-passcode').value,'');
 vm.runInContext('render({model:"test-model", cost_usd:0.01, billing_uncertain:true});',access.context);
 assert.match(access.node('out').innerHTML,/Final charge uncertain/);
 vm.runInContext('render({model:"test-model", error:"Failed", cost_usd:null});',access.context);
@@ -87,20 +125,33 @@ assert.equal(unavailable.requests.some(([url,method])=>url==='/api/runs' && meth
 assert.match(unavailable.node('live-status').textContent,/not configured/);
 const rejected=await page({hash:'#access=test-link-token',invalidLink:true});
 assert.match(rejected.node('access-message').textContent,/Oops!/);
-assert.match(rejected.node('out').innerHTML,/Sample investigation/);
+assert.match(rejected.node('out').innerHTML,/Latest saved investigation/);
 await rejected.node('go').onclick();
 assert.equal(rejected.requests.some(([url,method])=>url==='/api/runs' && method==='POST'),false);
 const deep=await page({search:'?run=saved-1'});
 assert.equal(deep.requests[0][0],'/api/runs/saved-1');
 assert.match(deep.node('out').innerHTML,/Agent said/);
-await deep.node('replay').onclick();
-assert.equal(deep.context.changedURL,'?replay=offline');
+assert.doesNotMatch(deep.node('out').innerHTML,/Latest saved investigation/);
+const explicitSample=await page({search:'?replay=offline'});
+assert.equal(explicitSample.requests[0][0],'/api/replay');
+assert.match(explicitSample.node('out').innerHTML,/Sample investigation · Offline rules · No LLM calls/);
+assert.match(explicitSample.node('out').innerHTML,/\$0.000000/);
+assert.match(explicitSample.node('out').innerHTML,/Offline sample · No LLM calls/);
 const accessDeep=await page({search:'?run=saved-1',hash:'#access=test-link-token'});
 assert.equal(accessDeep.context.changedURL,'/?run=saved-1');
 assert.match(accessDeep.node('out').innerHTML,/Agent said/);
 const empty=await page({count:0});
 assert.equal(empty.node('history-status').textContent,'No saved investigations yet.');
 assert.equal(empty.node('history-more').hidden,true);
+assert.match(empty.node('out').innerHTML,/Sample investigation/);
+const failedHistory=await page({historyFails:true});
+assert.match(failedHistory.node('out').innerHTML,/Sample investigation/);
+assert.match(failedHistory.node('history-status').textContent,/History unavailable/);
+const failedSaved=await page({savedFails:true});
+assert.match(failedSaved.node('out').innerHTML,/Sample investigation/);
+const failedFallback=await page({historyFails:true,replayFails:true});
+assert.match(failedFallback.node('out').innerHTML,/Sample unavailable/);
+assert.equal(failedFallback.node('go').disabled,false);
 const degraded=await page({count:0,configFails:true});
 assert.match(degraded.node('out').innerHTML,/Sample investigation/);
 await degraded.node('go').onclick();
@@ -112,6 +163,6 @@ assert.equal(home.node('go').disabled,true);
 vm.runInContext('busy = false; controls();',home.context);
 assert.equal(home.node('go-label').textContent,'Page the agent');
 assert.equal(home.node('go-sparkles').hidden,false);
-const result={passed:true,checks:['default sample','locked message and no paid POST','fragment removed before exchange','granted message and matching button state','authorized run with mocked transport','missing model configuration','invalid link','saved-run links','pagination 20 + 3','empty history','configuration failure','HTML escaping','budget bar','busy label and sparkle','run cost: offline, live, uncertain and unrecorded'],real_network_requests:0,real_llm_calls:0,browser_visual_review:false};
+const result={passed:true,checks:['latest saved run by default without a paid POST','locked message and no paid POST','fragment removed before exchange','granted message and matching button state','authorized run with mocked transport','missing model configuration','invalid link','saved-run links take priority','pagination 20 + 3','empty-history sample fallback','history-fetch sample fallback','saved-run-fetch sample fallback','fallback failure is visible','explicit offline replay link','configuration failure','HTML escaping','budget bar','busy label and sparkle','run cost: offline, live, uncertain and unrecorded','Sonnet-only password field and empty-password stop','Sonnet password sent only for Sonnet and cleared','wrong Sonnet password feedback'],real_network_requests:0,real_llm_calls:0,browser_visual_review:false};
 console.log(JSON.stringify(result));
 export default result;

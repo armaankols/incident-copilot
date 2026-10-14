@@ -98,10 +98,13 @@ def test_cross_origin_unlock_and_live_requests_rejected(client, origin):
 def test_valid_same_origin_session_still_obeys_budget_and_model_configuration(client, monkeypatch):
     assert client.post("/api/access", json={"token": TOKEN}, headers={"Origin": "https://testserver"}).status_code == 200
     monkeypatch.setattr(main, "DAILY_BUDGET_USD", .1)
+    ledger = main.ledger()
+    ledger.settle(ledger.reserve(.1, .1, "earlier"), .1)
     assert client.post("/api/runs", json={}, headers={"Origin": "https://testserver"}).status_code == 429
     monkeypatch.delenv("ANTHROPIC_API_KEY")
     assert client.post("/api/investigate", json={}).status_code == 503
-    assert_no_reservations()
+    with ledger.connect() as db:
+        assert db.execute("SELECT COUNT(*) FROM runs").fetchone()[0] == 1
 
 
 @pytest.mark.parametrize("token", [None, "short-token"])

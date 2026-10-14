@@ -54,10 +54,15 @@ def test_racing_starts_near_threshold_admit_only_one(tmp_path):
     assert len(admitted) == 1
 
 
-def test_start_threshold_preserves_per_run_bound_and_concurrency(tmp_path):
+@pytest.mark.parametrize("spent", [0, .49])
+def test_start_threshold_allows_larger_model_below_daily_threshold(tmp_path, spent):
     ledger = Ledger(tmp_path / "threshold.sqlite3")
-    with pytest.raises(AdmissionDenied, match="per-investigation budget"):
-        ledger.reserve(1.26, .5, "sonnet", start_threshold=True)
+    seed(ledger, spent)
+    assert ledger.reserve(1.26, .5, "owner-sonnet", start_threshold=True)
+
+
+def test_start_threshold_preserves_concurrency(tmp_path):
+    ledger = Ledger(tmp_path / "threshold.sqlite3")
     ledger.reserve(.42, .5, "first", concurrency=1, start_threshold=True)
     with pytest.raises(AdmissionDenied, match="capacity"):
         ledger.reserve(.42, .5, "second", concurrency=1, start_threshold=True)
@@ -108,7 +113,7 @@ def test_both_paid_endpoints_start_at_49_cents_with_mocked_model_and_stop_afterw
         assert len(calls) == 1
 
 
-def test_sonnet_remains_blocked_before_sdk_creation(monkeypatch, tmp_path):
+def test_sonnet_without_owner_password_is_blocked_before_sdk_creation(monkeypatch, tmp_path):
     monkeypatch.setenv("BUDGET_DB", str(tmp_path / "sonnet.sqlite3"))
     monkeypatch.setenv("ANTHROPIC_API_KEY", "offline-fixture-not-real")
     token = "offline-access-fixture-" + "x" * 32
@@ -119,7 +124,7 @@ def test_sonnet_remains_blocked_before_sdk_creation(monkeypatch, tmp_path):
         assert client.post("/api/access", json={"token": token}).status_code == 200
         for path in ("/api/runs", "/api/investigate"):
             response = client.post(path, json={"model": "claude-sonnet-4-6"})
-            assert response.status_code == 429
-            assert "per-investigation budget" in response.json()["detail"]
+            assert response.status_code == 403
+            assert "owner password" in response.json()["detail"]
     with main.ledger().connect() as db:
         assert db.execute("SELECT COUNT(*) FROM runs").fetchone()[0] == 0

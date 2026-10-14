@@ -1,4 +1,5 @@
 const $ = id => document.getElementById(id);
+const SONNET_MODEL = "claude-sonnet-4-6";
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const recoveryLabels = {recommended:"Recommendation available", unverified:"No verified action", blocked:"Scaling blocked", unavailable:"Unavailable"};
 const stopLabels = {model_submission:"Final result submitted", step_budget:"Model call limit reached", stagnation:"Repeated results", correction_limit:"Repeated invalid submissions", output_limit:"Repeated output truncation", tool_limit:"Query limit reached", timeout:"Timed out", error:"Investigation failed"};
@@ -16,9 +17,9 @@ async function fetchJSON(url, options) {
 }
 function controls() {
   $("go").disabled = busy;
-  $("replay").disabled = busy;
   $("fault").disabled = busy;
   $("model").disabled = busy;
+  $("sonnet-passcode").disabled = busy;
   $("go-label").textContent = busy ? "Investigating…" : "Page the agent";
   $("go-sparkles").hidden = busy;
 }
@@ -27,6 +28,12 @@ function showAccess() {
   $("access-message").textContent = agentAccess
     ? "Thanks for checking out Armaan’s profile. You have agent access!"
     : "Oops! You don’t have agent access.\nHint: click in from Armaan’s portfolio or résumé.";
+}
+function showModelAccess() {
+  const sonnet = $("model").value === SONNET_MODEL;
+  $("sonnet-access").hidden = !sonnet;
+  $("sonnet-passcode").required = sonnet;
+  if (!sonnet) $("sonnet-passcode").value = "";
 }
 function options(id, values, random = false) {
   const select = $(id), previous = select.value;
@@ -37,6 +44,7 @@ async function init() {
   const config = await fetchJSON("/api/config");
   options("fault", config.fault_types, true);
   options("model", config.models);
+  showModelAccess();
   liveEnabled = config.live_enabled;
   agentAccess = config.agent_access === true;
   showAccess();
@@ -63,7 +71,7 @@ function traceHTML(trace = []) {
     return "";
   }).join("");
 }
-function render(result) {
+function render(result, latest = null) {
   const diagnosis = result.diagnosis || {}, grade = result.grade || {}, truth = result.ground_truth || {};
   const mark = ok => ok ? '<span class="ok">match</span>' : '<span class="bad">miss</span>';
   const offline = result.model?.startsWith("offline");
@@ -71,7 +79,8 @@ function render(result) {
   const costNote = offline ? "Offline sample · No LLM calls"
     : !costRecorded ? "Usage cost was not recorded."
     : result.billing_uncertain ? "Reported usage · Final charge uncertain" : "From reported token usage";
-  $("out").innerHTML = `${offline ? '<p class="sample">Sample investigation · Offline rules · No LLM calls</p>' : ""}
+  $("out").innerHTML = `${latest ? `<p class="sample latest-investigation">Latest saved investigation · ${esc(new Date(latest.started_at).toLocaleString())}</p>` : ""}
+    ${offline ? '<p class="sample">Sample investigation · Offline rules · No LLM calls</p>' : ""}
     ${result.error ? `<p class="err">${esc(result.error)}. Partial investigation preserved below.</p>` : ""}
     <div class="alert">${esc(result.alert)}</div>
     <div class="verdict"><div><h3>${offline ? "Offline rules said" : "Agent said"}</h3>
@@ -110,6 +119,19 @@ async function poll(rid) {
   }
   throw new Error("Polling timed out. Reload this saved run link to check again; the server may still be finishing.");
 }
+async function showLatest() {
+  try {
+    const history = await fetchJSON("/api/runs?limit=1");
+    const latest = history.runs[0];
+    if (latest) {
+      const saved = await fetchJSON(`/api/runs/${encodeURIComponent(latest.run_id)}`);
+      if (saved.status === "completed") { render(saved.result, latest); return; }
+    }
+  } catch {
+    // The bundled sample keeps the first visit useful if saved runs cannot load.
+  }
+  render(await fetchJSON("/api/replay"));
+}
 async function runUI(action) {
   busy = true; controls();
   try { await action(); }
@@ -143,21 +165,27 @@ async function loadHistory(append = false) {
   }
 }
 $("history-more").onclick = () => loadHistory(true);
+$("model").onchange = showModelAccess;
 $("go").onclick = () => {
   if (!agentAccess) { showAccess(); $("access-message").focus?.(); return; }
+  const model = $("model").value;
+  const passcode = model === SONNET_MODEL ? $("sonnet-passcode").value : null;
+  if (model === SONNET_MODEL && !passcode) {
+    $("sonnet-passcode").reportValidity?.();
+    $("sonnet-passcode").focus?.();
+    return;
+  }
   if (!liveEnabled) { $("live-status").textContent = "Live investigations are not configured."; return; }
   return runUI(async () => {
+  $("sonnet-passcode").value = "";
   $("out").innerHTML = '<p class="lede">Starting the investigation…</p>';
   const {run_id} = await fetchJSON("/api/runs", {method:"POST", headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({fault_type:$("fault").value || null, model:$("model").value})});
+    body:JSON.stringify({fault_type:$("fault").value || null, model,
+      ...(model === SONNET_MODEL ? {sonnet_passcode:passcode} : {})})});
   history.replaceState(null, "", `?run=${encodeURIComponent(run_id)}`);
   await poll(run_id);
   });
 };
-$("replay").onclick = () => runUI(async () => {
-  render(await fetchJSON("/api/replay"));
-  history.replaceState(null, "", "?replay=offline");
-});
 async function boot() {
   showAccess();
   const fragment = new URLSearchParams(location.hash.slice(1));
@@ -173,6 +201,7 @@ async function boot() {
   }
   const query = new URLSearchParams(location.search);
   if (query.get("run")) await runUI(() => poll(query.get("run")));
-  else await runUI(async () => render(await fetchJSON("/api/replay")));
+  else if (query.get("replay") === "offline") await runUI(async () => render(await fetchJSON("/api/replay")));
+  else await runUI(showLatest);
 }
 boot().catch(error => { liveEnabled = false; controls(); $("meta").textContent = error.message; });

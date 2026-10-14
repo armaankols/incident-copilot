@@ -53,7 +53,8 @@ requested, but cache savings have not been measured.
   Success, failure and cancellation settle reservations; uncertain
   billing retains the full reservation. This is an application guardrail, not a
   provider billing hard cap. Deployment requires one machine and one worker.
-- The UI opens with a labeled offline sample and polls live investigation progress.
+- The UI opens with the latest saved investigation and its timestamp, with an
+  offline sample fallback, and polls live investigation progress.
   Past investigations lists saved hosted runs newest first, with pagination and
   links to each result. Viewing samples or history makes no LLM calls. Saved run
   links open their specific result. The sample uses the tailored rule baseline.
@@ -63,6 +64,8 @@ requested, but cache savings have not been measured.
   from the address bar. The access gate and navy/cream UI are deployed. Request
   bodies and rates are bounded, and both paid routes authenticate before parsing
   JSON. See [demo access](docs/demo-access.md) and [security controls](docs/security-controls.md).
+- Sonnet additionally requires a private owner password, checked on both paid
+  endpoints before model calls. Haiku uses the shared portfolio access link.
 - Evaluations checkpoint each record and use unique experiment names, source
   hashes, dataset/prompt versions, case IDs, errors and observed usage.
 

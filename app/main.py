@@ -13,9 +13,9 @@ from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, SecretStr
 
-from app.access import COOKIE, SESSION_SECONDS, check_origin, has_access, make_session, require_access, valid_link_token
+from app.access import COOKIE, SESSION_SECONDS, check_origin, has_access, make_session, require_access, valid_link_token, valid_sonnet_passcode
 from app.security import RequestGuard, visitor_id
 
 from copilot.budget import AdmissionDenied, Ledger
@@ -26,7 +26,8 @@ from copilot.runner import run_scenario
 from copilot.sim import FAULT_TYPES, generate
 
 STATIC = Path(__file__).parent / "static"
-ALLOWED_MODELS = [DEFAULT_MODEL, "claude-sonnet-4-6"]
+SONNET_MODEL = "claude-sonnet-4-6"
+ALLOWED_MODELS = [DEFAULT_MODEL, SONNET_MODEL]
 DAILY_BUDGET_USD = float(os.getenv("DAILY_BUDGET_USD", "2.0"))
 RATE_LIMIT_PER_HOUR = int(os.getenv("RATE_LIMIT_PER_HOUR", "8"))
 MAX_STEPS = 12
@@ -77,6 +78,7 @@ def make_llm(model):
 class InvestigateRequest(BaseModel):
     fault_type: str | None = Field(None, max_length=64)
     model: str = Field(DEFAULT_MODEL, max_length=64)
+    sonnet_passcode: SecretStr | None = Field(None, max_length=256, repr=False)
 
 
 class AccessRequest(BaseModel):
@@ -122,9 +124,18 @@ def admit(req, request):
         raise HTTPException(400, f"model must be one of {ALLOWED_MODELS}")
     if req.fault_type and req.fault_type not in FAULT_TYPES:
         raise HTTPException(400, f"fault_type must be one of {FAULT_TYPES}")
+    visitor = visitor_id(request)
+    passcode = req.sonnet_passcode.get_secret_value() if req.sonnet_passcode else ""
+    req.sonnet_passcode = None  # Never carry a password into execution or replays.
+    if req.model == SONNET_MODEL:
+        retry_after = ledger().allow_request([("sonnet-password:" + visitor, 20)])
+        if retry_after:
+            raise HTTPException(429, "Too many Sonnet password attempts. Try again shortly.",
+                                headers={"Retry-After": str(retry_after)})
+        if not valid_sonnet_passcode(passcode):
+            raise HTTPException(403, "A valid owner password is required for Sonnet")
     if not os.getenv("ANTHROPIC_API_KEY"):
         raise HTTPException(503, "Live investigations require server API credentials; saved replays are available.")
-    visitor = visitor_id(request)
     # Worst-case 5-minute cache writes on every input token, plus capped output.
     maximum = cost_usd(req.model, {"cache_write_tokens": MAX_INPUT_TOKENS * MAX_STEPS,
                                   "output_tokens": MAX_OUTPUT_TOKENS * MAX_STEPS})

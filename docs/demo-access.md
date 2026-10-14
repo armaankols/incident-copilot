@@ -33,6 +33,17 @@ before admission or SDK creation. Expired, modified and revoked sessions return
 401, and cross-origin browser requests return 403. Public reads remain available.
 API responses use `Cache-Control: no-store` so access status is not cached.
 
+Sonnet has one additional password field when selected. Set your chosen private
+password in the server's `SONNET_PASSCODE` environment variable (a separate Fly
+secret for production). It is submitted with each Sonnet investigation and
+checked on both paid endpoints before any reservation or model client creation.
+It is not an extra cookie or unlock flow. Missing/wrong passwords return 403;
+Haiku needs no extra password. The browser clears the field on submission or
+when switching to Haiku. The password is excluded from URLs, saved investigations,
+model inputs and public configuration. Twenty attempts per visitor per minute
+are allowed across both paid endpoints. Both models use the same daily start
+threshold; an owner Sonnet run may finish above $0.50.
+
 Configure a randomly generated `DEMO_ACCESS_TOKEN` of at least 32 characters in
 the server environment (a Fly secret for deployment). A missing/short token closes
 the gate. Changing the token revokes existing sessions and links. The owner has

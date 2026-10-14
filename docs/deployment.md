@@ -48,11 +48,22 @@ $0.50-per-test development authorization. The day resets at midnight Pacific
 Pacific accounting date and reset boundary. Haiku's
 conservative per-run reservation is $0.42. Admission checks existing charges plus
 active holds against $0.50, without requiring the new $0.42 hold to fit the
-remaining balance. Existing holds can temporarily block another start. Each run's
-maximum must still fit the nominal daily limit, so Sonnet remains denied before
-provider calls. At or above $0.50, no further investigation starts that day.
+remaining balance. Existing holds can temporarily block another start. Sonnet
+uses the same start policy and requires a separate owner password; its full-run
+maximum can exceed the daily start threshold. At or above $0.50, no further
+investigation starts that day.
 The application ledger uses reported usage, not reconciled provider invoices.
 Saved replays remain available.
+
+Set the private `SONNET_PASSCODE` server environment variable to enable owner
+Sonnet requests. The local source password box sends it in the POST body; both
+paid routes require it as well as the normal agent-access session. Keep this
+password out of Git, the README access link and frontend code. The ignored
+`.bootstrap/sonnet-passcode.txt` file is available for the owner to choose a value
+before configuring it as a Fly secret. A missing password keeps Sonnet closed.
+With current token/call bounds, full-run reservations remain $0.42 for Haiku and
+$1.26 for Sonnet. Standing development-test authorization remains $0.50 per test;
+this owner-access change does not authorize a paid full-bound Sonnet test.
 
 The user approved a monitored $10/month Fly hosting target after clarification
 that it is not a hard cap. Check actual month-to-date billing manually; near $8,

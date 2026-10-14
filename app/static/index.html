@@ -17,14 +17,12 @@
   h1{font:700 40px/1.05 var(--serif);margin:0 0 10px;letter-spacing:-.01em}
   .lede{color:var(--muted);margin:0 0 28px;max-width:34ch}
   label{display:block;font-weight:600;font-size:14px;margin:16px 0 6px}
-  select,button{font:inherit;width:100%;padding:10px 12px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:4px}
+  select,button,input[type="password"]{font:inherit;width:100%;padding:10px 12px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:4px}
   button{background:var(--ink);color:var(--bg);border-color:var(--ink);font-weight:600;cursor:pointer;margin-top:22px}
-  #go{display:flex;align-items:center;justify-content:center;gap:10px;min-height:50px}
+  #go{display:flex;align-items:center;justify-content:center;gap:5px;min-height:50px}
   #go:hover:not(:disabled){background:#FFF6E5;border-color:#FFF6E5}
   #go:disabled{cursor:not-allowed}
   .sparkles{font:400 28px/1 Georgia,serif}
-  button.sample-button{display:block;width:fit-content;padding:8px 14px;margin-top:12px;background:var(--panel);color:var(--ink);border:1px solid var(--steel);font-size:14px;font-weight:500}
-  button.sample-button:hover:not(:disabled){background:#21394E}
   button:disabled{opacity:.55;cursor:wait} :focus-visible{outline:3px solid var(--steel);outline-offset:2px}
   .meta{font-size:13px;color:var(--muted);margin-top:14px}
   .budget-card{padding:14px 16px;background:var(--panel);border:1px solid var(--line);border-radius:6px}
@@ -57,6 +55,7 @@
   .stats{font:13px var(--mono);color:var(--muted);margin-top:12px}
   .err{color:var(--alert);margin-top:16px;font-weight:600}
   .sample{font-size:13px;color:var(--steel);margin:0 0 14px}
+  .latest-investigation{font:700 16px/1.4 var(--serif)}
   .history{margin-top:32px;border-top:1px solid var(--line);padding-top:20px}
   .history h2{font:700 24px var(--serif);margin:0 0 8px}
   .history ul{list-style:none;margin:0;padding:0}
@@ -71,13 +70,16 @@
 <main>
   <section aria-labelledby="t">
     <h1 id="t">Incident Copilot</h1>
-    <p class="lede">Investigate synthetic telemetry through MCP tools. Compare the diagnosis with the injected fault, or inspect a saved offline rule-baseline replay.</p>
+    <p class="lede">Investigate synthetic telemetry through MCP tools. Browse saved investigations or page the agent to start a new one.</p>
     <label for="fault">Injected fault</label>
     <select id="fault"><option value="">Random</option></select>
     <label for="model">Model</label>
     <select id="model"></select>
+    <div id="sonnet-access" hidden>
+      <label for="sonnet-passcode">Sonnet password</label>
+      <input id="sonnet-passcode" type="password" maxlength="256" autocomplete="current-password">
+    </div>
     <button id="go" disabled><span id="go-label">Page the agent</span><span id="go-sparkles" class="sparkles" aria-hidden="true">✧</span></button>
-    <button id="replay" class="sample-button">View offline sample</button>
     <p id="access-message" class="access-message" role="status" tabindex="-1"></p>
     <div class="meta" id="meta"></div>
     <section class="history" aria-labelledby="history-title">
@@ -89,7 +91,7 @@
     </section>
   </section>
   <section aria-live="polite">
-    <div id="out"><p class="lede">Loading sample investigation…</p></div>
+    <div id="out"><p class="lede">Loading latest investigation…</p></div>
   </section>
 </main>
 <script src="/static/demo.js" defer onerror="document.getElementById('out').textContent='Unable to load the application. Please reload the page.'; document.getElementById('history-status').textContent='Saved investigations could not load.';"></script>

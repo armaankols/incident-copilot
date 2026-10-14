@@ -97,7 +97,7 @@ class Ledger:
 
         Strict admission requires the entire new hold to fit. Start-threshold
         admission checks existing charges/holds first, allowing one final run
-        to cross the threshold. Each run must still fit the nominal daily limit.
+        to cross the threshold. Per-run token/call limits bound its maximum cost.
         """
         if not math.isfinite(amount) or amount <= 0 or not math.isfinite(daily_cap) or daily_cap < 0:
             raise ValueError("Invalid budget")
@@ -107,8 +107,6 @@ class Ledger:
             spent = db.execute("SELECT COALESCE(SUM(charged),0) FROM runs WHERE day=?", (day,)).fetchone()[0]
             holds = db.execute("SELECT COALESCE(SUM(reserved),0), COALESCE(SUM(active),0) FROM runs WHERE active=1").fetchone()
             if start_threshold:
-                if amount > daily_cap + 1e-12:
-                    raise AdmissionDenied("This model exceeds the per-investigation budget")
                 if spent >= daily_cap:
                     raise AdmissionDenied("Daily API start limit reached; new investigations resume at midnight Pacific")
                 if spent + holds[0] >= daily_cap:

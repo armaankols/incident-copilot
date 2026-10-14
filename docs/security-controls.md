@@ -58,9 +58,20 @@ The hosted $0.50 value is a start threshold, not a strict final-spend ceiling.
 Admission atomically checks existing charges plus all active holds against the
 threshold, without adding the proposed new hold to that comparison. A run can
 start at $0.49 and finish above $0.50; no further runs start at or above $0.50.
-The proposed run's maximum must still fit the nominal daily limit, keeping Sonnet
-blocked at its existing bound. Concurrency and visitor quotas remain enforced.
+Both allowed models use this policy, even when the proposed run's maximum is
+larger than the remaining balance or the start threshold. Token/call limits still
+bound each run. Concurrency and visitor quotas remain enforced.
 An active hold can block another start until its reported usage is settled.
+
+Sonnet additionally requires the owner's `SONNET_PASSCODE` in the request body on
+both paid routes. Missing/unconfigured/wrong passwords return 403 before model
+client creation or reservation. The public portfolio access token cannot double
+as the private Sonnet password. Attempts share a persistent quota of 20 per
+visitor per minute across the two routes. Comparisons use constant-time hashes.
+The password is a redacted, bounded request field, cleared before execution and
+excluded from model inputs, progress, saved results and public configuration.
+The frontend shows a password input only for Sonnet, clears it when submitting
+or switching to Haiku, and never puts it in URLs or browser storage.
 
 Active model reservations count across all Pacific days. A run spanning midnight is
 conservatively charged in full to its settlement day, including any earlier-day
@@ -77,4 +88,6 @@ is deliberately published in the README. It is kept out of runtime source and th
 app image. The provider API key remains server-side and unpublished. Both paid
 endpoints still apply the durable investigation budget, hourly
 run quota, and concurrency limits after access validation. Production verification
-can use the over-budget Sonnet selection to check admission without model calls.
+can probe a missing/wrong Sonnet password for a 403 without model calls. A valid
+owner Sonnet request below the start threshold can now start paid work; use an
+isolated ledger fixture when testing budget-denial behavior.

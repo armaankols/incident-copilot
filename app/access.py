@@ -70,3 +70,15 @@ def valid_link_token(token):
     key = access_key()
     return key is not None and len(token) <= 256 and hmac.compare_digest(
         hashlib.sha256(token.encode()).digest(), key)
+
+
+def valid_sonnet_passcode(passcode):
+    expected = os.getenv("SONNET_PASSCODE", "")
+    if not expected or len(expected) > 256:
+        return False
+    key = hashlib.sha256(expected.encode()).digest()
+    public_key = access_key()
+    # The portfolio link is public; it cannot also be the owner's password.
+    if public_key is not None and hmac.compare_digest(key, public_key):
+        return False
+    return hmac.compare_digest(hashlib.sha256(passcode.encode()).digest(), key)
