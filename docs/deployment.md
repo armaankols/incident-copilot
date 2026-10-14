@@ -33,14 +33,18 @@ access link and machine/volume were preserved. All 229 offline tests, frontend
 checks, runtime CI and exact AMD64 container checks passed. No provider calls or
 new model reservations were made. See [Pacific-budget verification](pacific-budget-verification.json).
 
-The public API budget is $0.50/day across visitors, separate from standing
+The user approved $0.50 as a daily **start threshold** across visitors: a final
+run started below $0.50 may finish above it. This is separate from standing
 $0.50-per-test development authorization. The day resets at midnight Pacific
 (`America/Los_Angeles`), including daylight saving transitions. The UI labels the
-Pacific accounting date and reset boundary. Haiku's conservative per-run reservation
-is $0.42; Sonnet exceeds the daily cap and is denied before provider calls. This
-can reject new investigations before actual spend reaches $0.50, because each
-run must fit its worst-case reservation. The application ledger uses reported
-usage, not reconciled provider invoices. Saved replays remain available.
+Pacific accounting date, reset boundary and possible final-run overshoot. Haiku's
+conservative per-run reservation is $0.42. Admission checks existing charges plus
+active holds against $0.50, without requiring the new $0.42 hold to fit the
+remaining balance. Existing holds can temporarily block another start. Each run's
+maximum must still fit the nominal daily limit, so Sonnet remains denied before
+provider calls. At or above $0.50, no further investigation starts that day.
+The application ledger uses reported usage, not reconciled provider invoices.
+Saved replays remain available.
 
 The user approved a monitored $10/month Fly hosting target after clarification
 that it is not a hard cap. Check actual month-to-date billing manually; near $8,
@@ -222,7 +226,7 @@ The user-selected name `incident-copilot` is deployed at
 retired after snapshot restoration, identical ledger/replay fingerprints, matching
 API-key digests and six HTTPS checks. One run, one replay and $0.060967 of charges
 were preserved; no new LLM calls were made. Current machine is `7843e61a994648`,
-current encrypted 1 GB volume is `vol_4m3mklle2q5n32zv`. The daily API cap remains
+current encrypted 1 GB volume is `vol_4m3mklle2q5n32zv`. The daily API start threshold is
 $0.50. See [migration verification](name-migration.md). Historical initial
 deployment records below keep their original names and resource identifiers.
 

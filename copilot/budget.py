@@ -92,7 +92,13 @@ class Ledger:
                 db.execute("INSERT INTO request_limits VALUES (?,?,1) ON CONFLICT(bucket,window) DO UPDATE SET hits=hits+1", (bucket, window))
         return 0
 
-    def reserve(self, amount, daily_cap, visitor, hourly_limit=8, concurrency=2):
+    def reserve(self, amount, daily_cap, visitor, hourly_limit=8, concurrency=2, *, start_threshold=False):
+        """Reserve a bounded run atomically.
+
+        Strict admission requires the entire new hold to fit. Start-threshold
+        admission checks existing charges/holds first, allowing one final run
+        to cross the threshold. Each run must still fit the nominal daily limit.
+        """
         if not math.isfinite(amount) or amount <= 0 or not math.isfinite(daily_cap) or daily_cap < 0:
             raise ValueError("Invalid budget")
         with self.connect() as db:
@@ -100,7 +106,14 @@ class Ledger:
             day = self.day()
             spent = db.execute("SELECT COALESCE(SUM(charged),0) FROM runs WHERE day=?", (day,)).fetchone()[0]
             holds = db.execute("SELECT COALESCE(SUM(reserved),0), COALESCE(SUM(active),0) FROM runs WHERE active=1").fetchone()
-            if spent + holds[0] + amount > daily_cap + 1e-12:
+            if start_threshold:
+                if amount > daily_cap + 1e-12:
+                    raise AdmissionDenied("This model exceeds the per-investigation budget")
+                if spent >= daily_cap:
+                    raise AdmissionDenied("Daily API start limit reached; new investigations resume at midnight Pacific")
+                if spent + holds[0] >= daily_cap:
+                    raise AdmissionDenied("Daily allowance is reserved by an active or unfinished investigation")
+            elif spent + holds[0] + amount > daily_cap + 1e-12:
                 raise AdmissionDenied("Daily budget has insufficient unreserved funds")
             if holds[1] >= concurrency:
                 raise AdmissionDenied("Investigation capacity reached")

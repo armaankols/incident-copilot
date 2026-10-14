@@ -113,7 +113,7 @@ def health():
 def config(request: Request):
     return {"models": ALLOWED_MODELS, "fault_types": FAULT_TYPES, "daily_budget_usd": DAILY_BUDGET_USD,
             **ledger().budget_status(), "live_enabled": bool(os.getenv("ANTHROPIC_API_KEY")),
-            "agent_access": has_access(request)}
+            "agent_access": has_access(request), "budget_policy": "start_threshold"}
 
 
 def admit(req, request):
@@ -129,7 +129,7 @@ def admit(req, request):
     maximum = cost_usd(req.model, {"cache_write_tokens": MAX_INPUT_TOKENS * MAX_STEPS,
                                   "output_tokens": MAX_OUTPUT_TOKENS * MAX_STEPS})
     try:
-        return ledger().reserve(maximum, DAILY_BUDGET_USD, visitor, RATE_LIMIT_PER_HOUR)
+        return ledger().reserve(maximum, DAILY_BUDGET_USD, visitor, RATE_LIMIT_PER_HOUR, start_threshold=True)
     except AdmissionDenied as e:
         raise HTTPException(429, str(e)) from e
 

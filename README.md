@@ -12,7 +12,8 @@ and [prior seven edge cases](docs/live-v8-edge-cases.md). The subsequent
 [name migration](docs/name-migration.md) preserved the ledger and saved replay
 without another LLM call; the old app was retired. These small synthetic runs
 do not establish reliability or recovery effectiveness. Public API usage has a
-$0.50/day application budget. Hosting has a monitored $10/month target, not a hard
+$0.50 daily start threshold: a final investigation may finish above it. The API
+threshold resets at midnight Pacific. Hosting has a monitored $10/month target, not a hard
 billing cap. No automatic hosting cutoff is installed.
 
 The existing simulator models six fault types across seven services. This is not
@@ -45,7 +46,9 @@ requested, but cache savings have not been measured.
 - Budget exhaustion returns `insufficient_evidence` without a forced model guess.
   Model calls, graph steps, tool calls, usage and partial failure traces are distinct.
 - Web admission uses atomic SQLite reservations, durable rate limits and bounded
-  concurrency. Success, failure and cancellation settle reservations; uncertain
+  concurrency. Starts check existing spend and active holds against the daily
+  threshold; the new run's full reservation need not fit the remaining balance.
+  Success, failure and cancellation settle reservations; uncertain
   billing retains the full reservation. This is an application guardrail, not a
   provider billing hard cap. Deployment requires one machine and one worker.
 - The UI opens with a labeled offline sample and polls live investigation progress.

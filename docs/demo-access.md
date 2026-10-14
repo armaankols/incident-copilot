@@ -24,7 +24,7 @@ session expires. Use a private window to preview the no-access message.
 Both modes use the same button and styling. Visitors see one of:
 
 - “Thanks for checking out Armaan’s profile. You have agent access!”
-- “Oops! You don’t have agent access. Hint: check Armaan’s portfolio or résumé.”
+- “Oops! You don’t have agent access. Hint: click in from Armaan’s portfolio or résumé.”
 
 Without access, clicking the button focuses the notice and makes no live-run
 request. Authorized visitors also need a configured server model and available
@@ -43,7 +43,10 @@ Anyone possessing a valid access link can unlock the demo. Publishing one on a
 public README makes it publicly copyable; this gate does not verify a visitor’s
 referring site or identity. Keep the existing daily budget, per-visitor rate limits
 and concurrency controls. Unlock requests make no model calls. The standing
-public API cap remains $0.50/day; the local 50% budget fixture is not provider spend.
+public API start threshold is $0.50/day, resetting at midnight Pacific. A final
+run may finish above that amount; new starts stop once the threshold is reached.
+Active holds still count for concurrent admission. The local 50% budget fixture
+is not provider spend.
 
 The production portfolio/resume link is stored locally in the ignored,
 owner-readable `.bootstrap/demo-access-link.txt`; it is not included in the image

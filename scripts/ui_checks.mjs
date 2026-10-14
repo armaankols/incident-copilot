@@ -59,6 +59,7 @@ assert.match(home.node('meta').innerHTML,/Daily API budget/);
 assert.match(home.node('meta').innerHTML,/value="0.5"/);
 assert.match(home.node('meta').innerHTML,/2026-10-13 · Pacific time/);
 assert.match(home.node('meta').innerHTML,/Resets at midnight Pacific/);
+assert.match(home.node('meta').innerHTML,/New runs pause at \$0\.50; a final run may exceed it\./);
 assert.match(home.node('out').innerHTML,/This run’s API cost/);
 assert.match(home.node('out').innerHTML,/\$0.000000/);
 assert.match(home.node('out').innerHTML,/Offline sample · No LLM calls/);

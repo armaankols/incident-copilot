@@ -54,6 +54,14 @@ The daily budget resets at midnight in `America/Los_Angeles`, following Pacific
 daylight saving time. The config response reports the accounting date, timezone,
 next reset timestamp and spend from the same date snapshot.
 
+The hosted $0.50 value is a start threshold, not a strict final-spend ceiling.
+Admission atomically checks existing charges plus all active holds against the
+threshold, without adding the proposed new hold to that comparison. A run can
+start at $0.49 and finish above $0.50; no further runs start at or above $0.50.
+The proposed run's maximum must still fit the nominal daily limit, keeping Sonnet
+blocked at its existing bound. Concurrency and visitor quotas remain enforced.
+An active hold can block another start until its reported usage is settled.
+
 Active model reservations count across all Pacific days. A run spanning midnight is
 conservatively charged in full to its settlement day, including any earlier-day
 usage, so it cannot vanish from that day's admission total. Repeated settlement
