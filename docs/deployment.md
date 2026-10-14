@@ -15,6 +15,15 @@ not create spoofed visitor quotas. The same machine/volume, two existing runs,
 two replay payloads and $0.090678 of charges were preserved. See
 [security verification](security-verification.json). No paid test was made.
 
+The audit follow-up is deployed from committed runtime `07abd54` as
+`registry.fly.io/incident-copilot:07abd54`. It disables unsafe slash redirects,
+redacts MCP/legacy trace errors, separates health-probe quotas, and fixes explicit
+low-credit and cross-midnight accounting. All 219 offline tests, frontend checks,
+runtime CI and the exact AMD64 container checks passed. Live checks preserved
+the original access link, both credentials, machine/volume, ledger rows and replay
+payloads. No provider calls or new model reservations were made. See
+[follow-up verification](security-fixes-verification.json).
+
 The public API budget is $0.50/day across visitors, separate from standing
 $0.50-per-test development authorization. Haiku's conservative per-run reservation
 is $0.42; Sonnet exceeds the daily cap and is denied before provider calls. This

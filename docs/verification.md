@@ -261,3 +261,25 @@ exchange, and 503 with an authorized session but no model credentials. The local
 synthetic $1/$2 budget fixture remains at 50% and was unchanged by those probes.
 No provider calls were made. Deployment remains on hold for visual review, and
 the production token has not been configured. See [demo-access.md](demo-access.md).
+
+2026-10-13 security deployment and follow-up (UTC verification completed on
+2026-10-14): another session deployed the security audit changes, with a fresh
+production access token, before this review. Those previously uncommitted changes
+and the follow-up fixes are now committed/pushed in runtime `07abd54`. The unsafe
+HTTPS-to-HTTP trailing-slash redirect now returns 404 without Location. MCP error
+results and historical/running trace errors are redacted without mutating stored
+payloads. Health checks have independent per-visitor quotas. Confirmed low-credit
+rejections release unused reservation amounts and show a temporary-unavailability
+message; earlier successful usage remains charged. Unknown failures retain full
+reservations. Runs spanning midnight are conservatively charged to their UTC
+settlement day, with active holds counted across days and idempotent settlement.
+
+All 219 offline tests passed in 4.24 seconds, frontend checks passed, and
+[runtime CI](https://github.com/armaankols/incident-copilot/actions/runs/38507747701)
+passed. The exact AMD64 image passed container/non-root/restart persistence and
+no-redirect checks. Live verification confirmed 404/no Location on slash variants,
+401 without access and 429 for authorized over-budget probes. The old access link
+still unlocks access; both credential digests and all runtime source hashes were
+verified. The original machine/volume, two runs/replays, their logical hashes and
+$0.090678 recorded charges were unchanged. No new model reservations or provider
+calls were made. See [measured record](security-fixes-verification.json).
