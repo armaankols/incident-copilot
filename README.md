@@ -2,10 +2,9 @@
 
 A Python/FastAPI demo that investigates **synthetic incident telemetry** using
 Claude tool calls, a LangGraph investigation loop, and an in-memory MCP session.
-It compares diagnoses with injected ground truth. The demo is deployed at
-[incident-copilot.fly.dev](https://incident-copilot.fly.dev/).
+It compares diagnoses with injected ground truth. The demo is deployed here:
 
-[Open live demo with agent access](https://incident-copilot.fly.dev/#access=475qN7AHUNlRQItTZJFRFVjjpmybe4-vFtpIzUzgix4xHBRtj2_xHDFHYbE_R3Ug).
+[incident-copilot.fly.dev - Open live demo with agent access](https://incident-copilot.fly.dev/#access=475qN7AHUNlRQItTZJFRFVjjpmybe4-vFtpIzUzgix4xHBRtj2_xHDFHYbE_R3Ug).
 
 Thirty authorized Haiku smoke investigations have completed across prompt versions.
 The hosted memory-leak smoke correctly diagnosed orders, returned the OOMKilled
