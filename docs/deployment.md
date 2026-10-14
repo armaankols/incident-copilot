@@ -45,7 +45,7 @@ The user approved $0.50 as a daily **start threshold** across visitors: a final
 run started below $0.50 may finish above it. This is separate from standing
 $0.50-per-test development authorization. The day resets at midnight Pacific
 (`America/Los_Angeles`), including daylight saving transitions. The UI labels the
-Pacific accounting date, reset boundary and possible final-run overshoot. Haiku's
+Pacific accounting date and reset boundary. Haiku's
 conservative per-run reservation is $0.42. Admission checks existing charges plus
 active holds against $0.50, without requiring the new $0.42 hold to fit the
 remaining balance. Existing holds can temporarily block another start. Each run's
