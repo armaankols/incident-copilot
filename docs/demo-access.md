@@ -35,8 +35,9 @@ API responses use `Cache-Control: no-store` so access status is not cached.
 
 Configure a randomly generated `DEMO_ACCESS_TOKEN` of at least 32 characters in
 the server environment (a Fly secret for deployment). A missing/short token closes
-the gate. Changing the token revokes existing sessions and links. The token must
-not be committed to source code or embedded in shipped frontend files. A preview
+the gate. Changing the token revokes existing sessions and links. The owner has
+approved publishing the production access link in the README for portfolio
+visitors. Keep it out of runtime source and shipped frontend files. A preview
 fixture token is local-only and must not be reused for deployment.
 
 Anyone possessing a valid access link can unlock the demo. Publishing one on a
@@ -49,7 +50,8 @@ Active holds still count for concurrent admission. The local 50% budget fixture
 is not provider spend.
 
 The production portfolio/resume link is stored locally in the ignored,
-owner-readable `.bootstrap/demo-access-link.txt`; it is not included in the image
-or this documentation. Use that link rather than the preview fixture link.
+owner-readable `.bootstrap/demo-access-link.txt` and deliberately published under
+“Open live demo with agent access” in the README. It is not included in the app
+image. Use that link rather than the preview fixture link.
 Routine deployments preserve the production token; rotate it deliberately when
 revoking existing links and sessions. Repeat access and budget checks after updates.

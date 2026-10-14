@@ -72,7 +72,9 @@ review. Original UTC days remain in `legacy_utc_days`; charges, reservations and
 raw replay payloads are preserved. A durable timezone marker prevents remigration.
 
 The access-link design remains a shared possession-based gate, not user accounts.
-The token is configured as a Fly secret and must not be committed or baked into an
-image. Both paid endpoints still apply the durable investigation budget, hourly
+The token is configured as a Fly secret; the owner-approved portfolio access link
+is deliberately published in the README. It is kept out of runtime source and the
+app image. The provider API key remains server-side and unpublished. Both paid
+endpoints still apply the durable investigation budget, hourly
 run quota, and concurrency limits after access validation. Production verification
 can use the over-budget Sonnet selection to check admission without model calls.
