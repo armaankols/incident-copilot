@@ -1,0 +1,97 @@
+{
+  "measured_at": "2026-10-14T22:44:53.510283+00:00",
+  "url": "https://incident-copilot.fly.dev",
+  "deployed_commit": "437feb3cd8f0a8712b7a462849a83bba0a195c42",
+  "image": "registry.fly.io/incident-copilot:437feb3",
+  "before": {
+    "run_count": 7,
+    "replay_count": 7,
+    "active_count": 0,
+    "charged_usd": 0.27548,
+    "runs_sha256": "4b344f19dbb4127fdc3eee668edac37d925158ed9fdf204db3123ffd8be921e0",
+    "replays_sha256": "f578fcd19f5b13e57d64f7834ab7917e323e521bf514843d961762946ef83555",
+    "machine_id": "7843e61a994648",
+    "volume_id": "vol_4m3mklle2q5n32zv",
+    "image": "registry.fly.io/incident-copilot:4a5d279"
+  },
+  "after": {
+    "run_count": 7,
+    "replay_count": 7,
+    "active_count": 0,
+    "charged_usd": 0.27548,
+    "runs_sha256": "4b344f19dbb4127fdc3eee668edac37d925158ed9fdf204db3123ffd8be921e0",
+    "replays_sha256": "f578fcd19f5b13e57d64f7834ab7917e323e521bf514843d961762946ef83555",
+    "machine_id": "7843e61a994648",
+    "volume_id": "vol_4m3mklle2q5n32zv",
+    "image": "registry.fly.io/incident-copilot:437feb3"
+  },
+  "http_statuses": {
+    "unauthorized /api/runs": 401,
+    "missing Sonnet password /api/runs": 403,
+    "wrong Sonnet password /api/runs": 403,
+    "unauthorized /api/investigate": 401,
+    "missing Sonnet password /api/investigate": 403,
+    "wrong Sonnet password /api/investigate": 403
+  },
+  "runtime_sources_and_served_script_match": true,
+  "latest_run_loader_served": true,
+  "offline_button_removed": true,
+  "latest_label_font_px": 16,
+  "primary_button_gap_px": 5,
+  "sonnet_password_input_served": true,
+  "existing_credentials_unchanged": true,
+  "old_access_link_still_valid": true,
+  "ledger_and_raw_replays_unchanged": true,
+  "all_saved_runs_reopen": true,
+  "owner_password_probe": {
+    "owner_password_valid": true,
+    "synthetic_start_at_49_cents_allowed": true,
+    "synthetic_finish_at_55_cents_recorded": true,
+    "synthetic_next_start_denied": true,
+    "password_cleared_before_execution": true,
+    "provider_calls": 0
+  },
+  "new_production_model_reservations": 0,
+  "new_provider_calls": 0,
+  "offline_tests": {
+    "passed": 260,
+    "seconds": 5.43
+  },
+  "frontend_checks": {
+    "passed": 22,
+    "mock_dom_and_http": true,
+    "browser_visual_review": false
+  },
+  "container": {
+    "measured_at": "2026-10-14T22:43:21.283717+00:00",
+    "image": "registry.fly.io/incident-copilot:437feb3",
+    "image_id": "sha256:a1ca22da27448aa98c9667aac0ba8f0bb1f447bfb67aa60a38ea205e09c95fe8",
+    "platform": "linux/amd64",
+    "http_statuses": {
+      "/healthz": 200,
+      "/": 200,
+      "/static/demo.js": 200,
+      "/api/config": 200,
+      "/api/replay": 200
+    },
+    "unauthorized_status": 401,
+    "persistent_test_charge_usd": 0.1,
+    "replay_survived_restart": true,
+    "server_uid": 10001,
+    "root_owned_mount_repaired": true,
+    "trailing_slash_access_status": 404,
+    "trailing_slash_no_location": true
+  },
+  "runtime_ci": {
+    "status": "success",
+    "url": "https://github.com/armaankols/incident-copilot/actions/runs/38649388511"
+  },
+  "deployment_workflow": {
+    "image_built_locally": true,
+    "existing_machine_and_volume_reused": true,
+    "machine_count_after": 1,
+    "fly_pricing_checked_on": "2026-10-14",
+    "fly_pricing_source": "https://docs.fly.io/about/pricing",
+    "incremental_fly_charge_measured": false
+  }
+}

@@ -41,6 +41,19 @@ unchanged four-run ledger and $0.198665 total, preserved replays and access link
 copy of the live ledger admitted a Haiku reservation at the current spend; no
 paid run was started. See [start-threshold verification](start-threshold-verification.json).
 
+Runtime `437feb3` deploys the latest saved investigation as the homepage default,
+retaining the offline replay as a fallback. The sample button is removed, the
+latest-run label uses 16px Newsreader, and the primary button uses a 5px sparkle
+gap. Sonnet has a private password input; the owner's chosen value is configured
+as a Fly secret. Both models now use the same daily start threshold, and both
+paid routes require the extra password for Sonnet before admission/model calls.
+All 260 offline tests, 22 named frontend checks, runtime CI and exact AMD64
+container checks passed. Live verification preserved all seven runs/replays and
+$0.275480 of recorded charges, the original machine/volume and existing
+credentials. Correct owner admission was checked only in an isolated fixture;
+missing/wrong-password HTTP probes returned 403. No paid model calls or new
+production reservations were made. See [latest-run/Sonnet verification](latest-sonnet-verification.json).
+
 The user approved $0.50 as a daily **start threshold** across visitors: a final
 run started below $0.50 may finish above it. This is separate from standing
 $0.50-per-test development authorization. The day resets at midnight Pacific

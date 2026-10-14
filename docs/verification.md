@@ -326,3 +326,27 @@ unauthorized paid routes returned 401 and both oversized Sonnet requests returne
 429 before creating reservations. A temporary copy of the live ledger admitted
 Haiku at its current spend. There were no new production model reservations or
 provider calls. See [measured record](start-threshold-verification.json).
+
+2026-10-14 latest-run homepage and owner Sonnet deployment: runtime `437feb3`
+opens the most recent saved investigation with its timestamp, using the bundled
+offline sample only as a fallback. The sample button is removed; the latest-run
+label uses 16px Newsreader and the Page the agent sparkle gap is 5px. Sonnet
+requires a private password in the request body on both paid routes. The value
+was configured as a Fly secret and is excluded from frontend code, URLs, model
+inputs and saved results. Haiku needs no extra password. Both models can start
+below the same $0.50 daily threshold and finish above it, subject to active holds,
+visitor quotas and concurrency. Their token/call limits remain unchanged.
+
+All 260 Python tests passed in 5.43 seconds, 22 named mocked frontend checks
+passed, and [runtime CI](https://github.com/armaankols/incident-copilot/actions/runs/38649388511)
+passed. The exact AMD64 image passed non-root serving, access rejection and
+restart persistence checks. Live source/static hashes match; the served HTML
+contains the reviewed styles and password field. Both unauthorized paid routes
+returned 401, and missing/wrong Sonnet passwords returned 403. Correct password
+admission at $0.49 and rejection after a synthetic $0.55 settlement were verified
+in an isolated ledger on the deployed runtime, without invoking a model client.
+All seven saved runs reopened; their ledger/replay hashes, $0.275480 total
+recorded charges, existing credentials and machine/volume were preserved.
+No new production model reservations or provider calls were made. Browser visual
+review of production was not performed; the user reviewed the local preview.
+See [measured record](latest-sonnet-verification.json).
