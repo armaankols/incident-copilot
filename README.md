@@ -4,6 +4,12 @@ Claude investigates simulated outages across seven services and six fault types
 using logs, metrics, deployments, and runbooks. The demo shows its diagnosis,
 supporting evidence, and suggested next steps.
 
+**How the logs are made:**
+- Python generates two hours of sample logs, performance metrics, and deployment history.
+- One of six simulated faults adds recognizable symptoms—for example, rising memory followed by an out-of-memory restart.
+- A seed varies the affected service, metric values, and background logs. The same seed and settings reproduce the same case.
+- Undiagnosable cases show signs of an outage but omit the logs and metrics needed to determine why. The agent should acknowledge the missing evidence instead of guessing.
+
 [incident-copilot.fly.dev - Open live demo with agent access](https://incident-copilot.fly.dev/#access=475qN7AHUNlRQItTZJFRFVjjpmybe4-vFtpIzUzgix4xHBRtj2_xHDFHYbE_R3Ug).
 
 **Stack:** Python · FastAPI · Claude · LangGraph · MCP · TF-IDF RAG · SQLite · Docker · Fly.io
