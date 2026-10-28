@@ -66,7 +66,7 @@ OVERRIDES = {
 class Scenario:
     seed: int
     fault_type: str
-    root_service: str
+    root_service: str | None
     metrics: dict
     logs: list            # (minute, service, level, message)
     deploys: list         # dicts
@@ -305,3 +305,27 @@ def generate(seed: int, fault_type: str | None = None) -> Scenario:
             metrics[s][m] = [min(100.0, v) for v in metrics[s][m]]
     return Scenario(seed=seed, fault_type=fault_type, root_service=root, metrics=metrics, logs=logs,
                     deploys=deploys, alert=_make_alert(metrics, MINUTES - 1))
+
+
+def with_missing_dependency_telemetry(sc: Scenario) -> Scenario:
+    """Keep outage symptoms while removing the evidence needed to identify a cause.
+
+    Mutates a scenario owned by the caller. No fabricated healthy measurements
+    replace the missing dependency data, and the agent receives no diagnosis hint.
+    """
+    sc.logs = [(sc.now, "gateway", "WARN", "upstream requests failing; dependency telemetry unavailable")]
+    sc.deploys = []
+    sc.metrics = {"gateway": sc.metrics["gateway"]}
+    sc.telemetry_availability = {
+        "metrics": {s: "unavailable" for s in SERVICES if s != "gateway"},
+        "logs": {s: "partial" if s == "gateway" else "unavailable" for s in SERVICES},
+        "deploys": "unavailable",
+    }
+    sc.fault_type = "insufficient_evidence"
+    sc.root_service = None
+    return sc
+
+
+def generate_undiagnosable(seed: int) -> Scenario:
+    """A reproducible incomplete snapshot, using the challenge suite's redaction."""
+    return with_missing_dependency_telemetry(generate(seed))

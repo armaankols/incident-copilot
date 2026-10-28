@@ -7,7 +7,7 @@ correlated-v2 preserves those variants but removes fabricated downstream samples
 and explicitly exposes unavailable/partial collection coverage on redacted cases.
 """
 import copy
-from copilot.sim import FAULT_TYPES, SERVICES, generate
+from copilot.sim import FAULT_TYPES, SERVICES, generate, with_missing_dependency_telemetry
 
 VERSION = "correlated-v2"
 PARAPHRASES = {
@@ -41,21 +41,16 @@ def scenarios(n, seed, suite="original", offset=0):
             sc.logs.append((minute, healthy, level, "diagnostic drill: unhandled exception; recovered immediately, no customer impact"))
             sc.logs.sort()
         elif variant == "redacted":
-            # Keep only gateway symptoms; all root-cause telemetry is unavailable.
-            sc.logs = [(sc.now, "gateway", "WARN", "upstream requests failing; dependency telemetry unavailable")]
-            sc.deploys = []
-            gateway = sc.metrics["gateway"]
-            sc.metrics = {s: {k: ([v[0]]*len(v) if s != "gateway" else list(v)) for k, v in gateway.items()} for s in SERVICES}
             if suite == VERSION:
-                # v1 remains reproducible; v2 removes fabricated healthy samples.
-                sc.metrics = {"gateway": gateway}
-                sc.telemetry_availability = {
-                    "metrics": {s: "unavailable" for s in SERVICES if s != "gateway"},
-                    "logs": {s: "partial" if s == "gateway" else "unavailable" for s in SERVICES},
-                    "deploys": "unavailable",
-                }
-            sc.fault_type = "insufficient_evidence"
-            sc.root_service = None
+                sc = with_missing_dependency_telemetry(sc)
+            else:
+                # Preserve v1's historical numeric snapshot exactly.
+                sc.logs = [(sc.now, "gateway", "WARN", "upstream requests failing; dependency telemetry unavailable")]
+                sc.deploys = []
+                gateway = sc.metrics["gateway"]
+                sc.metrics = {s: {k: ([v[0]]*len(v) if s != "gateway" else list(v)) for k, v in gateway.items()} for s in SERVICES}
+                sc.fault_type = "insufficient_evidence"
+                sc.root_service = None
         sc.case_id = f"{suite}/{variant}/{seed*1000+i}"
         sc.variant = variant
         out.append(sc)

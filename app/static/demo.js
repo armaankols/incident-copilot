@@ -1,11 +1,13 @@
 const $ = id => document.getElementById(id);
 const SONNET_MODEL = "claude-sonnet-4-6";
+const INTRO_DISMISSED_KEY = "copilot-intro-dismissed-v1";
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const recoveryLabels = {recommended:"Recommendation available", unverified:"No verified action", blocked:"Scaling blocked", unavailable:"Unavailable"};
+const recoveryLabels = {recommended:"Recommendation available", unverified:"Pending verification", blocked:"Scaling blocked", unavailable:"Unavailable"};
 const stopLabels = {model_submission:"Final result submitted", step_budget:"Model call limit reached", stagnation:"Repeated results", correction_limit:"Repeated invalid submissions", output_limit:"Repeated output truncation", tool_limit:"Query limit reached", timeout:"Timed out", error:"Investigation failed"};
 let busy = false;
 let liveEnabled = false;
 let agentAccess = false;
+let accessKnown = false;
 let historyOffset = null;
 let historyLoading = false;
 
@@ -16,7 +18,10 @@ async function fetchJSON(url, options) {
   return data;
 }
 function controls() {
-  $("go").disabled = busy;
+  $("go").disabled = busy || !agentAccess || !liveEnabled;
+  $("go").title = busy ? "An investigation is in progress."
+    : !agentAccess ? "Agent access is required."
+    : !liveEnabled ? "Live investigations are not configured." : "";
   $("fault").disabled = busy;
   $("model").disabled = busy;
   $("sonnet-passcode").disabled = busy;
@@ -28,7 +33,27 @@ function showAccess() {
   $("access-message").textContent = agentAccess
     ? "Thanks for checking out Armaan’s profile. You have agent access!"
     : "Oops! You don’t have agent access.\nHint: click in from Armaan’s portfolio or résumé.";
+  $("intro-access").className = `intro-access${accessKnown && agentAccess ? " granted" : ""}`;
+  $("intro-access").textContent = !accessKnown ? "Checking your agent access…"
+    : agentAccess ? "You have agent access." : "You don’t have agent access.";
+  $("intro-access-start").hidden = !accessKnown || !agentAccess;
+  $("intro-access-hint").hidden = !accessKnown || agentAccess;
 }
+function openIntro() {
+  if (!$("intro-dialog").open) $("intro-dialog").showModal();
+  document.body.classList.add("intro-open");
+}
+function maybeShowIntro() {
+  try { if (localStorage.getItem(INTRO_DISMISSED_KEY) === "1") return; } catch {}
+  openIntro();
+}
+$("intro-open").onclick = openIntro;
+$("intro-close").onclick = $("intro-done").onclick = () => $("intro-dialog").close();
+$("intro-dialog").onclose = () => {
+  document.body.classList.remove("intro-open");
+  try { localStorage.setItem(INTRO_DISMISSED_KEY, "1"); } catch {}
+  $("intro-open").focus();
+};
 function showModelAccess() {
   const sonnet = $("model").value === SONNET_MODEL;
   $("sonnet-access").hidden = !sonnet;
@@ -37,7 +62,8 @@ function showModelAccess() {
 }
 function options(id, values, random = false) {
   const select = $(id), previous = select.value;
-  select.replaceChildren(...(random ? [new Option("Random", "")] : []), ...values.map(value => new Option(value, value)));
+  select.replaceChildren(...(random ? [new Option("Random", "")] : []), ...values.map(value => new Option(
+    id === "fault" && value === "insufficient_evidence" ? "** Undiagnosable **" : value, value)));
   if ([...select.options].some(option => option.value === previous)) select.value = previous;
 }
 async function init() {
@@ -47,6 +73,7 @@ async function init() {
   showModelAccess();
   liveEnabled = config.live_enabled;
   agentAccess = config.agent_access === true;
+  accessKnown = true;
   showAccess();
   const spent = Number(config.spent_today_usd), budget = Number(config.daily_budget_usd);
   const fraction = budget > 0 ? Math.min(1, Math.max(0, spent / budget)) : 0;
@@ -71,10 +98,30 @@ function traceHTML(trace = []) {
     return "";
   }).join("");
 }
+function recoveryHTML(result) {
+  const diagnosis = result.diagnosis || {};
+  if (result.error || diagnosis.status !== "diagnosed") {
+    return diagnosis.remediation ? `<p>${esc(diagnosis.remediation)}</p>` : "";
+  }
+  const pendingPlan = diagnosis.recovery_status === "unverified" && !diagnosis.action && !diagnosis.target
+    && (diagnosis.recovery_reason === "No recovery action was verified."
+      || diagnosis.remediation === "Diagnosis recorded. No recovery action has been verified. Consult the service owner and verify the service recovery policy before selecting a change. No change has been executed.");
+  const guidance = pendingPlan
+    ? "Review recovery options with the service owner and confirm the relevant runbook before making a change."
+    : String(diagnosis.remediation || "").replace(/^Recommendation only; no change has been executed\. /, "");
+  if (!guidance) return "";
+  return `<section class="recovery-summary" aria-label="Recovery guidance">
+    <h3>Next step</h3>
+    <p>${esc(guidance)}</p>
+    <p class="recovery-meta">Recovery plan: <strong>${esc(recoveryLabels[diagnosis.recovery_status] || "Not recorded")}</strong></p>
+    <p class="advisory-note">Advisory only · No changes made</p>
+  </section>`;
+}
 function render(result, latest = null) {
   const diagnosis = result.diagnosis || {}, grade = result.grade || {}, truth = result.ground_truth || {};
   const mark = ok => ok ? '<span class="ok">match</span>' : '<span class="bad">miss</span>';
   const offline = result.model?.startsWith("offline");
+  const expectedAbstention = truth.fault_type === "insufficient_evidence";
   const costRecorded = typeof result.cost_usd === "number" && Number.isFinite(result.cost_usd) && result.cost_usd >= 0;
   const costNote = offline ? "Offline sample · No LLM calls"
     : !costRecorded ? "Usage cost was not recorded."
@@ -83,15 +130,20 @@ function render(result, latest = null) {
     ${offline ? '<p class="sample">Sample investigation · Offline rules · No LLM calls</p>' : ""}
     ${result.error ? `<p class="err">${esc(result.error)}. Partial investigation preserved below.</p>` : ""}
     <div class="alert">${esc(result.alert)}</div>
+    ${!result.error && diagnosis.status === "diagnosed" ? `<h2 class="diagnosis-heading">${offline ? "Offline diagnosis complete" : "Diagnosis complete"}</h2>` : ""}
+    ${!result.error && expectedAbstention && diagnosis.status === "insufficient_evidence" ? '<h2 class="diagnosis-heading">Insufficient evidence</h2>' : ""}
     <div class="verdict"><div><h3>${offline ? "Offline rules said" : "Agent said"}</h3>
     <div class="row"><span>Outcome</span><b>${esc(diagnosis.status || "unavailable")}</b></div>
     <div class="row"><span>Service</span><b>${esc(diagnosis.root_cause_service || "none")}</b></div>
     <div class="row"><span>Fault type</span><b>${esc(diagnosis.fault_type || "none")}</b></div>
     <div class="row"><span>Recovery</span><b>${esc(recoveryLabels[diagnosis.recovery_status] || (diagnosis.action ? "Recommendation available" : "Not recorded"))}</b></div>
     <div class="row"><span>Action</span><b>${esc(diagnosis.action || "none")}</b></div></div>
-    <div><h3>Actually injected</h3><div class="row"><span>Service ${mark(grade.service_ok)}</span><b>${esc(truth.root_service)}</b></div>
-    <div class="row"><span>Fault type ${mark(grade.type_ok)}</span><b>${esc(truth.fault_type)}</b></div></div></div>
-    ${diagnosis.remediation ? `<p>${esc(diagnosis.remediation)}</p>` : ""}
+    <div>${expectedAbstention ? `<h3>Expected outcome</h3>
+    <div class="row"><span>Abstention ${mark(grade.both_ok)}</span><b>Insufficient evidence</b></div>
+    <p class="expected-note">Dependency telemetry is unavailable, so the snapshot cannot establish a root cause.</p>`
+    : `<h3>Actually injected</h3><div class="row"><span>Service ${mark(grade.service_ok)}</span><b>${esc(truth.root_service)}</b></div>
+    <div class="row"><span>Fault type ${mark(grade.type_ok)}</span><b>${esc(truth.fault_type)}</b></div>`}</div></div>
+    ${recoveryHTML(result)}
     ${result.termination_reason ? `<p>Investigation ended: ${esc(stopLabels[result.termination_reason] || result.termination_reason)}.</p>` : ""}
     <div class="budget-card run-cost">
       <div class="budget-title">This run’s API cost</div>
@@ -138,7 +190,13 @@ async function runUI(action) {
   catch (error) { $("out").insertAdjacentHTML("beforeend", `<p class="err">${esc(error.message)}</p>`); }
   finally {
     busy = false;
-    try { await init(); } catch (error) { $("meta").textContent = error.message; }
+    try { await init(); } catch (error) {
+      liveEnabled = false;
+      $("meta").textContent = error.message;
+      $("intro-access").className = "intro-access";
+      $("intro-access").textContent = "Agent access status is unavailable.";
+      $("intro-access-start").hidden = $("intro-access-hint").hidden = true;
+    }
     await loadHistory();
     controls();
   }
@@ -188,6 +246,7 @@ $("go").onclick = () => {
 };
 async function boot() {
   showAccess();
+  maybeShowIntro();
   const fragment = new URLSearchParams(location.hash.slice(1));
   const token = fragment.get("access");
   if (token !== null) {

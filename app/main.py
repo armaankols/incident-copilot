@@ -23,11 +23,12 @@ from copilot.llm import AnthropicLLM
 from copilot.errors import public_error, public_result
 from copilot.pricing import DEFAULT_MODEL, cost_usd
 from copilot.runner import run_scenario
-from copilot.sim import FAULT_TYPES, generate
+from copilot.sim import FAULT_TYPES, generate, generate_undiagnosable
 
 STATIC = Path(__file__).parent / "static"
 SONNET_MODEL = "claude-sonnet-4-6"
 ALLOWED_MODELS = [DEFAULT_MODEL, SONNET_MODEL]
+WEB_FAULT_TYPES = [*FAULT_TYPES, "insufficient_evidence"]
 DAILY_BUDGET_USD = float(os.getenv("DAILY_BUDGET_USD", "2.0"))
 RATE_LIMIT_PER_HOUR = int(os.getenv("RATE_LIMIT_PER_HOUR", "8"))
 MAX_STEPS = 12
@@ -113,7 +114,7 @@ def health():
 
 @app.get("/api/config")
 def config(request: Request):
-    return {"models": ALLOWED_MODELS, "fault_types": FAULT_TYPES, "daily_budget_usd": DAILY_BUDGET_USD,
+    return {"models": ALLOWED_MODELS, "fault_types": WEB_FAULT_TYPES, "daily_budget_usd": DAILY_BUDGET_USD,
             **ledger().budget_status(), "live_enabled": bool(os.getenv("ANTHROPIC_API_KEY")),
             "agent_access": has_access(request), "budget_policy": "start_threshold"}
 
@@ -122,8 +123,8 @@ def admit(req, request):
     require_access(request)
     if req.model not in ALLOWED_MODELS:
         raise HTTPException(400, f"model must be one of {ALLOWED_MODELS}")
-    if req.fault_type and req.fault_type not in FAULT_TYPES:
-        raise HTTPException(400, f"fault_type must be one of {FAULT_TYPES}")
+    if req.fault_type and req.fault_type not in WEB_FAULT_TYPES:
+        raise HTTPException(400, f"fault_type must be one of {WEB_FAULT_TYPES}")
     visitor = visitor_id(request)
     passcode = req.sonnet_passcode.get_secret_value() if req.sonnet_passcode else ""
     req.sonnet_passcode = None  # Never carry a password into execution or replays.
@@ -149,7 +150,8 @@ async def execute(rid, req):
     progress = _jobs.setdefault(rid, {})
     result = None
     try:
-        sc = generate(random.randint(10_000, 99_999), req.fault_type)
+        seed = random.randint(10_000, 99_999)
+        sc = generate_undiagnosable(seed) if req.fault_type == "insufficient_evidence" else generate(seed, req.fault_type)
         progress["alert"] = sc.alert
         result = await run_scenario(sc, make_llm(req.model), max_steps=MAX_STEPS, progress=progress)
         result.update(alert=sc.alert, model=req.model, run_id=rid,
