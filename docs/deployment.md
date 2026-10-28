@@ -54,6 +54,19 @@ credentials. Correct owner admission was checked only in an isolated fixture;
 missing/wrong-password HTTP probes returned 403. No paid model calls or new
 production reservations were made. See [latest-run/Sonnet verification](latest-sonnet-verification.json).
 
+Runtime `a3d9456` deploys the cream/pastel-red interface, introductory dialog,
+clearer diagnosis and recovery summaries, and the selectable
+`** Undiagnosable **` case. That case uses the existing correlated-v2 redaction:
+gateway symptoms remain, while dependency telemetry is explicitly unavailable.
+All 267 Python tests, 37 frontend checks, runtime CI and the exact AMD64
+container checks passed. The simulator snapshot check normalizes floating-point
+noise across macOS and Linux without changing generated telemetry. Live checks
+preserved all 13 runs/replays, $0.528822 in total recorded charges, credentials,
+the original access link and the current machine/volume. Every saved run reopened.
+A scripted test through real MCP tools on the deployed runtime accepted the
+expected abstention; no provider calls or new production reservations were made.
+See [UI and undiagnosable-case verification](cream-guide-verification.json).
+
 The user approved $0.50 as a daily **start threshold** across visitors: a final
 run started below $0.50 may finish above it. This is separate from standing
 $0.50-per-test development authorization. The day resets at midnight Pacific
@@ -99,13 +112,14 @@ idle-stop observation; it does not independently verify idle behavior on a paid
 account. The trial lasts seven days or two shared VM hours, whichever comes first;
 adding a credit card ends the trial immediately.
 
-The UI loads the labeled offline sample by default. Past investigations lists
+The UI loads the latest saved investigation by default, falling back to the
+labeled offline sample if no saved result can be loaded. Past investigations lists
 completed saved hosted results, including saved failures, newest first with
 20 results per page. The read-only `GET /api/runs` endpoint accepts `limit` (1–50)
 and `offset` (nonnegative), and exposes summary fields without visitor hashes,
 reservation amounts or full traces. Active or interrupted runs without saved
 results are excluded. Historical local benchmark files are not imported into
-the hosted database. Existing `?run=...` links take priority over the sample.
+the hosted database. Existing `?run=...` links take priority over the default view.
 
 ## Local setup
 
