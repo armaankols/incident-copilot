@@ -8,6 +8,14 @@ supporting evidence, and suggested next steps.
 
 **Stack:** Python · FastAPI · Claude · LangGraph · MCP · TF-IDF RAG · SQLite · Docker · Fly.io
 
+## Reported results
+
+- **Diagnosis:** 38/40 simulated incidents correctly diagnosed (95%).
+- **Abstention:** Appropriate abstention on 9/10 undiagnosable cases (90%).
+- **API cost:** $0.04 per incident on average.
+
+*Reported by the project owner; this batch’s run-level records are not included in the repository.*
+
 ## Implementation
 
 - **Agent:** LangGraph orchestrates Claude tool calls through MCP; TF-IDF search
@@ -22,6 +30,15 @@ supporting evidence, and suggested next steps.
 Results are from synthetic tests and do not establish production reliability.
 See [evaluation details](results/RESULTS.md), [security and access](docs/security-controls.md),
 and [deployment notes](docs/deployment.md).
+
+## Key takeaways
+
+- **Benchmark difficulty matters.** Simulator-tailored rules scored 60/60 on the
+  original cases but 8/24 on the challenge suite, showing why decoys, paraphrases,
+  and missing telemetry matter. [Baseline results](results/RESULTS.md).
+- **Diagnosis and recovery are separate.** A supported cause can be recorded
+  while recovery remains blocked or unverified. Recommendations require further
+  checks; the demo executes no changes. [Design notes](docs/diagnosis-stopping.md).
 
 ## Measured results
 
