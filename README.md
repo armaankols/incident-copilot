@@ -1,73 +1,27 @@
 # Incident Copilot
 
-A Python/FastAPI demo that investigates **synthetic incident telemetry** using
-Claude tool calls, a LangGraph investigation loop, and an in-memory MCP session.
-It compares diagnoses with injected ground truth. The demo is deployed here:
+Claude investigates simulated outages across seven services and six fault types
+using logs, metrics, deployments, and runbooks. The demo shows its diagnosis,
+supporting evidence, and suggested next steps.
 
 [incident-copilot.fly.dev - Open live demo with agent access](https://incident-copilot.fly.dev/#access=475qN7AHUNlRQItTZJFRFVjjpmybe4-vFtpIzUzgix4xHBRtj2_xHDFHYbE_R3Ug).
 
-Thirty authorized Haiku smoke investigations have completed across prompt versions.
-The hosted memory-leak smoke correctly diagnosed orders, returned the OOMKilled
-excerpt, and cost $0.060967 from reported token usage, with zero validation
-rejections or truncations. See [deployment verification](docs/deployment-live.md)
-and [prior seven edge cases](docs/live-v8-edge-cases.md). The subsequent
-[name migration](docs/name-migration.md) preserved the ledger and saved replay
-without another LLM call; the old app was retired. These small synthetic runs
-do not establish reliability or recovery effectiveness. Public API usage has a
-$0.50 daily start threshold: a final investigation may finish above it. The API
-threshold resets at midnight Pacific. Hosting has a monitored $10/month target, not a hard
-billing cap. No automatic hosting cutoff is installed.
-
-The existing simulator models six fault types across seven services. This is not
-a Docker service fault lab. Runbook retrieval uses sparse TF-IDF vectors and
-cosine similarity; optional FastEmbed provides dense vectors. Prompt caching is
-requested, but cache savings have not been measured.
+**Stack:** Python · FastAPI · Claude · LangGraph · MCP · TF-IDF RAG · SQLite · Docker · Fly.io
 
 ## Implementation
 
-- The agent discovers MCP tools for health/topology, metric time series, logs,
-  release history, and runbooks. The server also supports standalone stdio.
-- Final submissions select successful observation IDs. The server attaches exact
-  source excerpts and validates the structured outcome, action and target. Provenance
-  alone does not establish that an observation supports a diagnosis. See
-  [observation-ID evidence](docs/observation-id-evidence.md).
-- All six fault types require cited MCP diagnostic assessments. Deployment/configuration
-  checks use release-linked failures; memory, slow-dependency and traffic checks use
-  local fault records plus metrics; certificates require ownership/expiry corroboration.
-  Missing telemetry is explicit in `correlated-v2`. These checks cover narrow synthetic
-  patterns. See [fault evidence and compact submissions](docs/fault-gates-compact.md).
-- Certificate renewal and scaling require cited, target-specific MCP operational
-  assessments. Unknown ownership or blocked/unknown replica headroom cannot support
-  those recommendations. See [operational checks](docs/operational-checks.md).
-- A supported diagnosis can retain its service/fault while recovery is blocked or
-  unverified. Repeated queries are cached, and bounded query/correction/stagnation
-  rules stop the graph without another model call. See [diagnosis and stopping](docs/diagnosis-stopping.md).
-- Final submissions use six fields and at most three observation IDs; the server
-  generates source excerpts and remediation prose. Truncated responses execute no tools and have a separate
-  stopping limit; the 1,000-output-token API allowance remains unchanged.
-- Budget exhaustion returns `insufficient_evidence` without a forced model guess.
-  Model calls, graph steps, tool calls, usage and partial failure traces are distinct.
-- Web admission uses atomic SQLite reservations, durable rate limits and bounded
-  concurrency. Starts check existing spend and active holds against the daily
-  threshold; the new run's full reservation need not fit the remaining balance.
-  Success, failure and cancellation settle reservations; uncertain
-  billing retains the full reservation. This is an application guardrail, not a
-  provider billing hard cap. Deployment requires one machine and one worker.
-- The UI opens with the latest saved investigation and its timestamp, with an
-  offline sample fallback, and polls live investigation progress.
-  Past investigations lists saved hosted runs newest first, with pagination and
-  links to each result. Viewing samples or history makes no LLM calls. Saved run
-  links open their specific result. The sample uses the tailored rule baseline.
-- Current source requires a link-based session before starting live investigations.
-  Ordinary visitors can still browse samples and history. The access link uses
-  `#access=TOKEN`; its token is exchanged for a two-hour signed cookie and removed
-  from the address bar. The access gate and navy/cream UI are deployed. Request
-  bodies and rates are bounded, and both paid routes authenticate before parsing
-  JSON. See [demo access](docs/demo-access.md) and [security controls](docs/security-controls.md).
-- Sonnet additionally requires a private owner password, checked on both paid
-  endpoints before model calls. Haiku uses the shared portfolio access link.
-- Evaluations checkpoint each record and use unique experiment names, source
-  hashes, dataset/prompt versions, case IDs, errors and observed usage.
+- **Agent:** LangGraph orchestrates Claude tool calls through MCP; TF-IDF search
+  retrieves relevant runbook sections.
+- **Evidence checks:** Diagnoses cite tool observations and pass fault-specific
+  validation. Recovery guidance is separate; no service changes are executed.
+- **Evaluation:** Seeded cases, ground-truth grading, rule baselines, confidence
+  intervals, and token-cost tracking.
+- **Web demo:** Saved investigations, link-based access, owner-only Sonnet,
+  and persistent SQLite budget and rate controls.
+
+Results are from synthetic tests and do not establish production reliability.
+See [evaluation details](results/RESULTS.md), [security and access](docs/security-controls.md),
+and [deployment notes](docs/deployment.md).
 
 ## Measured results
 
